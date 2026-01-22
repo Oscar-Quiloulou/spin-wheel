@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>JEU 3 - Estimation des points</title>
+  <link rel="stylesheet" href="assets/style.css">
+  <style>
+    .levels button {
+      display:block;
+      width:100%;
+      margin:6px 0;
+      padding:10px 16px;
+      border-radius:999px;
+      border:none;
+      font-size:15px;
+      font-weight:600;
+      cursor:pointer;
+      background:linear-gradient(135deg,#0ea5e9,#6366f1);
+      color:white;
+      box-shadow:0 0 14px rgba(56,189,248,0.7);
+      transition:0.15s;
+    }
+    .zone {
+      position: relative;
+      width: 300px;
+      height: 300px;
+      margin: 0 auto 20px;
+      background: rgba(30,41,59,0.7);
+      border: 1px solid rgba(148,163,184,0.3);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 0 18px rgba(15,23,42,0.9);
+    }
+    .dot {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      background: #38bdf8;
+      border-radius: 50%;
+      box-shadow: 0 0 6px rgba(56,189,248,0.8);
+    }
+    input[type="number"] {
+      padding: 8px;
+      width: 120px;
+      border-radius: 8px;
+      border: none;
+      margin-top: 8px;
+      text-align: center;
+      font-size: 15px;
+    }
+
+    /* Menu cheat */
+    #cheat-menu {
+      position: absolute;
+      top: 20px;
+      right: -200px;
+      width: 180px;
+      padding: 10px;
+      background: rgba(15,23,42,0.95);
+      border: 1px solid rgba(129,140,248,0.5);
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(129,140,248,0.4);
+      transition: right 0.4s ease;
+      z-index: 100;
+    }
+    #cheat-menu.show {
+      right: 20px;
+    }
+
+    /* Zone secrète */
+    #secret-zone {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      width: 40px;
+      height: 40px;
+      opacity: 0;
+      z-index: 200;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+
+    <div class="side-leaderboard">
+      <div id="leaderboard"></div>
+    </div>
+
+    <!-- Zone secrète -->
+    <div id="secret-zone"></div>
+
+    <!-- Menu cheat -->
+    <div id="cheat-menu">
+      <button class="btn" onclick="cheatReveal()">Révéler</button>
+      <button class="btn" onclick="cheatAuto()">Auto‑Réponse</button>
+      <button class="btn" onclick="cheatHighlight()">Highlight</button>
+    </div>
+
+    <div id="menu">
+      <h1>Estimation des points</h1>
+      <h2>Choisis un niveau</h2>
+      <div class="levels">
+        <button data-min="20" data-max="50">Facile (20–50 points)</button>
+        <button data-min="50" data-max="150">Normal (50–150 points)</button>
+        <button data-min="150" data-max="300">Difficile (150–300 points)</button>
+      </div>
+      <a href="index.html">⬅ Retour au menu principal</a>
+    </div>
+
+    <div id="game" class="hidden">
+      <h2 id="title"></h2>
+      <div class="zone" id="zone"></div>
+
+      <div id="guessBox" class="hidden">
+        <p>Combien de points y avait-il ?</p>
+        <input type="number" id="guess" min="0">
+        <button id="validate" class="btn">Valider</button>
+      </div>
+
+      <div id="result" class="hidden" style="margin-top:10px;font-size:16px;font-weight:600;"></div>
+
+      <div class="center">
+        <button id="retry" class="btn hidden">Nouveau round</button>
+        <button id="back" class="btn hidden">Changer de niveau</button>
+      </div>
+      <a href="index.html">⬅ Retour au menu principal</a>
+    </div>
+
+  </div>
+
+  <script src="assets/leaderboard.js"></script>
+  <script>
+    const menu = document.getElementById("menu");
+    const game = document.getElementById("game");
+    const zone = document.getElementById("zone");
+    const title = document.getElementById("title");
+    const guessBox = document.getElementById("guessBox");
+    const guess = document.getElementById("guess");
+    const validate = document.getElementById("validate");
+    const result = document.getElementById("result");
+    const retry = document.getElementById("retry");
+    const back = document.getElementById("back");
+
+    let minPoints = 20;
+    let maxPoints = 50;
+    let totalPoints = 0;
+
+    function startLevel(min, max) {
+      minPoints = min;
+      maxPoints = max;
+      menu.classList.add("hidden");
+      game.classList.remove("hidden");
+      title.textContent = `Niveau : ${min}-${max} points`;
+      hideScores("leaderboard");
+      newRound();
+    }
+
+    document.querySelectorAll(".levels button").forEach(btn => {
+      btn.addEventListener("click", () => {
+        startLevel(parseInt(btn.dataset.min), parseInt(btn.dataset.max));
+      });
+    });
+
+    function newRound() {
+      zone.innerHTML = "";
+      result.classList.add("hidden");
+      retry.classList.add("hidden");
+      back.classList.add("hidden");
+      guessBox.classList.add("hidden");
+      guess.value = "";
+
+      totalPoints = Math.floor(Math.random() * (maxPoints - minPoints + 1)) + minPoints;
+
+      for (let i = 0; i < totalPoints; i++) {
+        const dot = document.createElement("div");
+        dot.className = "dot";
+        dot.style.left = Math.random() * 290 + "px";
+        dot.style.top = Math.random() * 290 + "px";
+        zone.appendChild(dot);
+      }
+
+      setTimeout(() => {
+        zone.innerHTML = "";
+        guessBox.classList.remove("hidden");
+      }, 1000);
+    }
+
+    validate.addEventListener("click", () => {
+      const userGuess = parseInt(guess.value || "0", 10);
+      const diff = Math.abs(userGuess - totalPoints);
+
+      result.textContent = `Il y avait ${totalPoints} points. Écart : ${diff}`;
+      result.classList.remove("hidden");
+
+      const score = Math.max(0, 300 - diff);
+
+      saveScore("JEU3_scores", score, {
+        mode: `${minPoints}-${maxPoints}`
+      });
+      displayScores("JEU3_scores", "leaderboard");
+
+      retry.classList.remove("hidden");
+      back.classList.remove("hidden");
+    });
+
+    retry.addEventListener("click", newRound);
+
+    back.addEventListener("click", () => {
+      game.classList.add("hidden");
+      menu.classList.remove("hidden");
+    });
+
+    /* --- Zone secrète triple tap --- */
+    let tapCount = 0;
+    let tapTimer = null;
+
+    document.getElementById("secret-zone").addEventListener("touchstart", () => {
+      tapCount++;
+
+      if (tapCount === 3) {
+        tapCount = 0;
+        clearTimeout(tapTimer);
+        toggleCheatMenu();
+      }
+
+      clearTimeout(tapTimer);
+      tapTimer = setTimeout(() => tapCount = 0, 400);
+    });
+
+    function toggleCheatMenu() {
+      document.getElementById("cheat-menu").classList.toggle("show");
+    }
+
+    /* --- Cheats --- */
+    function cheatReveal() {
+      alert("Il y a " + totalPoints + " points");
+    }
+
+    function cheatAuto() {
+      guess.value = totalPoints;
+    }
+
+    function cheatHighlight() {
+      zone.style.background = "rgba(255,0,0,0.2)";
+    }
+  </script>
+</body>
+</html>

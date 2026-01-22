@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>JEU 1 - Attrape le bouton</title>
+  <link rel="stylesheet" href="assets/style.css">
+  <style>
+    .hud {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+    .arena {
+      position: relative;
+      width: 100%;
+      height: 260px;
+      border-radius: 14px;
+      background: radial-gradient(circle at top, #0f172a, #020617);
+      overflow: hidden;
+      border: 1px solid rgba(148,163,184,0.3);
+      box-shadow: 0 0 18px rgba(15,23,42,0.9);
+    }
+    #target {
+      position: absolute;
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: #022c22;
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 14px;
+      font-weight: 700;
+      box-shadow: 0 0 14px rgba(34,197,94,0.8);
+      white-space: nowrap;
+      transition: transform 0.1s ease;
+    }
+    #target:active {
+      transform: scale(0.95);
+    }
+    #countdown {
+      position:absolute;
+      top:50%;
+      left:50%;
+      transform:translate(-50%, -50%);
+      font-size:60px;
+      font-weight:900;
+      color:#f97316;
+      text-shadow:0 0 20px rgba(249,115,22,0.9);
+      display:none;
+    }
+    .level-btn {
+      display:block;
+      width:100%;
+      margin:6px 0;
+      padding:10px 16px;
+      border-radius:999px;
+      border:none;
+      font-size:15px;
+      font-weight:600;
+      cursor:pointer;
+      background:linear-gradient(135deg,#0ea5e9,#6366f1);
+      color:white;
+      box-shadow:0 0 14px rgba(56,189,248,0.7);
+      transition:0.15s;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+
+    <!-- Leaderboard latéral -->
+    <div class="side-leaderboard">
+      <div id="leaderboard"></div>
+    </div>
+
+    <div id="screen-levels">
+      <h1>Attrape le bouton</h1>
+      <h2>Choisis ton niveau</h2>
+      <button class="level-btn" data-level="easy">Simple</button>
+      <button class="level-btn" data-level="medium">Moyen</button>
+      <button class="level-btn" data-level="normal">Normal</button>
+      <button class="level-btn" data-level="hard">Difficile</button>
+      <a href="index.html">⬅ Retour au menu principal</a>
+    </div>
+
+    <div id="screen-game" class="hidden">
+      <h2 id="game-title">Niveau</h2>
+      <div class="hud">
+        <div>Score : <span id="score">0</span></div>
+        <div>Temps : <span id="time">0</span>s</div>
+      </div>
+      <div class="arena" id="arena">
+        <button id="target">Attrape-moi !</button>
+        <div id="countdown"></div>
+      </div>
+      <div class="center">
+        <button id="btn-quit" class="btn">Quitter</button>
+      </div>
+    </div>
+
+    <div id="screen-end" class="hidden">
+      <h2>Fin du jeu</h2>
+      <p style="margin-top:10px;">Score final : <strong id="final-score">0</strong></p>
+      <div class="center">
+        <button id="btn-restart" class="btn" style="margin-top:16px;">Rejouer</button>
+      </div>
+      <a href="index.html">⬅ Retour au menu principal</a>
+    </div>
+
+  </div>
+
+  <script src="assets/leaderboard.js"></script>
+  <script>
+    const screenLevels = document.getElementById('screen-levels');
+    const screenGame   = document.getElementById('screen-game');
+    const screenEnd    = document.getElementById('screen-end');
+
+    const levelButtons = document.querySelectorAll('.level-btn');
+    const gameTitle    = document.getElementById('game-title');
+    const scoreSpan    = document.getElementById('score');
+    const timeSpan     = document.getElementById('time');
+    const finalScore   = document.getElementById('final-score');
+
+    const arena        = document.getElementById('arena');
+    const target       = document.getElementById('target');
+    const countdown    = document.getElementById('countdown');
+    const btnQuit      = document.getElementById('btn-quit');
+    const btnRestart   = document.getElementById('btn-restart');
+
+    let score = 0;
+    let timeLeft = 0;
+    let timerId = null;
+
+    const levels = {
+      easy:   { label: 'Simple',    time: 40, size: 120 },
+      medium: { label: 'Moyen',     time: 30, size: 100 },
+      normal: { label: 'Normal',    time: 25, size: 90  },
+      hard:   { label: 'Difficile', time: 20, size: 70  }
+    };
+
+    function showScreen(id) {
+      screenLevels.classList.add('hidden');
+      screenGame.classList.add('hidden');
+      screenEnd.classList.add('hidden');
+      document.getElementById(id).classList.remove('hidden');
+    }
+
+    function moveTarget() {
+      const rect = arena.getBoundingClientRect();
+      const btnRect = target.getBoundingClientRect();
+      const maxX = rect.width - btnRect.width;
+      const maxY = rect.height - btnRect.height;
+      target.style.left = Math.random() * maxX + 'px';
+      target.style.top  = Math.random() * maxY + 'px';
+    }
+
+    function startTimer() {
+      if (timerId) clearInterval(timerId);
+      timeSpan.textContent = timeLeft;
+
+      timerId = setInterval(() => {
+        timeLeft--;
+        timeSpan.textContent = timeLeft;
+
+        if (timeLeft <= 3 && timeLeft > 0) {
+          countdown.textContent = timeLeft;
+          countdown.style.display = "block";
+        } else {
+          countdown.style.display = "none";
+        }
+
+        if (timeLeft <= 0) {
+          clearInterval(timerId);
+          timerId = null;
+          countdown.style.display = "none";
+          endGame();
+        }
+      }, 1000);
+    }
+
+    function startGame(levelKey) {
+      const level = levels[levelKey];
+      score = 0;
+      timeLeft = level.time;
+      scoreSpan.textContent = score;
+      timeSpan.textContent = timeLeft;
+      gameTitle.textContent = `Niveau : ${level.label}`;
+      target.style.width = level.size + 'px';
+
+      showScreen('screen-game');
+      setTimeout(() => {
+        moveTarget();
+        startTimer();
+      }, 80);
+    }
+
+    function endGame() {
+      finalScore.textContent = score;
+
+      saveScore("JEU1_scores", score, {
+        duration: timeLeft
+      });
+      displayScores("JEU1_scores", "leaderboard");
+
+      showScreen('screen-end');
+    }
+
+    function tap() {
+      score++;
+      scoreSpan.textContent = score;
+      moveTarget();
+    }
+
+    target.addEventListener('click', tap);
+    target.addEventListener('touchstart', tap);
+
+    levelButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        startGame(btn.dataset.level);
+      });
+    });
+
+    btnQuit.addEventListener('click', () => {
+      if (timerId) clearInterval(timerId);
+      showScreen('screen-levels');
+    });
+
+    btnRestart.addEventListener('click', () => {
+      hideScores("leaderboard");
+      showScreen('screen-levels');
+    });
+  </script>
+</body>
+</html>

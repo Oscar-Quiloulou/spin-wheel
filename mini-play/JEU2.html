@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>JEU 2 - Tire la barre</title>
+  <link rel="stylesheet" href="assets/style.css">
+  <style>
+    input[type="range"] {
+      width: 100%;
+      margin: 20px 0;
+      accent-color: #6366f1;
+    }
+    .mode-btn {
+      display:block;
+      width:100%;
+      margin:6px 0;
+      padding:10px 16px;
+      border-radius:999px;
+      border:none;
+      font-size:15px;
+      font-weight:600;
+      cursor:pointer;
+      background:linear-gradient(135deg,#0ea5e9,#6366f1);
+      color:white;
+      box-shadow:0 0 14px rgba(56,189,248,0.7);
+      transition:0.15s;
+    }
+    .result {
+      margin-top: 10px;
+      font-size: 17px;
+      font-weight: 600;
+    }
+
+    /* Menu cheat */
+    #cheat-menu {
+      position: absolute;
+      top: 20px;
+      right: -200px;
+      width: 180px;
+      padding: 10px;
+      background: rgba(15,23,42,0.95);
+      border: 1px solid rgba(129,140,248,0.5);
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(129,140,248,0.4);
+      transition: right 0.4s ease;
+      z-index: 100;
+    }
+    #cheat-menu.show {
+      right: 20px;
+    }
+
+    /* Zone secrète */
+    #secret-zone {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      width: 40px;
+      height: 40px;
+      opacity: 0;
+      z-index: 200;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+
+    <div class="side-leaderboard">
+      <div id="leaderboard"></div>
+    </div>
+
+    <!-- Zone secrète -->
+    <div id="secret-zone"></div>
+
+    <!-- Menu cheat -->
+    <div id="cheat-menu">
+      <button class="btn" onclick="cheatAutoWin()">Auto‑Win</button>
+      <button class="btn" onclick="cheatSlow()">Ralentir</button>
+      <button class="btn" onclick="cheatReveal()">Révéler</button>
+    </div>
+
+    <div id="menu">
+      <h1>Tire la barre</h1>
+      <h2>Choisis un mode</h2>
+      <button class="mode-btn" data-mode="1">Mode 1 — Précision extrême</button>
+      <button class="mode-btn" data-mode="2">Mode 2 — Temps limité</button>
+      <button class="mode-btn" data-mode="3">Mode 3 — Barre folle</button>
+      <button class="mode-btn" data-mode="4">Mode 4 — Barre invisible</button>
+      <a href="index.html">⬅ Retour au menu principal</a>
+    </div>
+
+    <div id="game" class="hidden">
+      <h2 id="title"></h2>
+      <h3 id="targetText"></h3>
+
+      <input type="range" id="slider" min="0" max="100" value="50">
+      <div>Ta valeur : <span id="currentValue">50%</span></div>
+
+      <button id="validate" class="btn" style="margin-top:12px;">Valider</button>
+
+      <div class="result" id="result"></div>
+
+      <div class="center">
+        <button id="back" class="btn" style="margin-top:16px;">Changer de mode</button>
+      </div>
+      <a href="index.html">⬅ Retour au menu principal</a>
+    </div>
+
+  </div>
+
+  <script src="assets/leaderboard.js"></script>
+  <script>
+    const menu = document.getElementById("menu");
+    const game = document.getElementById("game");
+
+    const slider = document.getElementById("slider");
+    const currentValue = document.getElementById("currentValue");
+    const targetText = document.getElementById("targetText");
+    const result = document.getElementById("result");
+    const validate = document.getElementById("validate");
+    const back = document.getElementById("back");
+    const title = document.getElementById("title");
+
+    let mode = 1;
+    let target = 50;
+    let interval = null;
+    let direction = 1;
+
+    function newTarget(decimal = false) {
+      target = decimal
+        ? parseFloat((Math.random() * 100).toFixed(1))
+        : Math.floor(Math.random() * 101);
+
+      targetText.textContent = "Objectif : " + target + "%";
+    }
+
+    function startMode(m) {
+      mode = m;
+      menu.classList.add("hidden");
+      game.classList.remove("hidden");
+      result.textContent = "";
+      hideScores("leaderboard");
+
+      slider.style.opacity = "1";
+      slider.disabled = false;
+      if (interval) clearInterval(interval);
+
+      if (mode === 1) {
+        title.textContent = "Mode 1 — Précision extrême";
+        slider.step = "0.1";
+        slider.value = 50;
+        currentValue.textContent = "50%";
+        newTarget(true);
+      }
+
+      if (mode === 2) {
+        title.textContent = "Mode 2 — Temps limité";
+        slider.step = "1";
+        newTarget(false);
+        slider.value = 0;
+        currentValue.textContent = "0%";
+        interval = setInterval(() => {
+          slider.value = (parseInt(slider.value) + 1) % 101;
+          currentValue.textContent = slider.value + "%";
+        }, 40);
+      }
+
+      if (mode === 3) {
+        title.textContent = "Mode 3 — Barre folle";
+        slider.step = "1";
+        newTarget(false);
+        slider.value = 50;
+        currentValue.textContent = "50%";
+        direction = 1;
+        interval = setInterval(() => {
+          let v = parseInt(slider.value);
+          v += direction * (Math.random() * 4 + 1);
+          if (v >= 100 || v <= 0) direction *= -1;
+          slider.value = Math.max(0, Math.min(100, v));
+          currentValue.textContent = Math.round(slider.value) + "%";
+        }, 60);
+      }
+
+      if (mode === 4) {
+        title.textContent = "Mode 4 — Barre invisible";
+        slider.step = "1";
+        newTarget(false);
+        slider.value = Math.floor(Math.random() * 101);
+        currentValue.textContent = slider.value + "%";
+        setTimeout(() => slider.style.opacity = "0", 1000);
+      }
+    }
+
+    document.querySelectorAll(".mode-btn").forEach(btn => {
+      btn.addEventListener("click", () => startMode(parseInt(btn.dataset.mode)));
+    });
+
+    slider.addEventListener("input", () => {
+      currentValue.textContent = slider.value + "%";
+    });
+
+    slider.addEventListener("touchmove", e => {
+      const touch = e.touches[0];
+      const rect = slider.getBoundingClientRect();
+      const percent = ((touch.clientX - rect.left) / rect.width) * 100;
+      slider.value = Math.max(0, Math.min(100, percent));
+      currentValue.textContent = slider.value + "%";
+    });
+
+    validate.addEventListener("click", () => {
+      if (interval) clearInterval(interval);
+
+      const value = parseFloat(slider.value);
+      const diff = Math.abs(value - target);
+      result.textContent = `Écart : ${diff.toFixed(1)}%`;
+
+      const score = Math.max(0, 100 - diff);
+
+      saveScore("JEU2_scores", score, {
+        mode: "Mode " + mode
+      });
+      displayScores("JEU2_scores", "leaderboard");
+
+      setTimeout(() => startMode(mode), 1600);
+    });
+
+    back.addEventListener("click", () => {
+      if (interval) clearInterval(interval);
+      game.classList.add("hidden");
+      menu.classList.remove("hidden");
+    });
+
+    /* --- Zone secrète triple tap --- */
+    let tapCount = 0;
+    let tapTimer = null;
+
+    document.getElementById("secret-zone").addEventListener("touchstart", () => {
+      tapCount++;
+
+      if (tapCount === 3) {
+        tapCount = 0;
+        clearTimeout(tapTimer);
+        toggleCheatMenu();
+      }
+
+      clearTimeout(tapTimer);
+      tapTimer = setTimeout(() => tapCount = 0, 400);
+    });
+
+    function toggleCheatMenu() {
+      document.getElementById("cheat-menu").classList.toggle("show");
+    }
+
+    /* --- Cheats --- */
+    function cheatAutoWin() {
+      slider.value = target;
+      currentValue.textContent = target + "%";
+    }
+
+    function cheatSlow() {
+      if (interval) clearInterval(interval);
+      interval = setInterval(() => {
+        slider.value = (parseInt(slider.value) + 1) % 101;
+        currentValue.textContent = slider.value + "%";
+      }, 200);
+    }
+
+    function cheatReveal() {
+      alert("Objectif : " + target + "%");
+    }
+  </script>
+</body>
+</html>
