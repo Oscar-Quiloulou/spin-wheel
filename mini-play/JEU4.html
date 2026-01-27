@@ -16,26 +16,35 @@
       touch-action: none;
     }
 
-    /* ===== MENU CHEAT ===== */
+    /* ===== MENU CHEAT (VRAIMENT CACHÉ) ===== */
     #cheat-menu {
       position: fixed;
       top: 20px;
-      right: -26000px; /* caché par défaut */
+      right: 20px;
       width: 240px;
       max-height: 80vh;
       padding: 10px;
+
       background: rgba(15,23,42,0.97);
       border: 1px solid rgba(129,140,248,0.5);
       border-radius: 12px;
       box-shadow: 0 0 20px rgba(129,140,248,0.4);
-      transition: right 0.4s ease;
-      z-index: 1000;
-      overflow-y: auto;
+
       font-size: 13px;
+      overflow-y: auto;
+      z-index: 1000;
+
+      /* 👇 caché par défaut */
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(0.95);
+      transition: opacity 0.25s ease, transform 0.25s ease;
     }
 
     #cheat-menu.show {
-      right: 20px;
+      opacity: 1;
+      pointer-events: auto;
+      transform: scale(1);
     }
 
     #cheat-menu h3 {
@@ -58,7 +67,7 @@
       cursor: pointer;
     }
 
-    /* ===== BOUTON SECRET INVISIBLE ===== */
+    /* ===== BOUTON SECRET (DEBUG VISIBLE) ===== */
     #secret-btn {
       position: fixed;
       bottom: 10px;
@@ -66,12 +75,12 @@
       width: 50px;
       height: 50px;
 
-      background: transparent;
+      background: red;   /* 🔴 DEBUG */
+      opacity: 0.4;      /* changer à 0 pour prod */
       border: none;
       padding: 0;
       margin: 0;
 
-      opacity: 0; /* invisible */
       cursor: pointer;
       z-index: 3000;
     }
@@ -152,6 +161,27 @@
   <script src="assets/cheats-pingpong.js"></script>
 
   <script>
+    /* ===== RESET CHEATS AU CHARGEMENT ===== */
+    function resetCheats() {
+      window.cheatWallLeftEnabled = false;
+      window.cheatWallRightEnabled = false;
+      window.cheatMagnetEnabled = false;
+      window.cheatAutoPaddleEnabled = false;
+      window.cheatInvincibleBallEnabled = false;
+      window.cheatScoreLocked = false;
+      window.cheatScoreInfinite = false;
+      window.cheatGravityInverted = false;
+      window.cheatChaosEnabled = false;
+      window.cheatSlowGlobal = false;
+      window.cheatFastGlobal = false;
+      window.cheatMatrixEnabled = false;
+      window.cheatZenEnabled = false;
+      window.cheatBossEnabled = false;
+      window.cheatZigzagEnabled = false;
+    }
+
+    resetCheats();
+
     /* ===== TOGGLE MENU CHEAT ===== */
     const cheatMenu = document.getElementById("cheat-menu");
     const secretBtn = document.getElementById("secret-btn");
@@ -168,5 +198,3 @@
   </script>
 </body>
 </html>
-
-
