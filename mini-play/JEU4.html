@@ -37,7 +37,7 @@
       /* 👇 caché par défaut */
       opacity: 0;
       pointer-events: none;
-      transform: scale(0.95);
+      transform: translateX(-260px) scale(0.95);
       transition: opacity 0.25s ease, transform 0.25s ease;
     }
 
@@ -75,8 +75,8 @@
       width: 50px;
       height: 50px;
 
-      background: red;   /* 🔴 DEBUG */
-      opacity: 0.4;      /* changer à 0 pour prod */
+      background: transparent;   /* 🔴 DEBUG */
+      opacity: 0;      /* changer à 0 pour prod */
       border: none;
       padding: 0;
       margin: 0;
@@ -198,3 +198,4 @@
   </script>
 </body>
 </html>
+
