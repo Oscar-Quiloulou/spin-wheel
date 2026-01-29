@@ -231,19 +231,31 @@
       }
 
       // collision raquette
-      if (
-        !cheatInvincibleBallEnabled &&
-        b.x - b.radius < paddle.x + paddle.width &&
-        b.y > paddle.y &&
-        b.y < paddle.y + paddle.height
-      ) {
-        b.speedX *= -1.1;
-        b.speedY *= 1.05;
-        if (!cheatScoreLocked) {
-          score++;
-          scoreSpan.textContent = score;
-        }
-      }
+if (
+  !cheatInvincibleBallEnabled &&
+  b.x - b.radius < paddle.x + paddle.width &&
+  b.y > paddle.y &&
+  b.y < paddle.y + paddle.height
+) {
+    // rebond normal
+    b.speedX *= -1;
+    
+    // augmentation contrôlée de la vitesse
+    if (score < 10) {
+      b.speedX *= 1.10;
+      b.speedY *= 1.05;
+    } else if (score % 20 === 0) {
+      b.speedX *= 1.10;
+      b.speedY *= 1.05;
+    }
+
+    // score
+    if (!cheatScoreLocked) {
+      score++;
+      scoreSpan.textContent = score;
+    }
+}
+
 
       // mur gauche
       if (b.x - b.radius < 0) {
@@ -415,3 +427,4 @@
 
 </body>
 </html>
+
