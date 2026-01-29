@@ -91,7 +91,8 @@
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
-</style>  
+</style> 
+
       </div>
     </div>
 
@@ -159,8 +160,8 @@
 
   </div>
 
-  <!-- Panneau contrôle parental -->
-  <div id="parental-panel" style="
+ <!-- Panneau contrôle parental -->
+<div id="parental-panel" style="
     position:fixed;
     top:50%;
     left:50%;
@@ -173,30 +174,100 @@
     color:white;
     display:none;
     z-index:5000;
-  ">
-    <h3>Contrôle parental</h3>
+">
+  <h3>Contrôle parental</h3>
 
-    <label>Mot de passe :</label>
-    <input id="parental-pass" type="password" style="width:100%; margin-bottom:10px;">
+  <label>Mot de passe :</label>
+  <input id="parental-pass" type="password" style="width:100%; margin-bottom:10px;">
 
-    <button id="parental-login" style="width:100%; margin-bottom:10px;">Valider</button>
+  <button id="parental-login" style="width:100%; margin-bottom:10px;">Valider</button>
 
-    <div id="parental-settings" style="display:none;">
-      <hr>
+  <!-- BOUTON FERMER -->
+  <button id="parental-close" style="width:100%; margin-bottom:10px; background:#334155;">
+    Fermer
+  </button>
 
-      <label>Temps limite (minutes) :</label>
-      <input id="limit-time" type="number" value="60" style="width:100%; margin-bottom:10px;">
+  <div id="parental-settings" style="display:none;">
+    <hr>
 
-      <label>Désactiver les cheats :</label>
-      <input id="disable-cheats" type="checkbox">
+    <label>Temps limite (minutes) :</label>
+    <input id="limit-time" type="number" value="60" style="width:100%; margin-bottom:10px;">
 
-      <h4>Logs :</h4>
-      <pre id="cheat-logs" style="background:#1e293b; padding:10px; height:100px; overflow:auto;"></pre>
+    <label>Désactiver les cheats :</label>
+    <input id="disable-cheats" type="checkbox">
 
-      <button id="parental-save" style="width:100%; margin-top:10px;">Enregistrer</button>
-    </div>
+    <h4>Logs :</h4>
+    <pre id="cheat-logs" style="background:#1e293b; padding:10px; height:100px; overflow:auto;"></pre>
+
+    <button id="parental-save" style="width:100%; margin-top:10px;">Enregistrer</button>
   </div>
+</div>
 
+
+<script>
+  // ====== LOGIQUE CONTROLE PARENTAL ======
+
+  const parentalBtn = document.getElementById("parental-btn");
+  const parentalPanel = document.getElementById("parental-panel");
+  const parentalLogin = document.getElementById("parental-login");
+  const parentalSettings = document.getElementById("parental-settings");
+  const parentalPass = document.getElementById("parental-pass");
+  const parentalClose = document.getElementById("parental-close");
+
+  const PARENTAL_PASSWORD = "1234"; // volontairement visible (normal pour ton projet)
+
+  // Ouvrir le panel
+  parentalBtn.addEventListener("click", () => {
+    parentalPanel.style.display = "block";
+  });
+
+  // Fermer via bouton “Fermer”
+  parentalClose.addEventListener("click", () => {
+    parentalPanel.style.display = "none";
+    parentalSettings.style.display = "none";
+    parentalPass.value = "";
+  });
+
+  // Validation du mot de passe
+  parentalLogin.addEventListener("click", () => {
+    if (parentalPass.value === PARENTAL_PASSWORD) {
+      parentalSettings.style.display = "block";
+    } else {
+      alert("Mot de passe incorrect");
+    }
+  });
+
+  // Sauvegarde des paramètres
+  document.getElementById("parental-save").addEventListener("click", () => {
+    window.parentalTimeLimit = parseInt(document.getElementById("limit-time").value) || 60;
+    window.parentalDisableCheats = document.getElementById("disable-cheats").checked;
+    window.parentalStartTime = Date.now();
+
+    document.getElementById("cheat-logs").textContent =
+      window.cheatLogs.join("\n");
+
+    alert("Paramètres enregistrés");
+  });
+
+  // Fermer quand on clique hors du panel
+  window.addEventListener("click", (e) => {
+    // ferme uniquement si on clique à l’extérieur du panneau
+    if (e.target === parentalPanel) {
+      parentalPanel.style.display = "none";
+      parentalSettings.style.display = "none";
+      parentalPass.value = "";
+    }
+  });
+
+  // Fermer avec Échap
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && parentalPanel.style.display === "block") {
+      parentalPanel.style.display = "none";
+      parentalSettings.style.display = "none";
+      parentalPass.value = "";
+    }
+  });
+</script>
   <!-- Firebase + Realtime Database -->
   <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
@@ -572,6 +643,7 @@
   </script>
 </body>
 </html>
+
 
 
 
