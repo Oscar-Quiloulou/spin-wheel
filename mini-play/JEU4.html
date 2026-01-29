@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <title>JEU 4 - Ping Pong</title>
   <link rel="stylesheet" href="assets/style.css">
-
   <style>
     canvas {
       background: rgba(30,41,59,0.8);
@@ -16,11 +15,11 @@
       touch-action: none;
     }
 
-    /* ===== MENU CHEAT ===== */
+    /* Menu cheat */
     #cheat-menu {
-      position: fixed;
+      position: absolute;
       top: 20px;
-      right: 20px;
+      right: -260px;
       width: 240px;
       max-height: 80vh;
       padding: 10px;
@@ -28,21 +27,21 @@
       border: 1px solid rgba(129,140,248,0.5);
       border-radius: 12px;
       box-shadow: 0 0 20px rgba(129,140,248,0.4);
-      font-size: 13px;
+      transition: right 0.4s ease;
+      z-index: 100;
       overflow-y: auto;
-      z-index: 1000;
-      opacity: 0;
-      pointer-events: none;
-      transform: translateX(-300px) scale(0.95);
-      transition: opacity 0.25s ease, transform 0.25s ease;
+      font-size: 13px;
     }
-
     #cheat-menu.show {
-      opacity: 1;
-      pointer-events: auto;
-      transform: translateX(0) scale(1);
+      right: 20px;
     }
-
+    #cheat-menu h3 {
+      margin: 6px 0 4px;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #a5b4fc;
+    }
     #cheat-menu button {
       width: 100%;
       margin: 2px 0;
@@ -55,22 +54,18 @@
       cursor: pointer;
     }
 
-    /* ===== BOUTON SECRET ===== */
-    #secret-btn {
-      position: fixed;
+    /* Zone secrète (bas gauche) */
+    #secret-zone {
+      position: absolute;
       bottom: 10px;
-      right: 10px;
-      width: 50px;
-      height: 50px;
-      background: transparent;
-      opacity: 0; /* mettre 1 pour debug */
-      border: none;
-      cursor: pointer;
-      z-index: 3000;
+      left: 10px;
+      width: 40px;
+      height: 40px;
+      opacity: 0;
+      z-index: 200;
     }
   </style>
 </head>
-
 <body>
   <div class="card">
 
@@ -78,14 +73,14 @@
       <div id="leaderboard"></div>
     </div>
 
-    <!-- BOUTON SECRET -->
-    <button id="secret-btn"></button>
+    <!-- Zone secrète -->
+    <div id="secret-zone"></div>
 
-    <!-- MENU CHEAT -->
+    <!-- Menu cheat (caché tant que pas de triple tap) -->
     <div id="cheat-menu">
       <h3>Balle</h3>
       <button onclick="cheatCenter()">Recentrer</button>
-      <button onclick="cheatInstantGameOver()">Game Over</button>
+      <button onclick="cheatInstantGameOver()">Game Over instantané</button>
       <button onclick="cheatBallSlow()">Balle lente</button>
       <button onclick="cheatBallFast()">Balle rapide</button>
       <button onclick="cheatBallBig()">Balle géante</button>
@@ -130,7 +125,7 @@
 
     <canvas id="gameCanvas" width="480" height="300"></canvas>
 
-    <div id="scoreBox">
+    <div id="scoreBox" style="margin-top:10px;font-size:18px;font-weight:600;">
       Score : <span id="score">0</span>
     </div>
 
@@ -141,10 +136,6 @@
 
   <script src="assets/leaderboard.js"></script>
   <script src="assets/cheats-pingpong.js"></script>
-
-  <!-- ========================= -->
-  <!--  SCRIPT DU JEU INTÉGRÉ    -->
-  <!-- ========================= -->
   <script>
     const canvas = document.getElementById("gameCanvas");
     const ctx = canvas.getContext("2d");
@@ -152,6 +143,7 @@
     const scoreSpan = document.getElementById("score");
     const restartBtn = document.getElementById("restart");
 
+    // objets globaux pour les cheats
     window.paddle = {
       x: 10,
       y: canvas.height / 2 - 40,
@@ -171,16 +163,32 @@
       speedY: 3
     };
 
-    window.extraBalls = [];
-    window.score = 0;
+    window.extraBalls = []; // pour multiball
 
+    window.score = 0;
     let gameOver = false;
     let gameOverHandled = false;
 
     let upPressed = false;
     let downPressed = false;
 
-    /* CONTROLES CLAVIER */
+    // flags cheats
+    window.cheatWallLeftEnabled = false;
+    window.cheatWallRightEnabled = false;
+    window.cheatMagnetEnabled = false;
+    window.cheatAutoPaddleEnabled = false;
+    window.cheatInvincibleBallEnabled = false;
+    window.cheatScoreLocked = false;
+    window.cheatScoreInfinite = false;
+    window.cheatGravityInverted = false;
+    window.cheatChaosEnabled = false;
+    window.cheatSlowGlobal = false;
+    window.cheatFastGlobal = false;
+    window.cheatMatrixEnabled = false;
+    window.cheatZenEnabled = false;
+    window.cheatBossEnabled = false;
+
+    /* --- CONTROLES CLAVIER --- */
     document.addEventListener("keydown", e => {
       if (e.key === "ArrowUp") upPressed = true;
       if (e.key === "ArrowDown") downPressed = true;
@@ -191,7 +199,7 @@
       if (e.key === "ArrowDown") downPressed = false;
     });
 
-    /* CONTROLES TACTILES */
+    /* --- CONTROLES TACTILES --- */
     let lastY = null;
 
     canvas.addEventListener("touchstart", e => {
@@ -223,12 +231,17 @@
       b.x += applyGlobalSpeedFactor(b.speedX);
       b.y += applyGlobalSpeedFactor(b.speedY);
 
-      if (cheatGravityInverted) b.speedY -= 0.05;
+      // gravité inversée
+      if (cheatGravityInverted) {
+        b.speedY -= 0.05;
+      }
 
+      // rebonds haut/bas
       if (b.y - b.radius < 0 || b.y + b.radius > canvas.height) {
         b.speedY *= -1;
       }
 
+      // collision raquette
       if (
         !cheatInvincibleBallEnabled &&
         b.x - b.radius < paddle.x + paddle.width &&
@@ -243,21 +256,31 @@
         }
       }
 
+      // mur gauche
       if (b.x - b.radius < 0) {
-        if (cheatWallLeftEnabled || cheatZenEnabled) b.speedX *= -1;
-        else if (!cheatScoreInfinite) gameOver = true;
+        if (cheatWallLeftEnabled || cheatZenEnabled) {
+          b.speedX *= -1;
+        } else if (!cheatScoreInfinite && !cheatZenEnabled) {
+          gameOver = true;
+        }
       }
 
+      // mur droit
       if (b.x + b.radius > canvas.width) {
-        if (cheatWallRightEnabled || cheatZenEnabled) b.speedX *= -1;
-        else b.speedX *= -1;
+        if (cheatWallRightEnabled || cheatZenEnabled) {
+          b.speedX *= -1;
+        } else {
+          b.speedX *= -1;
+        }
       }
 
+      // mode chaos
       if (cheatChaosEnabled) {
         b.speedX += (Math.random() - 0.5) * 0.2;
         b.speedY += (Math.random() - 0.5) * 0.2;
       }
 
+      // zigzag
       if (window.cheatZigzagEnabled) {
         b.speedY += (Math.random() - 0.5) * 0.4;
       }
@@ -343,6 +366,7 @@
       resetBall();
       hideScores("leaderboard");
 
+      // reset cheats
       cheatWallLeftEnabled = false;
       cheatWallRightEnabled = false;
       cheatMagnetEnabled = false;
@@ -360,26 +384,28 @@
       window.cheatZigzagEnabled = false;
     });
 
-    loop();
-  </script>
+    // zone secrète triple tap
+    let tapCount = 0;
+    let tapTimer = null;
 
-  <!-- MENU CHEAT TOGGLE -->
-  <script>
-    const cheatMenu = document.getElementById("cheat-menu");
-    const secretBtn = document.getElementById("secret-btn");
+    document.getElementById("secret-zone").addEventListener("touchstart", () => {
+      tapCount++;
+
+      if (tapCount === 3) {
+        tapCount = 0;
+        clearTimeout(tapTimer);
+        toggleCheatMenu();
+      }
+
+      clearTimeout(tapTimer);
+      tapTimer = setTimeout(() => tapCount = 0, 400);
+    });
 
     function toggleCheatMenu() {
-      cheatMenu.classList.toggle("show");
+      document.getElementById("cheat-menu").classList.toggle("show");
     }
 
-    if (secretBtn) {
-      secretBtn.addEventListener("click", toggleCheatMenu);
-      secretBtn.addEventListener("touchstart", (e) => {
-        e.preventDefault();
-        toggleCheatMenu();
-      });
-    }
+    loop();
   </script>
-
 </body>
 </html>
