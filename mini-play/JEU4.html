@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <title>JEU 4 - Ping Pong</title>
   <link rel="stylesheet" href="assets/style.css">
+
   <style>
     canvas {
       background: rgba(30,41,59,0.8);
@@ -35,37 +36,23 @@
     #cheat-menu.show {
       right: 20px;
     }
-    #cheat-menu h3 {
-      margin: 6px 0 4px;
-      font-size: 13px;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      color: #a5b4fc;
-    }
-    #cheat-menu button {
-      width: 100%;
-      margin: 2px 0;
-      padding: 4px 8px;
-      border-radius: 999px;
-      border: none;
-      background: rgba(30,64,175,0.9);
-      color: #e5e7eb;
-      font-size: 12px;
-      cursor: pointer;
-    }
 
-    /* Zone secrète (bas gauche) */
-    #secret-zone {
+    /* Bouton secret (remplace secret-zone) */
+    #secret-btn {
       position: absolute;
       bottom: 10px;
       left: 10px;
       width: 40px;
       height: 40px;
-      opacity: 0;
+      opacity: 0; /* mettre 1 pour debug */
+      border: none;
+      background: transparent;
       z-index: 200;
+      cursor: pointer;
     }
   </style>
 </head>
+
 <body>
   <div class="card">
 
@@ -73,10 +60,10 @@
       <div id="leaderboard"></div>
     </div>
 
-    <!-- Zone secrète -->
-    <div id="secret-zone"></div>
+    <!-- Bouton secret -->
+    <button id="secret-btn"></button>
 
-    <!-- Menu cheat (caché tant que pas de triple tap) -->
+    <!-- Menu cheat -->
     <div id="cheat-menu">
       <h3>Balle</h3>
       <button onclick="cheatCenter()">Recentrer</button>
@@ -125,7 +112,7 @@
 
     <canvas id="gameCanvas" width="480" height="300"></canvas>
 
-    <div id="scoreBox" style="margin-top:10px;font-size:18px;font-weight:600;">
+    <div id="scoreBox">
       Score : <span id="score">0</span>
     </div>
 
@@ -136,6 +123,8 @@
 
   <script src="assets/leaderboard.js"></script>
   <script src="assets/cheats-pingpong.js"></script>
+
+  <!-- SCRIPT DU JEU (inchangé) -->
   <script>
     const canvas = document.getElementById("gameCanvas");
     const ctx = canvas.getContext("2d");
@@ -407,5 +396,22 @@
 
     loop();
   </script>
+
+  <!-- Nouveau script pour ouvrir le menu cheat -->
+  <script>
+    const cheatMenu = document.getElementById("cheat-menu");
+    const secretBtn = document.getElementById("secret-btn");
+
+    function toggleCheatMenu() {
+      cheatMenu.classList.toggle("show");
+    }
+
+    secretBtn.addEventListener("click", toggleCheatMenu);
+    secretBtn.addEventListener("touchstart", (e) => {
+      e.preventDefault();
+      toggleCheatMenu();
+    });
+  </script>
+
 </body>
 </html>
