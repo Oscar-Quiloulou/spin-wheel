@@ -16,7 +16,7 @@
       touch-action: none;
     }
 
-    /* ===== MENU CHEAT (VRAIMENT CACHÉ) ===== */
+    /* ===== MENU CHEAT ===== */
     #cheat-menu {
       position: fixed;
       top: 20px;
@@ -24,36 +24,23 @@
       width: 240px;
       max-height: 80vh;
       padding: 10px;
-
       background: rgba(15,23,42,0.97);
       border: 1px solid rgba(129,140,248,0.5);
       border-radius: 12px;
       box-shadow: 0 0 20px rgba(129,140,248,0.4);
-
       font-size: 13px;
       overflow-y: auto;
       z-index: 1000;
-
-      /* 👇 caché par défaut */
       opacity: 0;
       pointer-events: none;
-      transform: translateX(-300) scale(0.95);
+      transform: translateX(-300px) scale(0.95);
       transition: opacity 0.25s ease, transform 0.25s ease;
     }
 
     #cheat-menu.show {
       opacity: 1;
       pointer-events: auto;
-      transform: scale(1);
-      right: -260px
-    }
-
-    #cheat-menu h3 {
-      margin: 6px 0 4px;
-      font-size: 13px;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      color: #a5b4fc;
+      transform: translateX(0) scale(1);
     }
 
     #cheat-menu button {
@@ -68,20 +55,16 @@
       cursor: pointer;
     }
 
-    /* ===== BOUTON SECRET (DEBUG VISIBLE) ===== */
+    /* ===== BOUTON SECRET ===== */
     #secret-btn {
       position: fixed;
       bottom: 10px;
       right: 10px;
       width: 50px;
       height: 50px;
-
-      background: transparent;   /* 🔴 DEBUG */
-      opacity: 0;      /* changer à 0 pour prod */
+      background: transparent;
+      opacity: 0; /* mettre 1 pour debug */
       border: none;
-      padding: 0;
-      margin: 0;
-
       cursor: pointer;
       z-index: 3000;
     }
@@ -96,14 +79,13 @@
     </div>
 
     <!-- BOUTON SECRET -->
-    <button id="secret-btn" aria-hidden="true"></button>
+    <button id="secret-btn"></button>
 
-    <!-- MENU CHEAT COMPLET -->
+    <!-- MENU CHEAT -->
     <div id="cheat-menu">
-
       <h3>Balle</h3>
       <button onclick="cheatCenter()">Recentrer</button>
-      <button onclick="cheatInstantGameOver()">Game Over instantané</button>
+      <button onclick="cheatInstantGameOver()">Game Over</button>
       <button onclick="cheatBallSlow()">Balle lente</button>
       <button onclick="cheatBallFast()">Balle rapide</button>
       <button onclick="cheatBallBig()">Balle géante</button>
@@ -116,7 +98,7 @@
       <button onclick="cheatTurbo()">Turbo</button>
       <button onclick="cheatPaddleBig()">Raquette géante</button>
       <button onclick="cheatPaddleSmall()">Raquette minuscule</button>
-      <button onclick="cheatAutoPaddle()">Auto-paddle</button>
+      <button onclick="cheatAutoPaddle()">Auto‑paddle</button>
       <button onclick="cheatPaddleMagnet()">Raquette aimantée</button>
       <button onclick="cheatPaddleTeleport()">Téléportation</button>
 
@@ -141,7 +123,6 @@
       <button onclick="cheatMatrix()">Mode Matrix</button>
       <button onclick="cheatBoss()">Mode Boss</button>
       <button onclick="cheatZen()">Mode Zen</button>
-
     </div>
 
     <h1>Ping Pong</h1>
@@ -161,29 +142,229 @@
   <script src="assets/leaderboard.js"></script>
   <script src="assets/cheats-pingpong.js"></script>
 
+  <!-- ========================= -->
+  <!--  SCRIPT DU JEU INTÉGRÉ    -->
+  <!-- ========================= -->
   <script>
-    /* ===== RESET CHEATS AU CHARGEMENT ===== */
-    function resetCheats() {
-      window.cheatWallLeftEnabled = false;
-      window.cheatWallRightEnabled = false;
-      window.cheatMagnetEnabled = false;
-      window.cheatAutoPaddleEnabled = false;
-      window.cheatInvincibleBallEnabled = false;
-      window.cheatScoreLocked = false;
-      window.cheatScoreInfinite = false;
-      window.cheatGravityInverted = false;
-      window.cheatChaosEnabled = false;
-      window.cheatSlowGlobal = false;
-      window.cheatFastGlobal = false;
-      window.cheatMatrixEnabled = false;
-      window.cheatZenEnabled = false;
-      window.cheatBossEnabled = false;
-      window.cheatZigzagEnabled = false;
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+
+    const scoreSpan = document.getElementById("score");
+    const restartBtn = document.getElementById("restart");
+
+    window.paddle = {
+      x: 10,
+      y: canvas.height / 2 - 40,
+      width: 10,
+      height: 80,
+      baseHeight: 80,
+      speed: 6,
+      baseSpeed: 6
+    };
+
+    window.ball = {
+      x: canvas.width / 2,
+      y: canvas.height / 2,
+      radius: 8,
+      baseRadius: 8,
+      speedX: 4,
+      speedY: 3
+    };
+
+    window.extraBalls = [];
+    window.score = 0;
+
+    let gameOver = false;
+    let gameOverHandled = false;
+
+    let upPressed = false;
+    let downPressed = false;
+
+    /* CONTROLES CLAVIER */
+    document.addEventListener("keydown", e => {
+      if (e.key === "ArrowUp") upPressed = true;
+      if (e.key === "ArrowDown") downPressed = true;
+    });
+
+    document.addEventListener("keyup", e => {
+      if (e.key === "ArrowUp") upPressed = false;
+      if (e.key === "ArrowDown") downPressed = false;
+    });
+
+    /* CONTROLES TACTILES */
+    let lastY = null;
+
+    canvas.addEventListener("touchstart", e => {
+      lastY = e.touches[0].clientY;
+    });
+
+    canvas.addEventListener("touchmove", e => {
+      const y = e.touches[0].clientY;
+      if (y < lastY) paddle.y -= paddle.speed;
+      else paddle.y += paddle.speed;
+      lastY = y;
+    });
+
+    function resetBall() {
+      ball.x = canvas.width / 2;
+      ball.y = canvas.height / 2;
+      ball.speedX = 4;
+      ball.speedY = 3;
+      extraBalls = [];
     }
 
-    resetCheats();
+    function applyGlobalSpeedFactor(v) {
+      if (cheatSlowGlobal) return v * 0.4;
+      if (cheatFastGlobal) return v * 1.8;
+      return v;
+    }
 
-    /* ===== TOGGLE MENU CHEAT ===== */
+    function updateBall(b) {
+      b.x += applyGlobalSpeedFactor(b.speedX);
+      b.y += applyGlobalSpeedFactor(b.speedY);
+
+      if (cheatGravityInverted) b.speedY -= 0.05;
+
+      if (b.y - b.radius < 0 || b.y + b.radius > canvas.height) {
+        b.speedY *= -1;
+      }
+
+      if (
+        !cheatInvincibleBallEnabled &&
+        b.x - b.radius < paddle.x + paddle.width &&
+        b.y > paddle.y &&
+        b.y < paddle.y + paddle.height
+      ) {
+        b.speedX *= -1.1;
+        b.speedY *= 1.05;
+        if (!cheatScoreLocked) {
+          score++;
+          scoreSpan.textContent = score;
+        }
+      }
+
+      if (b.x - b.radius < 0) {
+        if (cheatWallLeftEnabled || cheatZenEnabled) b.speedX *= -1;
+        else if (!cheatScoreInfinite) gameOver = true;
+      }
+
+      if (b.x + b.radius > canvas.width) {
+        if (cheatWallRightEnabled || cheatZenEnabled) b.speedX *= -1;
+        else b.speedX *= -1;
+      }
+
+      if (cheatChaosEnabled) {
+        b.speedX += (Math.random() - 0.5) * 0.2;
+        b.speedY += (Math.random() - 0.5) * 0.2;
+      }
+
+      if (window.cheatZigzagEnabled) {
+        b.speedY += (Math.random() - 0.5) * 0.4;
+      }
+    }
+
+    function update() {
+      if (gameOver) {
+        if (!gameOverHandled) {
+          saveScore("JEU4_scores", score, { duration: score });
+          displayScores("JEU4_scores", "leaderboard");
+          gameOverHandled = true;
+        }
+        return;
+      }
+
+      if (cheatAutoPaddleEnabled) {
+        paddle.y = ball.y - paddle.height / 2;
+      } else {
+        if (upPressed && paddle.y > 0) paddle.y -= paddle.speed;
+        if (downPressed && paddle.y + paddle.height < canvas.height) paddle.y += paddle.speed;
+      }
+
+      if (cheatMagnetEnabled) {
+        ball.y = paddle.y + paddle.height / 2;
+      }
+
+      updateBall(ball);
+      extraBalls.forEach(updateBall);
+    }
+
+    function drawBall(b) {
+      ctx.beginPath();
+      ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
+      ctx.fillStyle = "#f97316";
+      ctx.shadowColor = "rgba(249,115,22,0.9)";
+      ctx.shadowBlur = 12;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+
+      if (cheatMatrixEnabled) {
+        ctx.strokeStyle = "rgba(94,234,212,0.7)";
+        ctx.beginPath();
+        ctx.moveTo(b.x, b.y);
+        ctx.lineTo(b.x + b.speedX * 15, b.y + b.speedY * 15);
+        ctx.stroke();
+      }
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = "#38bdf8";
+      ctx.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
+
+      drawBall(ball);
+      extraBalls.forEach(drawBall);
+
+      if (gameOver) {
+        ctx.fillStyle = "#e5e7eb";
+        ctx.font = "28px system-ui";
+        ctx.fillText("Game Over", canvas.width / 2 - 80, canvas.height / 2);
+      }
+    }
+
+    function loop() {
+      update();
+      draw();
+      requestAnimationFrame(loop);
+    }
+
+    restartBtn.addEventListener("click", () => {
+      score = 0;
+      scoreSpan.textContent = score;
+
+      gameOver = false;
+      gameOverHandled = false;
+
+      paddle.y = canvas.height / 2 - paddle.height / 2;
+      paddle.height = paddle.baseHeight;
+      paddle.speed = paddle.baseSpeed;
+
+      ball.radius = ball.baseRadius;
+      resetBall();
+      hideScores("leaderboard");
+
+      cheatWallLeftEnabled = false;
+      cheatWallRightEnabled = false;
+      cheatMagnetEnabled = false;
+      cheatAutoPaddleEnabled = false;
+      cheatInvincibleBallEnabled = false;
+      cheatScoreLocked = false;
+      cheatScoreInfinite = false;
+      cheatGravityInverted = false;
+      cheatChaosEnabled = false;
+      cheatSlowGlobal = false;
+      cheatFastGlobal = false;
+      cheatMatrixEnabled = false;
+      cheatZenEnabled = false;
+      cheatBossEnabled = false;
+      window.cheatZigzagEnabled = false;
+    });
+
+    loop();
+  </script>
+
+  <!-- MENU CHEAT TOGGLE -->
+  <script>
     const cheatMenu = document.getElementById("cheat-menu");
     const secretBtn = document.getElementById("secret-btn");
 
@@ -191,13 +372,14 @@
       cheatMenu.classList.toggle("show");
     }
 
-    secretBtn.addEventListener("click", toggleCheatMenu);
-    secretBtn.addEventListener("touchstart", (e) => {
-      e.preventDefault();
-      toggleCheatMenu();
-    });
+    if (secretBtn) {
+      secretBtn.addEventListener("click", toggleCheatMenu);
+      secretBtn.addEventListener("touchstart", (e) => {
+        e.preventDefault();
+        toggleCheatMenu();
+      });
+    }
   </script>
+
 </body>
 </html>
-
-
