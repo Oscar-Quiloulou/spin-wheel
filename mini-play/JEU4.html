@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <title>JEU 4 - Ping Pong</title>
   <link rel="stylesheet" href="assets/style.css">
-
   <style>
     canvas {
       background: rgba(30,41,59,0.8);
@@ -36,6 +35,24 @@
     #cheat-menu.show {
       right: 20px;
     }
+    #cheat-menu h3 {
+      margin: 6px 0 4px;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #a5b4fc;
+    }
+    #cheat-menu button {
+      width: 100%;
+      margin: 2px 0;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: none;
+      background: rgba(30,64,175,0.9);
+      color: #e5e7eb;
+      font-size: 12px;
+      cursor: pointer;
+    }
 
     /* Bouton secret (remplace secret-zone) */
     #secret-btn {
@@ -52,7 +69,6 @@
     }
   </style>
 </head>
-
 <body>
   <div class="card">
 
@@ -63,7 +79,10 @@
     <!-- Bouton secret -->
     <button id="secret-btn"></button>
 
-    <!-- Menu cheat -->
+    <!-- Bouton contrôle parental -->
+    <button id="parental-btn" style="position:absolute; top:10px; left:10px;">Contrôle parental</button>
+
+    <!-- Menu cheat (caché tant que pas toggle) -->
     <div id="cheat-menu">
       <h3>Balle</h3>
       <button onclick="cheatCenter()">Recentrer</button>
@@ -112,7 +131,7 @@
 
     <canvas id="gameCanvas" width="480" height="300"></canvas>
 
-    <div id="scoreBox">
+    <div id="scoreBox" style="margin-top:10px;font-size:18px;font-weight:600;">
       Score : <span id="score">0</span>
     </div>
 
@@ -121,16 +140,67 @@
 
   </div>
 
+  <!-- Panneau contrôle parental -->
+  <div id="parental-panel" style="
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%, -50%);
+    width:300px;
+    padding:20px;
+    background:#0f172a;
+    border:1px solid #64748b;
+    border-radius:12px;
+    color:white;
+    display:none;
+    z-index:5000;
+  ">
+    <h3>Contrôle parental</h3>
+
+    <label>Mot de passe :</label>
+    <input id="parental-pass" type="password" style="width:100%; margin-bottom:10px;">
+
+    <button id="parental-login" style="width:100%; margin-bottom:10px;">Valider</button>
+
+    <div id="parental-settings" style="display:none;">
+      <hr>
+
+      <label>Temps limite (minutes) :</label>
+      <input id="limit-time" type="number" value="60" style="width:100%; margin-bottom:10px;">
+
+      <label>Désactiver les cheats :</label>
+      <input id="disable-cheats" type="checkbox">
+
+      <h4>Logs :</h4>
+      <pre id="cheat-logs" style="background:#1e293b; padding:10px; height:100px; overflow:auto;"></pre>
+
+      <button id="parental-save" style="width:100%; margin-top:10px;">Enregistrer</button>
+    </div>
+  </div>
+
   <script src="assets/leaderboard.js"></script>
   <script src="assets/cheats-pingpong.js"></script>
 
-  <!-- SCRIPT DU JEU (inchangé) -->
   <script>
     const canvas = document.getElementById("gameCanvas");
     const ctx = canvas.getContext("2d");
 
     const scoreSpan = document.getElementById("score");
     const restartBtn = document.getElementById("restart");
+
+    // contrôle parental
+    window.parentalTimeLimit = 60; // minutes
+    window.parentalDisableCheats = false;
+    window.parentalStartTime = Date.now();
+
+    // logs cheats
+    window.cheatLogs = [];
+    function logCheat(name) {
+      window.cheatLogs.push(name + " - " + new Date().toLocaleTimeString());
+    }
+    function cheatsAllowed() {
+      return !window.parentalDisableCheats;
+    }
 
     // objets globaux pour les cheats
     window.paddle = {
@@ -176,6 +246,7 @@
     window.cheatMatrixEnabled = false;
     window.cheatZenEnabled = false;
     window.cheatBossEnabled = false;
+    window.cheatZigzagEnabled = false;
 
     /* --- CONTROLES CLAVIER --- */
     document.addEventListener("keydown", e => {
@@ -231,31 +302,29 @@
       }
 
       // collision raquette
-if (
-  !cheatInvincibleBallEnabled &&
-  b.x - b.radius < paddle.x + paddle.width &&
-  b.y > paddle.y &&
-  b.y < paddle.y + paddle.height
-) {
-    // rebond normal
-    b.speedX *= -1;
-    
-    // augmentation contrôlée de la vitesse
-    if (score < 10) {
-      b.speedX *= 1.10;
-      b.speedY *= 1.05;
-    } else if (score % 20 === 0) {
-      b.speedX *= 1.10;
-      b.speedY *= 1.05;
-    }
+      if (
+        !cheatInvincibleBallEnabled &&
+        b.x - b.radius < paddle.x + paddle.width &&
+        b.y > paddle.y &&
+        b.y < paddle.y + paddle.height
+      ) {
+        // rebond de base
+        b.speedX *= -1;
 
-    // score
-    if (!cheatScoreLocked) {
-      score++;
-      scoreSpan.textContent = score;
-    }
-}
+        // gestion de la vitesse : + à chaque point jusqu'à 10, puis tous les 20
+        if (score < 10) {
+          b.speedX *= 1.10;
+          b.speedY *= 1.05;
+        } else if (score % 20 === 0) {
+          b.speedX *= 1.10;
+          b.speedY *= 1.05;
+        }
 
+        if (!cheatScoreLocked) {
+          score++;
+          scoreSpan.textContent = score;
+        }
+      }
 
       // mur gauche
       if (b.x - b.radius < 0) {
@@ -288,6 +357,11 @@ if (
     }
 
     function update() {
+      // limite de temps contrôle parental
+      if ((Date.now() - window.parentalStartTime) > window.parentalTimeLimit * 60000) {
+        gameOver = true;
+      }
+
       if (gameOver) {
         if (!gameOverHandled) {
           saveScore("JEU4_scores", score, { duration: score });
@@ -383,34 +457,16 @@ if (
       cheatZenEnabled = false;
       cheatBossEnabled = false;
       window.cheatZigzagEnabled = false;
+
+      // reset contrôle parental timer
+      window.parentalStartTime = Date.now();
     });
-
-    // zone secrète triple tap
-    let tapCount = 0;
-    let tapTimer = null;
-
-    document.getElementById("secret-zone").addEventListener("touchstart", () => {
-      tapCount++;
-
-      if (tapCount === 3) {
-        tapCount = 0;
-        clearTimeout(tapTimer);
-        toggleCheatMenu();
-      }
-
-      clearTimeout(tapTimer);
-      tapTimer = setTimeout(() => tapCount = 0, 400);
-    });
-
-    function toggleCheatMenu() {
-      document.getElementById("cheat-menu").classList.toggle("show");
-    }
 
     loop();
   </script>
 
-  <!-- Nouveau script pour ouvrir le menu cheat -->
   <script>
+    // toggle menu cheat via bouton secret
     const cheatMenu = document.getElementById("cheat-menu");
     const secretBtn = document.getElementById("secret-btn");
 
@@ -425,6 +481,37 @@ if (
     });
   </script>
 
+  <script>
+    // contrôle parental
+    const parentalBtn = document.getElementById("parental-btn");
+    const parentalPanel = document.getElementById("parental-panel");
+    const parentalLogin = document.getElementById("parental-login");
+    const parentalSettings = document.getElementById("parental-settings");
+    const parentalPass = document.getElementById("parental-pass");
+    const PARENTAL_PASSWORD = "1234"; // volontairement visible dans le code
+
+    parentalBtn.addEventListener("click", () => {
+      parentalPanel.style.display = "block";
+    });
+
+    parentalLogin.addEventListener("click", () => {
+      if (parentalPass.value === PARENTAL_PASSWORD) {
+        parentalSettings.style.display = "block";
+      } else {
+        alert("Mot de passe incorrect");
+      }
+    });
+
+    document.getElementById("parental-save").addEventListener("click", () => {
+      window.parentalTimeLimit = parseInt(document.getElementById("limit-time").value) || 60;
+      window.parentalDisableCheats = document.getElementById("disable-cheats").checked;
+      window.parentalStartTime = Date.now();
+
+      document.getElementById("cheat-logs").textContent =
+        window.cheatLogs.join("\n");
+
+      alert("Paramètres enregistrés");
+    });
+  </script>
 </body>
 </html>
-
