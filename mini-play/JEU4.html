@@ -199,35 +199,35 @@
 
   <!-- Firebase + Realtime Database -->
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
-    import {
-      getDatabase,
-      ref,
-      push,
-      query,
-      orderByChild,
-      limitToLast,
-      get
-    } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-database.js";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
+  import {
+    getDatabase,
+    ref,
+    push,
+    query,
+    orderByChild,
+    get,
+    remove
+  } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-database.js";
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyAdZva6_Enq9bcWcLIqZbH4kuzCybDoOP4",
-      authDomain: "leaderboard-mini-play.firebaseapp.com",
-      databaseURL: "https://leaderboard-mini-play-default-rtdb.europe-west1.firebasedatabase.app",
-      projectId: "leaderboard-mini-play",
-      storageBucket: "leaderboard-mini-play.firebasestorage.app",
-      messagingSenderId: "601804859698",
-      appId: "1:601804859698:web:88869d17691f8778150f2b",
-      measurementId: "G-7BTGGBWD08"
-    };
+  const firebaseConfig = {
+    apiKey: "AIzaSyAdZva6_Enq9bcWcLIqZbH4kuzCybDoOP4",
+    authDomain: "leaderboard-mini-play.firebaseapp.com",
+    databaseURL: "https://leaderboard-mini-play-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "leaderboard-mini-play",
+    storageBucket: "leaderboard-mini-play.firebasestorage.app",
+    messagingSenderId: "601804859698",
+    appId: "1:601804859698:web:88869d17691f8778150f2b",
+    measurementId: "G-7BTGGBWD08"
+  };
 
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
 
-    // On expose la DB et les helpers pour les scripts classiques
-    window._db = db;
-    window._rtdb = { ref, push, query, orderByChild, limitToLast, get };
-  </script>
+  window._db = db;
+  window._rtdb = { ref, push, query, orderByChild, get, remove };
+</script>
+
 
   <!-- Leaderboard en ligne (version Realtime DB - ton fichier doit être mis à jour) -->
   <script src="assets/leaderboard.js"></script>
@@ -572,6 +572,7 @@
   </script>
 </body>
 </html>
+
 
 
 
