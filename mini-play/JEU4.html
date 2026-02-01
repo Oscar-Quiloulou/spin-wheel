@@ -73,27 +73,7 @@
   <div class="card">
 
     <div class="side-leaderboard">
-      <div id="leaderboard">
-      <div id="lb-loading" style="display:none; text-align:center; padding:10px;">
-  <div class="spinner" style="
-    width: 24px;
-    height: 24px;
-    border: 3px solid rgba(255,255,255,0.3);
-    border-top-color: #fff;
-    border-radius: 50%;
-    animation: spin 0.7s linear infinite;
-    margin: 10px auto;
-  "></div>
-  <span style="opacity:0.7;">Chargement...</span>
-</div>
-
-<style>
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-</style> 
-
-      </div>
+      <div id="leaderboard"></div>
     </div>
 
     <!-- Bouton secret -->
@@ -105,14 +85,13 @@
     <!-- Menu cheat (caché tant que pas toggle) -->
     <div id="cheat-menu">
       <h3>Balle</h3>
-      <button onclick="window.location.href='jeu4/epi.html'"> Aller au jeu 4 </button>
       <button onclick="cheatCenter()">Recentrer</button>
       <button onclick="cheatInstantGameOver()">Game Over instantané</button>
       <button onclick="cheatBallSlow()">Balle lente</button>
       <button onclick="cheatBallFast()">Balle rapide</button>
       <button onclick="cheatBallBig()">Balle géante</button>
       <button onclick="cheatBallSmall()">Balle minuscule</button>
-      <!--<button onclick="cheatMultiball()">Multiball</button>-->
+      <button onclick="cheatMultiball()">Multiball</button>
       <button onclick="cheatBallZigzag()">Balle zigzag</button>
       <button onclick="cheatBallInvincible()">Balle invincible</button>
 
@@ -133,9 +112,9 @@
       <button onclick="cheatChaos()">Mode chaos</button>
 
       <h3>Score</h3>
-      <!--<button onclick="cheatPlus10()">+10 points</button>-->
-      <!--<button onclick="cheatPlus100()">+100 points</button>-->
-      <!--<button onclick="cheatScoreX2()">Score x2</button>-->
+      <button onclick="cheatPlus10()">+10 points</button>
+      <button onclick="cheatPlus100()">+100 points</button>
+      <button onclick="cheatScoreX2()">Score x2</button>
       <button onclick="cheatScoreLock()">Score bloqué</button>
       <button onclick="cheatScoreInfinite()">Score infini</button>
 
@@ -161,8 +140,8 @@
 
   </div>
 
- <!-- Panneau contrôle parental -->
-<div id="parental-panel" style="
+  <!-- Panneau contrôle parental -->
+  <div id="parental-panel" style="
     position:fixed;
     top:50%;
     left:50%;
@@ -175,133 +154,30 @@
     color:white;
     display:none;
     z-index:5000;
-">
-  <h3>Contrôle parental</h3>
+  ">
+    <h3>Contrôle parental</h3>
 
-  <label>Mot de passe :</label>
-  <input id="parental-pass" type="password" style="width:100%; margin-bottom:10px;">
+    <label>Mot de passe :</label>
+    <input id="parental-pass" type="password" style="width:100%; margin-bottom:10px;">
 
-  <button id="parental-login" style="width:100%; margin-bottom:10px;">Valider</button>
+    <button id="parental-login" style="width:100%; margin-bottom:10px;">Valider</button>
 
-  <!-- BOUTON FERMER -->
-  <button id="parental-close" style="width:100%; margin-bottom:10px; background:#334155;">
-    Fermer
-  </button>
+    <div id="parental-settings" style="display:none;">
+      <hr>
 
-  <div id="parental-settings" style="display:none;">
-    <hr>
+      <label>Temps limite (minutes) :</label>
+      <input id="limit-time" type="number" value="60" style="width:100%; margin-bottom:10px;">
 
-    <label>Temps limite (minutes) :</label>
-    <input id="limit-time" type="number" value="60" style="width:100%; margin-bottom:10px;">
+      <label>Désactiver les cheats :</label>
+      <input id="disable-cheats" type="checkbox">
 
-    <label>Désactiver les cheats :</label>
-    <input id="disable-cheats" type="checkbox">
+      <h4>Logs :</h4>
+      <pre id="cheat-logs" style="background:#1e293b; padding:10px; height:100px; overflow:auto;"></pre>
 
-    <h4>Logs :</h4>
-    <pre id="cheat-logs" style="background:#1e293b; padding:10px; height:100px; overflow:auto;"></pre>
-
-    <button id="parental-save" style="width:100%; margin-top:10px;">Enregistrer</button>
+      <button id="parental-save" style="width:100%; margin-top:10px;">Enregistrer</button>
+    </div>
   </div>
-</div>
 
-
-<script>
-  // ====== LOGIQUE CONTROLE PARENTAL ======
-
-  const parentalBtn = document.getElementById("parental-btn");
-  const parentalPanel = document.getElementById("parental-panel");
-  const parentalLogin = document.getElementById("parental-login");
-  const parentalSettings = document.getElementById("parental-settings");
-  const parentalPass = document.getElementById("parental-pass");
-  const parentalClose = document.getElementById("parental-close");
-
-  const PARENTAL_PASSWORD = "1234"; // volontairement visible (normal pour ton projet)
-
-  // Ouvrir le panel
-  parentalBtn.addEventListener("click", () => {
-    parentalPanel.style.display = "block";
-  });
-
-  // Fermer via bouton “Fermer”
-  parentalClose.addEventListener("click", () => {
-    parentalPanel.style.display = "none";
-    parentalSettings.style.display = "none";
-    parentalPass.value = "";
-  });
-
-  // Validation du mot de passe
-  parentalLogin.addEventListener("click", () => {
-    if (parentalPass.value === PARENTAL_PASSWORD) {
-      parentalSettings.style.display = "block";
-    } else {
-      alert("Mot de passe incorrect");
-    }
-  });
-
-  // Sauvegarde des paramètres
-  document.getElementById("parental-save").addEventListener("click", () => {
-    window.parentalTimeLimit = parseInt(document.getElementById("limit-time").value) || 60;
-    window.parentalDisableCheats = document.getElementById("disable-cheats").checked;
-    window.parentalStartTime = Date.now();
-
-    document.getElementById("cheat-logs").textContent =
-      window.cheatLogs.join("\n");
-
-    alert("Paramètres enregistrés");
-  });
-
-  // Fermer quand on clique hors du panel
-  window.addEventListener("click", (e) => {
-    // ferme uniquement si on clique à l’extérieur du panneau
-    if (e.target === parentalPanel) {
-      parentalPanel.style.display = "none";
-      parentalSettings.style.display = "none";
-      parentalPass.value = "";
-    }
-  });
-
-  // Fermer avec Échap
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && parentalPanel.style.display === "block") {
-      parentalPanel.style.display = "none";
-      parentalSettings.style.display = "none";
-      parentalPass.value = "";
-    }
-  });
-</script>
-  <!-- Firebase + Realtime Database -->
-  <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
-  import {
-    getDatabase,
-    ref,
-    push,
-    query,
-    orderByChild,
-    get,
-    remove
-  } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-database.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyAdZva6_Enq9bcWcLIqZbH4kuzCybDoOP4",
-    authDomain: "leaderboard-mini-play.firebaseapp.com",
-    databaseURL: "https://leaderboard-mini-play-default-rtdb.europe-west1.firebasedatabase.app",
-    projectId: "leaderboard-mini-play",
-    storageBucket: "leaderboard-mini-play.firebasestorage.app",
-    messagingSenderId: "601804859698",
-    appId: "1:601804859698:web:88869d17691f8778150f2b",
-    measurementId: "G-7BTGGBWD08"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
-
-  window._db = db;
-  window._rtdb = { ref, push, query, orderByChild, get, remove };
-</script>
-
-
-  <!-- Leaderboard en ligne (version Realtime DB - ton fichier doit être mis à jour) -->
   <script src="assets/leaderboard.js"></script>
   <script src="assets/cheats-pingpong.js"></script>
 
@@ -362,7 +238,7 @@
     window.cheatAutoPaddleEnabled = false;
     window.cheatInvincibleBallEnabled = false;
     window.cheatScoreLocked = false;
-    window.cheatScoreInfiniteEnabled = false;
+    window.cheatScoreInfinite = false;
     window.cheatGravityInverted = false;
     window.cheatChaosEnabled = false;
     window.cheatSlowGlobal = false;
@@ -488,14 +364,9 @@
 
       if (gameOver) {
         if (!gameOverHandled) {
+          saveScore("JEU4_scores", score, { duration: score });
+          displayScores("JEU4_scores", "leaderboard");
           gameOverHandled = true;
-
-          // On enregistre le score puis on recharge le leaderboard
-          saveScore("JEU4_scores", score, { duration: score })
-            .then(() => {
-              displayScores("JEU4_scores", "leaderboard");
-            })
-            .catch(err => console.error(err));
         }
         return;
       }
@@ -617,7 +488,7 @@
     const parentalLogin = document.getElementById("parental-login");
     const parentalSettings = document.getElementById("parental-settings");
     const parentalPass = document.getElementById("parental-pass");
-    const PARENTAL_PASSWORD = "1234"; // volontairement visible dans le code
+    const PARENTAL_PASSWORD = "1235"; // volontairement visible dans le code
 
     parentalBtn.addEventListener("click", () => {
       parentalPanel.style.display = "block";
@@ -644,11 +515,3 @@
   </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
