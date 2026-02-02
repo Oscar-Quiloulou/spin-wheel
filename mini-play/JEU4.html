@@ -407,5 +407,27 @@
 
     loop();
   </script>
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyAdZva6_Enq9bcWcLIqZbH4kuzCybDoOP4",
+  authDomain: "leaderboard-mini-play.firebaseapp.com",
+  databaseURL: "https://leaderboard-mini-play-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "leaderboard-mini-play",
+  storageBucket: "leaderboard-mini-play.firebasestorage.app",
+  messagingSenderId: "601804859698",
+  appId: "1:601804859698:web:88869d17691f8778150f2b",
+  measurementId: "G-7BTGGBWD08"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
 </body>
 </html>

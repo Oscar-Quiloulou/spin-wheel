@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin - JEU 4</title>
+  <style>
+    body {
+      background:#0f172a;
+      color:white;
+      font-family:system-ui;
+      padding:20px;
+    }
+    #panel {
+      width:420px;
+      margin:auto;
+      background:#1e293b;
+      padding:20px;
+      border-radius:12px;
+      border:1px solid #64748b;
+    }
+    input, textarea {
+      width:100%;
+      margin-bottom:10px;
+      padding:6px;
+      border-radius:6px;
+      border:none;
+      background:#334155;
+      color:white;
+    }
+    button {
+      width:100%;
+      padding:10px;
+      background:#4f46e5;
+      border:none;
+      color:white;
+      border-radius:6px;
+      cursor:pointer;
+      font-weight:600;
+    }
+    button:hover {
+      background:#6366f1;
+    }
+  </style>
+</head>
+<body>
+
+<div id="panel">
+  <h2>Interface Admin — JEU 4</h2>
+
+  <label>Mot de passe admin :</label>
+  <input id="admin-pass" type="password">
+
+  <button id="login-btn">Valider</button>
+
+  <div id="admin-settings" style="display:none;">
+    <hr>
+
+    <label>Temps limite par défaut (minutes) :</label>
+    <input id="default-time" type="number" value="60">
+
+    <label>Cheats autorisés par défaut :</label>
+    <input id="default-cheats" type="checkbox">
+
+    <label>Cheats visibles dans le menu :</label>
+    <textarea id="visible-cheats" rows="10"></textarea>
+
+    <button id="save-btn">Enregistrer</button>
+  </div>
+</div>
+
+<script type="module">
+  import { loadAdminSettings, saveAdminSettings } from "./assets/firebase-config.js";
+
+  const ADMIN_PASSWORD = "superadmin42"; // mot de passe admin caché dans le code
+
+  const loginBtn = document.getElementById("login-btn");
+  const adminSettings = document.getElementById("admin-settings");
+  const adminPass = document.getElementById("admin-pass");
+
+  loginBtn.addEventListener("click", () => {
+    if (adminPass.value === ADMIN_PASSWORD) {
+      adminSettings.style.display = "block";
+      loadSettings();
+    } else {
+      alert("Mot de passe incorrect");
+    }
+  });
+
+  async function loadSettings() {
+    const settings = await loadAdminSettings();
+
+    document.getElementById("default-time").value = settings.defaultTimeLimit;
+    document.getElementById("default-cheats").checked = settings.cheatsAllowed;
+    document.getElementById("visible-cheats").value =
+      settings.visibleCheats.join("\n");
+  }
+
+  document.getElementById("save-btn").addEventListener("click", async () => {
+    const settings = {
+      defaultTimeLimit: parseInt(document.getElementById("default-time").value),
+      cheatsAllowed: document.getElementById("default-cheats").checked,
+      visibleCheats: document.getElementById("visible-cheats").value
+        .split("\n")
+        .map(x => x.trim())
+        .filter(x => x.length > 0)
+    };
+
+    await saveAdminSettings(settings);
+    alert("Paramètres enregistrés !");
+  });
+</script>
+
+</body>
+</html>
