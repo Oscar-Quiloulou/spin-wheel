@@ -137,6 +137,8 @@
     <input id="parental-pass" type="password" style="width:100%; margin-bottom:10px;">
 
     <button id="parental-login" style="width:100%; margin-bottom:10px;">Valider</button>
+    <button id="parental-close" style="width:100%; margin-top:10px;">Fermer</button>
+
 
     <div id="parental-settings" style="display:none;">
       <hr>
@@ -154,62 +156,374 @@
     </div>
   </div>
 
-  <script src="assets/leaderboard.js"></script>
-  <script src="assets/cheats-pingpong.js"></script>
 
   <!-- TON MOTEUR DE JEU (inchangé) -->
-  <script>
-    /* … TON MOTEUR EXACT ICI … */
-    /* (je n’ai rien modifié, c’est exactement ce que tu m’as envoyé) */
-  </script>
+<script>
+    /* ---------------------------------------------
+       1. Charger les paramètres parentaux
+    --------------------------------------------- */
+    const savedLimit = localStorage.getItem("parental_limit");
+    const savedDisable = localStorage.getItem("parental_disable");
+    const savedStart = localStorage.getItem("parental_last_start");
+    const savedDay = localStorage.getItem("parental_day");
 
-  <!-- Interface cheat + contrôle parental -->
-  <script>
-    const cheatMenu = document.getElementById("cheat-menu");
-    const secretBtn = document.getElementById("secret-btn");
+    window.parentalTimeLimit = savedLimit ? parseInt(savedLimit) : 60;
+    window.parentalDisableCheats = savedDisable === "1";
+    window.parentalStartTime = savedStart ? parseInt(savedStart) : Date.now();
 
-    function toggleCheatMenu() {
-      cheatMenu.classList.toggle("show");
+    /* ---------------------------------------------
+       2. Reset automatique si on change de jour
+    --------------------------------------------- */
+    const today = new Date().toDateString();
+
+    if (savedDay !== today) {
+      localStorage.removeItem("parental_blocked");
+      localStorage.setItem("parental_day", today);
+      localStorage.setItem("parental_last_start", Date.now());
+      window.parentalStartTime = Date.now();
     }
 
-    secretBtn.addEventListener("click", toggleCheatMenu);
-    secretBtn.addEventListener("touchstart", (e) => {
-      e.preventDefault();
-      toggleCheatMenu();
+    /* ---------------------------------------------
+       3. Blocage immédiat si déjà bloqué
+    --------------------------------------------- */
+    if (localStorage.getItem("parental_blocked") === "1") {
+      alert("Temps de jeu quotidien dépassé. Réessayez demain.");
+      throw new Error("Parental block");
+    }
+
+    /* ---------------------------------------------
+       4. TON MOTEUR COMMENCE ICI
+    --------------------------------------------- */
+
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+
+    const scoreSpan = document.getElementById("score");
+    const restartBtn = document.getElementById("restart");
+
+    // logs cheats
+    window.cheatLogs = [];
+    function logCheat(name) {
+      window.cheatLogs.push(name + " - " + new Date().toLocaleTimeString());
+    }
+    function cheatsAllowed() {
+      return !window.parentalDisableCheats;
+    }
+
+    // objets globaux pour les cheats
+    window.paddle = {
+      x: 10,
+      y: canvas.height / 2 - 40,
+      width: 10,
+      height: 80,
+      baseHeight: 80,
+      speed: 6,
+      baseSpeed: 6
+    };
+
+    window.ball = {
+      x: canvas.width / 2,
+      y: canvas.height / 2,
+      radius: 8,
+      baseRadius: 8,
+      speedX: 4,
+      speedY: 3
+    };
+
+    window.extraBalls = [];
+    window.score = 0;
+
+    let gameOver = false;
+    let gameOverHandled = false;
+
+    let upPressed = false;
+    let downPressed = false;
+
+    // flags cheats
+    window.cheatWallLeftEnabled = false;
+    window.cheatWallRightEnabled = false;
+    window.cheatMagnetEnabled = false;
+    window.cheatAutoPaddleEnabled = false;
+    window.cheatInvincibleBallEnabled = false;
+    window.cheatScoreLocked = false;
+    window.cheatScoreInfinite = false;
+    window.cheatGravityInverted = false;
+    window.cheatChaosEnabled = false;
+    window.cheatSlowGlobal = false;
+    window.cheatFastGlobal = false;
+    window.cheatMatrixEnabled = false;
+    window.cheatZenEnabled = false;
+    window.cheatBossEnabled = false;
+    window.cheatZigzagEnabled = false;
+
+    /* --- CONTROLES CLAVIER --- */
+    document.addEventListener("keydown", e => {
+      if (e.key === "ArrowUp") upPressed = true;
+      if (e.key === "ArrowDown") downPressed = true;
     });
-  </script>
 
-  <script>
-    const parentalBtn = document.getElementById("parental-btn");
-    const parentalPanel = document.getElementById("parental-panel");
-    const parentalLogin = document.getElementById("parental-login");
-    const parentalSettings = document.getElementById("parental-settings");
-    const parentalPass = document.getElementById("parental-pass");
-    const PARENTAL_PASSWORD = "1235";
-
-    parentalBtn.addEventListener("click", () => {
-      parentalPanel.style.display = "block";
+    document.addEventListener("keyup", e => {
+      if (e.key === "ArrowUp") upPressed = false;
+      if (e.key === "ArrowDown") downPressed = false;
     });
 
-    parentalLogin.addEventListener("click", () => {
-      if (parentalPass.value === PARENTAL_PASSWORD) {
-        parentalSettings.style.display = "block";
-      } else {
-        alert("Mot de passe incorrect");
+    /* --- CONTROLES TACTILES --- */
+    let lastY = null;
+
+    canvas.addEventListener("touchstart", e => {
+      lastY = e.touches[0].clientY;
+    });
+
+    canvas.addEventListener("touchmove", e => {
+      const y = e.touches[0].clientY;
+      if (y < lastY) paddle.y -= paddle.speed;
+      else paddle.y += paddle.speed;
+      lastY = y;
+    });
+
+    function resetBall() {
+      ball.x = canvas.width / 2;
+      ball.y = canvas.height / 2;
+      ball.speedX = 4;
+      ball.speedY = 3;
+      extraBalls = [];
+    }
+
+    function applyGlobalSpeedFactor(v) {
+      if (cheatSlowGlobal) return v * 0.4;
+      if (cheatFastGlobal) return v * 1.8;
+      return v;
+    }
+
+    function updateBall(b) {
+      b.x += applyGlobalSpeedFactor(b.speedX);
+      b.y += applyGlobalSpeedFactor(b.speedY);
+
+      if (cheatGravityInverted) {
+        b.speedY -= 0.05;
       }
-    });
 
-    document.getElementById("parental-save").addEventListener("click", () => {
-      window.parentalTimeLimit = parseInt(document.getElementById("limit-time").value) || 60;
-      window.parentalDisableCheats = document.getElementById("disable-cheats").checked;
+      if (b.y - b.radius < 0 || b.y + b.radius > canvas.height) {
+        b.speedY *= -1;
+      }
+
+      if (
+        !cheatInvincibleBallEnabled &&
+        b.x - b.radius < paddle.x + paddle.width &&
+        b.y > paddle.y &&
+        b.y < paddle.y + paddle.height
+      ) {
+        b.speedX *= -1;
+
+        if (score < 10) {
+          b.speedX *= 1.10;
+          b.speedY *= 1.05;
+        } else if (score % 20 === 0) {
+          b.speedX *= 1.10;
+          b.speedY *= 1.05;
+        }
+
+        if (!cheatScoreLocked) {
+          score++;
+          scoreSpan.textContent = score;
+        }
+      }
+
+      if (b.x - b.radius < 0) {
+        if (cheatWallLeftEnabled || cheatZenEnabled) {
+          b.speedX *= -1;
+        } else if (!cheatScoreInfinite && !cheatZenEnabled) {
+          gameOver = true;
+        }
+      }
+
+      if (b.x + b.radius > canvas.width) {
+        if (cheatWallRightEnabled || cheatZenEnabled) {
+          b.speedX *= -1;
+        } else {
+          b.speedX *= -1;
+        }
+      }
+
+      if (cheatChaosEnabled) {
+        b.speedX += (Math.random() - 0.5) * 0.2;
+        b.speedY += (Math.random() - 0.5) * 0.2;
+      }
+
+      if (window.cheatZigzagEnabled) {
+        b.speedY += (Math.random() - 0.5) * 0.4;
+      }
+
+      if (cheatMatrixEnabled) {
+        ctx.strokeStyle = "rgba(94,234,212,0.7)";
+        ctx.beginPath();
+        ctx.moveTo(b.x, b.y);
+        ctx.lineTo(b.x + b.speedX * 15, b.y + b.speedY * 15);
+        ctx.stroke();
+      }
+    }
+
+    function update() {
+      const elapsed = Date.now() - window.parentalStartTime;
+      const limitMs = window.parentalTimeLimit * 60000;
+
+      if (elapsed > limitMs) {
+        localStorage.setItem("parental_blocked", "1");
+        alert("Temps de jeu quotidien dépassé.");
+        throw new Error("Parental block");
+      }
+
+      if (gameOver) {
+        if (!gameOverHandled) {
+          saveScore("JEU4_scores", score, { duration: score });
+          displayScores("JEU4_scores", "leaderboard");
+          gameOverHandled = true;
+        }
+        return;
+      }
+
+      if (cheatAutoPaddleEnabled) {
+        paddle.y = ball.y - paddle.height / 2;
+      } else {
+        if (upPressed && paddle.y > 0) paddle.y -= paddle.speed;
+        if (downPressed && paddle.y + paddle.height < canvas.height) paddle.y += paddle.speed;
+      }
+
+      if (cheatMagnetEnabled) {
+        ball.y = paddle.y + paddle.height / 2;
+      }
+
+      updateBall(ball);
+      extraBalls.forEach(updateBall);
+    }
+
+    function drawBall(b) {
+      ctx.beginPath();
+      ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
+      ctx.fillStyle = "#f97316";
+      ctx.shadowColor = "rgba(249,115,22,0.9)";
+      ctx.shadowBlur = 12;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = "#38bdf8";
+      ctx.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
+
+      drawBall(ball);
+      extraBalls.forEach(drawBall);
+
+      if (gameOver) {
+        ctx.fillStyle = "#e5e7eb";
+        ctx.font = "28px system-ui";
+        ctx.fillText("Game Over", canvas.width / 2 - 80, canvas.height / 2);
+      }
+    }
+
+    function loop() {
+      update();
+      draw();
+      requestAnimationFrame(loop);
+    }
+
+    restartBtn.addEventListener("click", () => {
+      score = 0;
+      scoreSpan.textContent = score;
+
+      gameOver = false;
+      gameOverHandled = false;
+
+      paddle.y = canvas.height / 2 - paddle.height / 2;
+      paddle.height = paddle.baseHeight;
+      paddle.speed = paddle.baseSpeed;
+
+      ball.radius = ball.baseRadius;
+      resetBall();
+      hideScores("leaderboard");
+
+      cheatWallLeftEnabled = false;
+      cheatWallRightEnabled = false;
+      cheatMagnetEnabled = false;
+      cheatAutoPaddleEnabled = false;
+      cheatInvincibleBallEnabled = false;
+      cheatScoreLocked = false;
+      cheatScoreInfinite = false;
+      cheatGravityInverted = false;
+      cheatChaosEnabled = false;
+      cheatSlowGlobal = false;
+      cheatFastGlobal = false;
+      cheatMatrixEnabled = false;
+      cheatZenEnabled = false;
+      cheatBossEnabled = false;
+      window.cheatZigzagEnabled = false;
+
       window.parentalStartTime = Date.now();
-
-      document.getElementById("cheat-logs").textContent =
-        window.cheatLogs.join("\n");
-
-      alert("Paramètres enregistrés");
     });
-  </script>
+
+    loop();
+</script>
+<script src="../assets/cheats-pingpong.js"></script>
+<script src="../assets/leaderboard.js"></script>
+<script>
+  const cheatMenu = document.getElementById("cheat-menu");
+  const secretBtn = document.getElementById("secret-btn");
+
+  function toggleCheatMenu() {
+    cheatMenu.classList.toggle("show");
+  }
+
+  secretBtn.addEventListener("click", toggleCheatMenu);
+  secretBtn.addEventListener("touchstart", (e) => {
+    e.preventDefault();
+    toggleCheatMenu();
+  });
+</script>
+
+<script>
+  const parentalBtn = document.getElementById("parental-btn");
+  const parentalPanel = document.getElementById("parental-panel");
+  const parentalLogin = document.getElementById("parental-login");
+  const parentalSettings = document.getElementById("parental-settings");
+  const parentalPass = document.getElementById("parental-pass");
+  const PARENTAL_PASSWORD = "1235";
+
+  parentalBtn.addEventListener("click", () => {
+    parentalPanel.style.display = "block";
+  });
+
+  parentalLogin.addEventListener("click", () => {
+    if (parentalPass.value === PARENTAL_PASSWORD) {
+      parentalSettings.style.display = "block";
+    } else {
+      alert("Mot de passe incorrect");
+    }
+  });
+
+  document.getElementById("parental-save").addEventListener("click", () => {
+    const limit = parseInt(document.getElementById("limit-time").value) || 60;
+    const disable = document.getElementById("disable-cheats").checked;
+
+    localStorage.setItem("parental_limit", limit);
+    localStorage.setItem("parental_disable", disable ? "1" : "0");
+    localStorage.setItem("parental_last_start", Date.now());
+    localStorage.setItem("parental_day", new Date().toDateString());
+    localStorage.removeItem("parental_blocked");
+
+    window.parentalTimeLimit = limit;
+    window.parentalDisableCheats = disable;
+    window.parentalStartTime = Date.now();
+
+    alert("Paramètres enregistrés");
+  });
+
+  document.getElementById("parental-close").addEventListener("click", () => {
+    parentalPanel.style.display = "none";
+  });
+</script>
+
 
 </body>
 </html>
