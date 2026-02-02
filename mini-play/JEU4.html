@@ -54,15 +54,18 @@
       cursor: pointer;
     }
 
-    /* Zone secrète (bas gauche) */
-    #secret-zone {
+    /* Bouton secret (remplace secret-zone) */
+    #secret-btn {
       position: absolute;
       bottom: 10px;
       left: 10px;
       width: 40px;
       height: 40px;
-      opacity: 0;
+      opacity: 0; /* mettre 1 pour debug */
+      border: none;
+      background: transparent;
       z-index: 200;
+      cursor: pointer;
     }
   </style>
 </head>
@@ -73,10 +76,13 @@
       <div id="leaderboard"></div>
     </div>
 
-    <!-- Zone secrète -->
-    <div id="secret-zone"></div>
+    <!-- Bouton secret -->
+    <button id="secret-btn"></button>
 
-    <!-- Menu cheat (caché tant que pas de triple tap) -->
+    <!-- Bouton contrôle parental -->
+    <button id="parental-btn" style="position:absolute; top:10px; left:10px;">Contrôle parental</button>
+
+    <!-- Menu cheat (caché tant que pas toggle) -->
     <div id="cheat-menu">
       <h3>Balle</h3>
       <button onclick="cheatCenter()">Recentrer</button>
@@ -134,14 +140,67 @@
 
   </div>
 
+  <!-- Panneau contrôle parental -->
+  <div id="parental-panel" style="
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%, -50%);
+    width:300px;
+    padding:20px;
+    background:#0f172a;
+    border:1px solid #64748b;
+    border-radius:12px;
+    color:white;
+    display:none;
+    z-index:5000;
+  ">
+    <h3>Contrôle parental</h3>
+
+    <label>Mot de passe :</label>
+    <input id="parental-pass" type="password" style="width:100%; margin-bottom:10px;">
+
+    <button id="parental-login" style="width:100%; margin-bottom:10px;">Valider</button>
+
+    <div id="parental-settings" style="display:none;">
+      <hr>
+
+      <label>Temps limite (minutes) :</label>
+      <input id="limit-time" type="number" value="60" style="width:100%; margin-bottom:10px;">
+
+      <label>Désactiver les cheats :</label>
+      <input id="disable-cheats" type="checkbox">
+
+      <h4>Logs :</h4>
+      <pre id="cheat-logs" style="background:#1e293b; padding:10px; height:100px; overflow:auto;"></pre>
+
+      <button id="parental-save" style="width:100%; margin-top:10px;">Enregistrer</button>
+    </div>
+  </div>
+
   <script src="assets/leaderboard.js"></script>
   <script src="assets/cheats-pingpong.js"></script>
+
   <script>
     const canvas = document.getElementById("gameCanvas");
     const ctx = canvas.getContext("2d");
 
     const scoreSpan = document.getElementById("score");
     const restartBtn = document.getElementById("restart");
+
+    // contrôle parental
+    window.parentalTimeLimit = 60; // minutes
+    window.parentalDisableCheats = false;
+    window.parentalStartTime = Date.now();
+
+    // logs cheats
+    window.cheatLogs = [];
+    function logCheat(name) {
+      window.cheatLogs.push(name + " - " + new Date().toLocaleTimeString());
+    }
+    function cheatsAllowed() {
+      return !window.parentalDisableCheats;
+    }
 
     // objets globaux pour les cheats
     window.paddle = {
@@ -187,6 +246,7 @@
     window.cheatMatrixEnabled = false;
     window.cheatZenEnabled = false;
     window.cheatBossEnabled = false;
+    window.cheatZigzagEnabled = false;
 
     /* --- CONTROLES CLAVIER --- */
     document.addEventListener("keydown", e => {
@@ -248,8 +308,18 @@
         b.y > paddle.y &&
         b.y < paddle.y + paddle.height
       ) {
-        b.speedX *= -1.1;
-        b.speedY *= 1.05;
+        // rebond de base
+        b.speedX *= -1;
+
+        // gestion de la vitesse : + à chaque point jusqu'à 10, puis tous les 20
+        if (score < 10) {
+          b.speedX *= 1.10;
+          b.speedY *= 1.05;
+        } else if (score % 20 === 0) {
+          b.speedX *= 1.10;
+          b.speedY *= 1.05;
+        }
+
         if (!cheatScoreLocked) {
           score++;
           scoreSpan.textContent = score;
@@ -287,6 +357,11 @@
     }
 
     function update() {
+      // limite de temps contrôle parental
+      if ((Date.now() - window.parentalStartTime) > window.parentalTimeLimit * 60000) {
+        gameOver = true;
+      }
+
       if (gameOver) {
         if (!gameOverHandled) {
           saveScore("JEU4_scores", score, { duration: score });
@@ -382,30 +457,61 @@
       cheatZenEnabled = false;
       cheatBossEnabled = false;
       window.cheatZigzagEnabled = false;
+
+      // reset contrôle parental timer
+      window.parentalStartTime = Date.now();
     });
-
-    // zone secrète triple tap
-    let tapCount = 0;
-    let tapTimer = null;
-
-    document.getElementById("secret-zone").addEventListener("touchstart", () => {
-      tapCount++;
-
-      if (tapCount === 3) {
-        tapCount = 0;
-        clearTimeout(tapTimer);
-        toggleCheatMenu();
-      }
-
-      clearTimeout(tapTimer);
-      tapTimer = setTimeout(() => tapCount = 0, 400);
-    });
-
-    function toggleCheatMenu() {
-      document.getElementById("cheat-menu").classList.toggle("show");
-    }
 
     loop();
+  </script>
+
+  <script>
+    // toggle menu cheat via bouton secret
+    const cheatMenu = document.getElementById("cheat-menu");
+    const secretBtn = document.getElementById("secret-btn");
+
+    function toggleCheatMenu() {
+      cheatMenu.classList.toggle("show");
+    }
+
+    secretBtn.addEventListener("click", toggleCheatMenu);
+    secretBtn.addEventListener("touchstart", (e) => {
+      e.preventDefault();
+      toggleCheatMenu();
+    });
+  </script>
+
+  <script>
+    // contrôle parental
+    const parentalBtn = document.getElementById("parental-btn");
+    const parentalPanel = document.getElementById("parental-panel");
+    const parentalLogin = document.getElementById("parental-login");
+    const parentalSettings = document.getElementById("parental-settings");
+    const parentalPass = document.getElementById("parental-pass");
+    const PARENTAL_PASSWORD = "1235"; // volontairement visible dans le code
+
+    parentalBtn.addEventListener("click", () => {
+      parentalPanel.style.display = "block";
+    });
+
+    parentalLogin.addEventListener("click", () => {
+      if (parentalPass.value === PARENTAL_PASSWORD) {
+        parentalSettings.style.display = "block";
+      } else {
+        alert("Mot de passe incorrect");
+      }
+    });
+
+    document.getElementById("parental-save").addEventListener("click", () => {
+      window.parentalTimeLimit = parseInt(document.getElementById("limit-time").value) || 60;
+      window.parentalDisableCheats = document.getElementById("disable-cheats").checked;
+      window.parentalStartTime = Date.now();
+
+      document.getElementById("cheat-logs").textContent =
+        window.cheatLogs.join("\n");
+
+      alert("Paramètres enregistrés");
+    });
   </script>
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
