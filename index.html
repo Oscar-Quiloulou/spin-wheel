@@ -61,7 +61,6 @@ body {
   position: relative;
   display: flex;
   justify-content: center;
-  cursor: pointer; /* REND TOUTE LA ROUE CLIQUABLE */
 }
 
 .wheel-container::after {
@@ -91,7 +90,6 @@ canvas {
     inset 0 0 20px #ffffffaa,
     inset 0 0 40px #00000033;
   transition: box-shadow 0.5s ease;
-  cursor: pointer;  /* AJOUT IMPORTANTE */
 }
 
 .pointer {
@@ -105,7 +103,6 @@ canvas {
   border-bottom: 16px solid transparent;
   border-left: 26px solid #ff3e7f;
   filter: drop-shadow(0 0 6px #ff3e7f);
-  pointer-events: none; /* POUR NE PAS BLOQUER LE CLIC */
 }
 
 /* ------------------------------------------------ */
@@ -211,7 +208,14 @@ input {
   color: var(--text);
 }
 
-.btn { padding: 10px 14px; border-radius: 12px; border: none; cursor: pointer; font-weight: 700; }
+.btn {
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  font-weight: 700;
+}
+
 .btn-primary { background: #ff3e7f; color: white; }
 .btn-danger { background: #ff0000; color: white; }
 .btn-secondary { background: #00c6ff; color: white; }
@@ -299,35 +303,106 @@ input {
 
 .accordion { margin-top: 20px; }
 
+.accordion-item {
+  background: #f0faff;
+  border: 2px solid #00c6ff55;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+
+.accordion-header {
+  padding: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  color: #0077aa;
+}
+
+.accordion-content {
+  max-height: 0;
+  overflow: hidden;
+  padding: 0 12px;
+  transition: max-height 0.3s ease;
+}
+
+.accordion-content.open {
+  padding: 12px;
+  max-height: 500px;
+}
+
+.tuto-highlight {
+  animation: tutoPulse 1.4s infinite;
+}
+
+@keyframes tutoPulse {
+  0%,100% { box-shadow: 0 0 0px #00c6ff; }
+  50% { box-shadow: 0 0 12px #00c6ff; }
+}
+
 /* ------------------------------------------------ */
 /* -------------------- THEMES -------------------- */
 /* ------------------------------------------------ */
-
 .theme-light {
   --bg: #fff7e6;
   --card: #ffffff;
   --text: #333;
+  --accent: #ff3e7f;
+  --accent2: #ffb800;
+  --accent3: #00c6ff;
 }
 
 .theme-dark {
   --bg: #111;
   --card: #1c1c1c;
   --text: #f5f5f5;
+  --accent: #8ab4ff;
+  --accent2: #bb86fc;
+  --accent3: #03dac6;
+}
+
+.theme-dark canvas {
+  background: radial-gradient(circle at 30% 30%, #333, #000);
+  box-shadow:
+    0 0 20px #8ab4ff55,
+    inset 0 0 20px #ffffff22,
+    inset 0 0 40px #000000aa;
 }
 
 .theme-festive {
   --bg: linear-gradient(135deg, #ff3e7f, #ffb800);
   --card: rgba(255,255,255,0.8);
   --text: #222;
+  --accent: #ff3e7f;
+  --accent2: #ffb800;
+  --accent3: #00c6ff;
+}
+
+.theme-festive .card {
+  backdrop-filter: blur(6px);
+  border-color: #ffffffaa;
 }
 
 .theme-animated {
+  --bg: #111;
+  --card: #1c1c1c;
+  --text: #fff;
+  --accent: #ff3e7f;
+  --accent2: #ffb800;
+  --accent3: #00c6ff;
   animation: animatedBG 12s infinite alternate;
 }
+
 @keyframes animatedBG {
   0% { background: linear-gradient(135deg, #111, #222); }
   50% { background: linear-gradient(135deg, #330033, #111); }
   100% { background: linear-gradient(135deg, #001133, #330033); }
+}
+
+.theme-animated .wheel-container::after {
+  animation: spinHalo 4s linear infinite;
+  opacity: 0.5;
 }
 
 /* ------------------------------------------------ */
@@ -345,7 +420,6 @@ input {
 }
 </style>
 </head>
-
 <body class="theme-light">
 
 <!-- BOUTON SECRET INVISIBLE -->
@@ -357,7 +431,7 @@ input {
   <div class="card">
     <h2 style="text-align:center; font-size:1.8rem; color:#ff3e7f;">🎉 Roue Stylée 🎉</h2>
 
-    <div class="wheel-container" id="wheelWrapper">
+    <div class="wheel-container">
       <canvas id="wheel" width="420" height="420"></canvas>
       <div class="pointer"></div>
     </div>
@@ -389,17 +463,115 @@ input {
 
 </div>
 
-<!-- AIDE -->
+<!-- -------------------- HELP BUTTON -------------------- -->
 <button class="help-button" id="helpBtn">❔</button>
 
+<!-- -------------------- HELP PANEL -------------------- -->
 <div class="help-panel" id="helpPanel">
+
   <button class="help-close" id="helpClose">✖</button>
   <h2 style="color:#00c6ff; margin-top:10px;">Aide & Tutoriel</h2>
+
   <div class="accordion">
-    (… contenu inchangé …)
+
+    <!-- SECTION 1 : COMMENT UTILISER LA ROUE -->
+    <div class="accordion-item">
+      <div class="accordion-header">
+        📘 Comment utiliser la roue ?
+        <span>▼</span>
+      </div>
+      <div class="accordion-content">
+        <p><b>1.</b> Ajoute un prénom dans le champ prévu.</p>
+        <p><b>2.</b> Appuie sur <b>Entrée</b> ou clique sur <b>Ajouter</b>.</p>
+        <p><b>3.</b> Répète pour ajouter plusieurs prénoms.</p>
+        <p><b>4.</b> Clique sur <b>Mélanger</b>.</p>
+        <p><b>5.</b> Clique sur <b>Lancer la roue</b>.</p>
+        <p><b>6.</b> Le gagnant apparaît avec un effet arc‑en‑ciel 🎉</p>
+        <a href="mini-play/index.html">Voir les mini jeu</a>
+      </div>
+    </div>
+
+    <!-- SECTION 2 : ASTUCES & TIPS -->
+    <div class="accordion-item">
+      <div class="accordion-header">
+        💡 Astuces & Tips
+        <span>▼</span>
+      </div>
+      <div class="accordion-content">
+        <p>• Appuie sur <b>Entrée</b> pour ajouter un prénom rapidement.</p>
+        <p>• Tu peux coller une liste entière. Il suffi de mettre <b>; entre</b> chaque prénom</p>
+        <p>• Clique sur <b>❌</b> pour supprimer un prénom.</p>
+        <p>• Les prénoms sont sauvegardés automatiquement dnas le stockage interne. Veuillez ne pas vider le cache.</p>
+        <p>• Fonctionne sur téléphone, tablette et PC.</p>
+      </div>
+    </div>
+
+    <!-- SECTION 3 : FONCTIONNALITÉS FUN -->
+    <div class="accordion-item">
+      <div class="accordion-header">
+        🎮 Fonctionnalités fun
+        <span>▼</span>
+      </div>
+      <div class="accordion-content">
+        <p>• Halo arc‑en‑ciel autour de la roue.</p>
+        <p>• Confettis dynamiques à chaque gagnant.</p>
+        <p>• Animation arc‑en‑ciel sur le gagnant.</p>
+        <p>• Segments en dégradés stylés.</p>
+        <p>• Interface fun et moderne.</p>
+      </div>
+    </div>
+
+    <!-- SECTION 4 : THEME -->
+    <div class="accordion-item">
+      <div class="accordion-header">
+        🎨 Thème
+        <span>▼</span>
+      </div>
+      <div class="accordion-content">
+        <p>Choisis l’ambiance de la roue :</p>
+
+        <label for="themeSelect"><b>Thème :</b></label>
+        <select id="themeSelect" style="margin-top:6px; width:100%; padding:8px; border-radius:8px; border:2px solid #00c6ff55;">
+          <option value="light">Clair</option>
+          <option value="dark">Sombre</option>
+          <option value="festive">Festif</option>
+          <option value="animated">Animé</option>
+        </select>
+
+        <p style="margin-top:10px; font-size:0.9rem; opacity:0.8;">
+          Le thème est sauvegardé automatiquement.
+        </p>
+      </div>
+    </div>
+
+    <!-- SECTION 5 : TUTORIEL ANIMÉ -->
+    <div class="accordion-item">
+      <div class="accordion-header">
+        🎓 Tutoriel animé
+        <span>▼</span>
+      </div>
+      <div class="accordion-content">
+        <p>Voici les éléments importants :</p>
+
+        <p><b>Champ d’ajout :</b></p>
+        <div class="input-wrapper tuto-highlight">
+          <span>✏️</span>
+          <input placeholder="Exemple">
+        </div>
+
+        <p style="margin-top:10px;"><b>Bouton Ajouter :</b></p>
+        <button class="btn btn-primary tuto-highlight">Ajouter</button>
+
+        <p style="margin-top:10px;"><b>Bouton Lancer la roue :</b></p>
+        <button class="spin-btn tuto-highlight" style="padding:8px 20px; font-size:1rem;">Lancer</button>
+
+        <p style="margin-top:10px;"><b>Résultat :</b></p>
+        <div class="result-box tuto-highlight" style="transform:scale(0.7); opacity:1;">Exemple</div>
+      </div>
+    </div>
+
   </div>
 </div>
-
 <script>
 /* ------------------------------------------------ */
 /* -------------------- STORAGE ------------------- */
@@ -419,7 +591,11 @@ const root = document.body;
 
 function applyTheme(theme) {
   root.classList.remove("theme-light", "theme-dark", "theme-festive", "theme-animated");
-  root.classList.add("theme-" + theme);
+
+  if (theme === "dark") root.classList.add("theme-dark");
+  else if (theme === "festive") root.classList.add("theme-festive");
+  else if (theme === "animated") root.classList.add("theme-animated");
+  else root.classList.add("theme-light");
 }
 
 function loadTheme() {
@@ -447,8 +623,6 @@ const resultEl = document.getElementById("result");
 const spinBtn = document.getElementById("spinBtn");
 const themeSelect = document.getElementById("themeSelect");
 const secretBtn = document.getElementById("secretBtn");
-const canvas = document.getElementById("wheel");
-const ctx = canvas.getContext("2d");
 
 /* ------------------------------------------------ */
 /* ---------------------- LISTE ------------------- */
@@ -487,7 +661,10 @@ function addName() {
 }
 
 addBtn.onclick = addName;
-nameInput.addEventListener("keydown", (e) => { if (e.key === "Enter") addName(); });
+
+nameInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") addName();
+});
 
 shuffleBtn.onclick = () => {
   for (let i = names.length - 1; i > 0; i--) {
@@ -509,7 +686,26 @@ clearBtn.onclick = () => {
 };
 
 /* ------------------------------------------------ */
-/";
+/* ---------------------- WHEEL ------------------- */
+/* ------------------------------------------------ */
+const canvas = document.getElementById("wheel");
+const ctx = canvas.getContext("2d");
+const size = canvas.width;
+const radius = size / 2;
+let currentAngle = 0;
+let spinning = false;
+
+function randomColor(i) {
+  const colors = ["#ff3e7f","#ffb800","#00c6ff","#ff6f00","#00ff9d","#ff00ff"];
+  return colors[i % colors.length];
+}
+
+function drawWheel() {
+  ctx.clearRect(0, 0, size, size);
+
+  if (names.length === 0) {
+    ctx.fillStyle = "#999";
+    ctx.font = "bold 18px Poppins";
     ctx.textAlign = "center";
     ctx.fillText("Ajoute des prénoms", radius, radius);
     return;
@@ -576,7 +772,7 @@ function spawnConfetti() {
 /* ------------------------------------------------ */
 /* ----------------------- SPIN ------------------- */
 /* ------------------------------------------------ */
-function spin() {
+spinBtn.onclick = () => {
   if (spinning || names.length === 0) return;
   spinning = true;
   spinBtn.disabled = true;
@@ -608,25 +804,20 @@ function spin() {
   }
 
   requestAnimationFrame(animate);
-}
-
-// Bouton
-spinBtn.onclick = spin;
-
-// Clic sur la roue
-canvas.addEventListener("click", spin);
-
-// Tactile (mobile)
-canvas.addEventListener("touchstart", (e) => { e.preventDefault(); spin(); }, { passive: false });
+};
 
 /* ------------------------------------------------ */
 /* -------------------- HELP PANEL ---------------- */
 /* ------------------------------------------------ */
+const helpBtn = document.getElementById("helpBtn");
+const helpPanel = document.getElementById("helpPanel");
+const helpClose = document.getElementById("helpClose");
+
 helpBtn.onclick = () => helpPanel.classList.add("open");
 helpClose.onclick = () => helpPanel.classList.remove("open");
 
 /* ------------------------------------------------ */
-/* --------------------- ACCORDION ---------------- */
+/* --------------------- ACCORDÉON ---------------- */
 /* ------------------------------------------------ */
 document.querySelectorAll(".accordion-header").forEach(header => {
   header.addEventListener("click", () => {
@@ -658,6 +849,3 @@ renderList();
 drawWheel();
 loadTheme();
 </script>
-
-</body>
-</html>
