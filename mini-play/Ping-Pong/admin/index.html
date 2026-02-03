@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Ping Pong Neo Arcade</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="adminApp">
+    <header class="top-bar">
+      <h1>Admin · Ping Pong Neo Arcade</h1>
+    </header>
+
+    <main>
+      <section class="panel">
+        <h2>Contrôle parental</h2>
+        <label>
+          <span>Temps max de jeu (minutes)</span>
+          <input type="number" id="maxPlayMinutes" min="1" max="240" />
+        </label>
+        <label>
+          <span>Activer le contrôle parental</span>
+          <input type="checkbox" id="parentalEnabled" />
+        </label>
+      </section>
+
+      <section class="panel">
+        <h2>Cheats</h2>
+        <label>
+          <span>Activer les cheats</span>
+          <input type="checkbox" id="cheatsEnabled" />
+        </label>
+
+        <div id="cheatsListAdmin">
+          <!-- Cheats dynamiques -->
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Maintenance</h2>
+        <label>
+          <span>Mode maintenance (bloquer le jeu)</span>
+          <input type="checkbox" id="maintenanceMode" />
+        </label>
+      </section>
+    </main>
+  </div>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+
+  <!-- Scripts admin -->
+  <script src="firebase.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

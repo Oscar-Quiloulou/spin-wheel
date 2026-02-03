@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Ping Pong Neo Arcade</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="app">
+    <header class="top-bar">
+      <h1>Ping Pong Neo Arcade</h1>
+      <div class="score-panel">
+        <span>Score : <span id="score">0</span></span>
+        <span id="status">Ready</span>
+      </div>
+    </header>
+
+    <main>
+      <div class="game-wrapper">
+        <canvas id="gameCanvas" width="800" height="450"></canvas>
+
+        <div class="controls-panel">
+          <button id="btnUp">▲</button>
+          <button id="btnDown">▼</button>
+        </div>
+      </div>
+
+      <section class="info-panel">
+        <div class="leaderboard">
+          <h2>Leaderboard</h2>
+          <ul id="leaderboardList"></ul>
+        </div>
+
+        <div class="cheats-panel">
+          <h2>Cheats (lecture seule)</h2>
+          <ul id="cheatsList"></ul>
+        </div>
+      </section>
+    </main>
+
+    <div id="parentalOverlay" class="overlay hidden">
+      <div class="overlay-content">
+        <h2>Temps de jeu écoulé</h2>
+        <p>Le temps maximum autorisé est atteint.</p>
+        <p>Demande à ton parent de modifier les paramètres.</p>
+      </div>
+    </div>
+
+    <div id="gameOverOverlay" class="overlay hidden">
+      <div class="overlay-content">
+        <h2>Game Over</h2>
+        <p>Score : <span id="finalScore">0</span></p>
+        <button id="btnRestart">Rejouer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+
+  <!-- Scripts du jeu -->
+  <script src="firebase.js"></script>
+  <script src="controls.js"></script>
+  <script src="cheats.js"></script>
+  <script src="leaderboard.js"></script>
+  <script src="parental.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
