@@ -2,62 +2,96 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <title>Admin Ping Pong Neo Arcade</title>
+  <title>Admin · Ping Pong Neo Arcade</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
   <div id="adminApp">
+
     <header class="top-bar">
       <h1>Admin · Ping Pong Neo Arcade</h1>
+
+      <!-- Bouton vers le jeu -->
       <button onclick="window.open('https://oscar-quiloulou.github.io/spin-wheel/mini-play/Ping-Pong/game/index.html', '_blank')">
-      Aller sur le jeu!!!
+        Aller sur le jeu !!!
       </button>
     </header>
 
     <main>
+
+      <!-- ========================= -->
+      <!-- CONTRÔLE PARENTAL -->
+      <!-- ========================= -->
       <section class="panel">
         <h2>Contrôle parental</h2>
+
         <label>
           <span>Temps max de jeu (minutes)</span>
           <input type="number" id="maxPlayMinutes" min="1" max="240" />
         </label>
+
         <label>
           <span>Activer le contrôle parental</span>
           <input type="checkbox" id="parentalEnabled" />
         </label>
-      
-
       </section>
 
+      <!-- ========================= -->
+      <!-- CHEATS -->
+      <!-- ========================= -->
       <section class="panel">
         <h2>Cheats</h2>
+
         <label>
           <span>Activer les cheats</span>
           <input type="checkbox" id="cheatsEnabled" />
         </label>
 
-        <div id="cheatsListAdmin">
-          <!-- Cheats dynamiques -->
+        <!-- Bouton menu cheats avancé -->
+        <button id="btnCheatMenu">Menu Cheats Avancé</button>
+
+        <!-- Popup -->
+        <div id="cheatDialog" class="dialog hidden">
+          <div class="dialog-content">
+            <h3>Activer quel type de cheats ?</h3>
+
+            <button id="btnCheatsWTF">Cheats WTF</button>
+            <button id="btnCheatsIA">Cheats IA</button>
+            <button id="btnCheatsPhysique">Cheats Physique</button>
+            <button id="btnCheatsChaos">Chaos total (20 aléatoires)</button>
+
+            <button id="btnCheatsClose">Fermer</button>
+          </div>
         </div>
+
+        <!-- Liste dynamique -->
+        <div id="cheatsListAdmin"></div>
       </section>
 
+      <!-- ========================= -->
+      <!-- MAINTENANCE -->
+      <!-- ========================= -->
       <section class="panel">
         <h2>Maintenance</h2>
+
         <label>
           <span>Mode maintenance (bloquer le jeu)</span>
           <input type="checkbox" id="maintenanceMode" />
         </label>
       </section>
+
     </main>
   </div>
 
-  <!-- Firebase SDKs -->
+  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 
-  <!-- Scripts admin -->
+  <!-- Scripts -->
   <script src="firebase.js"></script>
   <script src="admin.js"></script>
+
 </body>
 </html>
