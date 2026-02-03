@@ -1,0 +1,652 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>JEU 4 - Ping Pong</title>
+  <link rel="stylesheet" href="assets/style.css">
+  <style>
+    canvas {
+      background: rgba(30,41,59,0.8);
+      border: 1px solid rgba(148,163,184,0.4);
+      border-radius: 12px;
+      display: block;
+      margin: 0 auto;
+      box-shadow: 0 0 20px rgba(15,23,42,0.9);
+      touch-action: none;
+    }
+
+    /* Menu cheat */
+    #cheat-menu {
+      position: absolute;
+      top: 20px;
+      right: -260px;
+      width: 240px;
+      max-height: 80vh;
+      padding: 10px;
+      background: rgba(15,23,42,0.97);
+      border: 1px solid rgba(129,140,248,0.5);
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(129,140,248,0.4);
+      transition: right 0.4s ease;
+      z-index: 100;
+      overflow-y: auto;
+      font-size: 13px;
+    }
+    #cheat-menu.show {
+      right: 20px;
+    }
+    #cheat-menu h3 {
+      margin: 6px 0 4px;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #a5b4fc;
+    }
+    #cheat-menu button {
+      width: 100%;
+      margin: 2px 0;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: none;
+      background: rgba(30,64,175,0.9);
+      color: #e5e7eb;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    /* Bouton secret (remplace secret-zone) */
+    #secret-btn {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      width: 40px;
+      height: 40px;
+      opacity: 0; /* mettre 1 pour debug */
+      border: none;
+      background: transparent;
+      z-index: 200;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+
+    <div class="side-leaderboard">
+      <div id="leaderboard">
+      <div id="lb-loading" style="display:none; text-align:center; padding:10px;">
+  <div class="spinner" style="
+    width: 24px;
+    height: 24px;
+    border: 3px solid rgba(255,255,255,0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    margin: 10px auto;
+  "></div>
+  <span style="opacity:0.7;">Chargement...</span>
+</div>
+
+<style>
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+</style> 
+
+      </div>
+    </div>
+
+    <!-- Bouton secret -->
+    <button id="secret-btn"></button>
+
+    <!-- Bouton contrôle parental -->
+    <button id="parental-btn" style="position:absolute; top:10px; left:10px;">Contrôle parental</button>
+
+    <!-- Menu cheat (caché tant que pas toggle) -->
+    <div id="cheat-menu">
+      <h3>Balle</h3>
+      <button onclick="cheatCenter()">Recentrer</button>
+      <button onclick="cheatInstantGameOver()">Game Over instantané</button>
+      <button onclick="cheatBallSlow()">Balle lente</button>
+      <button onclick="cheatBallFast()">Balle rapide</button>
+      <button onclick="cheatBallBig()">Balle géante</button>
+      <button onclick="cheatBallSmall()">Balle minuscule</button>
+      <!--<button onclick="cheatMultiball()">Multiball</button>-->
+      <button onclick="cheatBallZigzag()">Balle zigzag</button>
+      <button onclick="cheatBallInvincible()">Balle invincible</button>
+
+      <h3>Raquette</h3>
+      <button onclick="cheatTurbo()">Turbo</button>
+      <button onclick="cheatPaddleBig()">Raquette géante</button>
+      <button onclick="cheatPaddleSmall()">Raquette minuscule</button>
+      <button onclick="cheatAutoPaddle()">Auto‑paddle</button>
+      <button onclick="cheatPaddleMagnet()">Raquette aimantée</button>
+      <button onclick="cheatPaddleTeleport()">Téléportation</button>
+
+      <h3>Terrain</h3>
+      <button onclick="cheatWallLeft()">Mur gauche</button>
+      <button onclick="cheatWallRight()">Mur droit</button>
+      <button onclick="cheatFieldSmall()">Terrain réduit</button>
+      <button onclick="cheatFieldBig()">Terrain géant</button>
+      <button onclick="cheatGravityInvert()">Gravité inversée</button>
+      <button onclick="cheatChaos()">Mode chaos</button>
+
+      <h3>Score</h3>
+      <!--<button onclick="cheatPlus10()">+10 points</button>-->
+      <!--<button onclick="cheatPlus100()">+100 points</button>-->
+      <!--<button onclick="cheatScoreX2()">Score x2</button>-->
+      <button onclick="cheatScoreLock()">Score bloqué</button>
+      <button onclick="cheatScoreInfinite()">Score infini</button>
+
+      <h3>Spéciaux</h3>
+      <button onclick="cheatSlowMotionGlobal()">Ralenti global</button>
+      <button onclick="cheatFastMotionGlobal()">Accéléré global</button>
+      <button onclick="cheatMatrix()">Mode Matrix</button>
+      <button onclick="cheatBoss()">Mode Boss</button>
+      <button onclick="cheatZen()">Mode Zen</button>
+    </div>
+
+    <h1>Ping Pong</h1>
+    <h2>Utilise ↑ ↓ ou glisse ton doigt</h2>
+
+    <canvas id="gameCanvas" width="480" height="300"></canvas>
+
+    <div id="scoreBox" style="margin-top:10px;font-size:18px;font-weight:600;">
+      Score : <span id="score">0</span>
+    </div>
+
+    <button id="restart" class="btn">Rejouer</button>
+    <a href="index.html">⬅ Retour au menu</a>
+
+  </div>
+
+ <!-- Panneau contrôle parental -->
+<div id="parental-panel" style="
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%, -50%);
+    width:300px;
+    padding:20px;
+    background:#0f172a;
+    border:1px solid #64748b;
+    border-radius:12px;
+    color:white;
+    display:none;
+    z-index:5000;
+">
+  <h3>Contrôle parental</h3>
+
+  <label>Mot de passe :</label>
+  <input id="parental-pass" type="password" style="width:100%; margin-bottom:10px;">
+
+  <button id="parental-login" style="width:100%; margin-bottom:10px;">Valider</button>
+
+  <!-- BOUTON FERMER -->
+  <button id="parental-close" style="width:100%; margin-bottom:10px; background:#334155;">
+    Fermer
+  </button>
+
+  <div id="parental-settings" style="display:none;">
+    <hr>
+
+    <label>Temps limite (minutes) :</label>
+    <input id="limit-time" type="number" value="60" style="width:100%; margin-bottom:10px;">
+
+    <label>Désactiver les cheats :</label>
+    <input id="disable-cheats" type="checkbox">
+
+    <h4>Logs :</h4>
+    <pre id="cheat-logs" style="background:#1e293b; padding:10px; height:100px; overflow:auto;"></pre>
+
+    <button id="parental-save" style="width:100%; margin-top:10px;">Enregistrer</button>
+  </div>
+</div>
+
+
+<script>
+  // ====== LOGIQUE CONTROLE PARENTAL ======
+
+  const parentalBtn = document.getElementById("parental-btn");
+  const parentalPanel = document.getElementById("parental-panel");
+  const parentalLogin = document.getElementById("parental-login");
+  const parentalSettings = document.getElementById("parental-settings");
+  const parentalPass = document.getElementById("parental-pass");
+  const parentalClose = document.getElementById("parental-close");
+
+  const PARENTAL_PASSWORD = "1234"; // volontairement visible (normal pour ton projet)
+
+  // Ouvrir le panel
+  parentalBtn.addEventListener("click", () => {
+    parentalPanel.style.display = "block";
+  });
+
+  // Fermer via bouton “Fermer”
+  parentalClose.addEventListener("click", () => {
+    parentalPanel.style.display = "none";
+    parentalSettings.style.display = "none";
+    parentalPass.value = "";
+  });
+
+  // Validation du mot de passe
+  parentalLogin.addEventListener("click", () => {
+    if (parentalPass.value === PARENTAL_PASSWORD) {
+      parentalSettings.style.display = "block";
+    } else {
+      alert("Mot de passe incorrect");
+    }
+  });
+
+  // Sauvegarde des paramètres
+  document.getElementById("parental-save").addEventListener("click", () => {
+    window.parentalTimeLimit = parseInt(document.getElementById("limit-time").value) || 60;
+    window.parentalDisableCheats = document.getElementById("disable-cheats").checked;
+    window.parentalStartTime = Date.now();
+
+    document.getElementById("cheat-logs").textContent =
+      window.cheatLogs.join("\n");
+
+    alert("Paramètres enregistrés");
+  });
+
+  // Fermer quand on clique hors du panel
+  window.addEventListener("click", (e) => {
+    // ferme uniquement si on clique à l’extérieur du panneau
+    if (e.target === parentalPanel) {
+      parentalPanel.style.display = "none";
+      parentalSettings.style.display = "none";
+      parentalPass.value = "";
+    }
+  });
+
+  // Fermer avec Échap
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && parentalPanel.style.display === "block") {
+      parentalPanel.style.display = "none";
+      parentalSettings.style.display = "none";
+      parentalPass.value = "";
+    }
+  });
+</script>
+  <!-- Firebase + Realtime Database -->
+  <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
+  import {
+    getDatabase,
+    ref,
+    push,
+    query,
+    orderByChild,
+    get,
+    remove
+  } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAdZva6_Enq9bcWcLIqZbH4kuzCybDoOP4",
+    authDomain: "leaderboard-mini-play.firebaseapp.com",
+    databaseURL: "https://leaderboard-mini-play-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "leaderboard-mini-play",
+    storageBucket: "leaderboard-mini-play.firebasestorage.app",
+    messagingSenderId: "601804859698",
+    appId: "1:601804859698:web:88869d17691f8778150f2b",
+    measurementId: "G-7BTGGBWD08"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  window._db = db;
+  window._rtdb = { ref, push, query, orderByChild, get, remove };
+</script>
+
+
+  <!-- Leaderboard en ligne (version Realtime DB - ton fichier doit être mis à jour) -->
+  <script src="assets/leaderboard.js"></script>
+  <script src="assets/cheats-pingpong.js"></script>
+
+  <script>
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+
+    const scoreSpan = document.getElementById("score");
+    const restartBtn = document.getElementById("restart");
+
+    // contrôle parental
+    window.parentalTimeLimit = 60; // minutes
+    window.parentalDisableCheats = false;
+    window.parentalStartTime = Date.now();
+
+    // logs cheats
+    window.cheatLogs = [];
+    function logCheat(name) {
+      window.cheatLogs.push(name + " - " + new Date().toLocaleTimeString());
+    }
+    function cheatsAllowed() {
+      return !window.parentalDisableCheats;
+    }
+
+    // objets globaux pour les cheats
+    window.paddle = {
+      x: 10,
+      y: canvas.height / 2 - 40,
+      width: 10,
+      height: 80,
+      baseHeight: 80,
+      speed: 6,
+      baseSpeed: 6
+    };
+
+    window.ball = {
+      x: canvas.width / 2,
+      y: canvas.height / 2,
+      radius: 8,
+      baseRadius: 8,
+      speedX: 4,
+      speedY: 3
+    };
+
+    window.extraBalls = []; // pour multiball
+
+    window.score = 0;
+    let gameOver = false;
+    let gameOverHandled = false;
+
+    let upPressed = false;
+    let downPressed = false;
+
+    // flags cheats
+    window.cheatWallLeftEnabled = false;
+    window.cheatWallRightEnabled = false;
+    window.cheatMagnetEnabled = false;
+    window.cheatAutoPaddleEnabled = false;
+    window.cheatInvincibleBallEnabled = false;
+    window.cheatScoreLocked = false;
+    window.cheatScoreInfiniteEnabled = false;
+    window.cheatGravityInverted = false;
+    window.cheatChaosEnabled = false;
+    window.cheatSlowGlobal = false;
+    window.cheatFastGlobal = false;
+    window.cheatMatrixEnabled = false;
+    window.cheatZenEnabled = false;
+    window.cheatBossEnabled = false;
+    window.cheatZigzagEnabled = false;
+
+    /* --- CONTROLES CLAVIER --- */
+    document.addEventListener("keydown", e => {
+      if (e.key === "ArrowUp") upPressed = true;
+      if (e.key === "ArrowDown") downPressed = true;
+    });
+
+    document.addEventListener("keyup", e => {
+      if (e.key === "ArrowUp") upPressed = false;
+      if (e.key === "ArrowDown") downPressed = false;
+    });
+
+    /* --- CONTROLES TACTILES --- */
+    let lastY = null;
+
+    canvas.addEventListener("touchstart", e => {
+      lastY = e.touches[0].clientY;
+    });
+
+    canvas.addEventListener("touchmove", e => {
+      const y = e.touches[0].clientY;
+      if (y < lastY) paddle.y -= paddle.speed;
+      else paddle.y += paddle.speed;
+      lastY = y;
+    });
+
+    function resetBall() {
+      ball.x = canvas.width / 2;
+      ball.y = canvas.height / 2;
+      ball.speedX = 4;
+      ball.speedY = 3;
+      extraBalls = [];
+    }
+
+    function applyGlobalSpeedFactor(v) {
+      if (cheatSlowGlobal) return v * 0.4;
+      if (cheatFastGlobal) return v * 1.8;
+      return v;
+    }
+
+    function updateBall(b) {
+      b.x += applyGlobalSpeedFactor(b.speedX);
+      b.y += applyGlobalSpeedFactor(b.speedY);
+
+      // gravité inversée
+      if (cheatGravityInverted) {
+        b.speedY -= 0.05;
+      }
+
+      // rebonds haut/bas
+      if (b.y - b.radius < 0 || b.y + b.radius > canvas.height) {
+        b.speedY *= -1;
+      }
+
+      // collision raquette
+      if (
+        !cheatInvincibleBallEnabled &&
+        b.x - b.radius < paddle.x + paddle.width &&
+        b.y > paddle.y &&
+        b.y < paddle.y + paddle.height
+      ) {
+        // rebond de base
+        b.speedX *= -1;
+
+        // gestion de la vitesse : + à chaque point jusqu'à 10, puis tous les 20
+        if (score < 10) {
+          b.speedX *= 1.10;
+          b.speedY *= 1.05;
+        } else if (score % 20 === 0) {
+          b.speedX *= 1.10;
+          b.speedY *= 1.05;
+        }
+
+        if (!cheatScoreLocked) {
+          score++;
+          scoreSpan.textContent = score;
+        }
+      }
+
+      // mur gauche
+      if (b.x - b.radius < 0) {
+        if (cheatWallLeftEnabled || cheatZenEnabled) {
+          b.speedX *= -1;
+        } else if (!cheatScoreInfinite && !cheatZenEnabled) {
+          gameOver = true;
+        }
+      }
+
+      // mur droit
+      if (b.x + b.radius > canvas.width) {
+        if (cheatWallRightEnabled || cheatZenEnabled) {
+          b.speedX *= -1;
+        } else {
+          b.speedX *= -1;
+        }
+      }
+
+      // mode chaos
+      if (cheatChaosEnabled) {
+        b.speedX += (Math.random() - 0.5) * 0.2;
+        b.speedY += (Math.random() - 0.5) * 0.2;
+      }
+
+      // zigzag
+      if (window.cheatZigzagEnabled) {
+        b.speedY += (Math.random() - 0.5) * 0.4;
+      }
+    }
+
+    function update() {
+      // limite de temps contrôle parental
+      if ((Date.now() - window.parentalStartTime) > window.parentalTimeLimit * 60000) {
+        gameOver = true;
+      }
+
+      if (gameOver) {
+        if (!gameOverHandled) {
+          gameOverHandled = true;
+
+          // On enregistre le score puis on recharge le leaderboard
+          saveScore("JEU4_scores", score, { duration: score })
+            .then(() => {
+              displayScores("JEU4_scores", "leaderboard");
+            })
+            .catch(err => console.error(err));
+        }
+        return;
+      }
+
+      if (cheatAutoPaddleEnabled) {
+        paddle.y = ball.y - paddle.height / 2;
+      } else {
+        if (upPressed && paddle.y > 0) paddle.y -= paddle.speed;
+        if (downPressed && paddle.y + paddle.height < canvas.height) paddle.y += paddle.speed;
+      }
+
+      if (cheatMagnetEnabled) {
+        ball.y = paddle.y + paddle.height / 2;
+      }
+
+      updateBall(ball);
+      extraBalls.forEach(updateBall);
+    }
+
+    function drawBall(b) {
+      ctx.beginPath();
+      ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
+      ctx.fillStyle = "#f97316";
+      ctx.shadowColor = "rgba(249,115,22,0.9)";
+      ctx.shadowBlur = 12;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+
+      if (cheatMatrixEnabled) {
+        ctx.strokeStyle = "rgba(94,234,212,0.7)";
+        ctx.beginPath();
+        ctx.moveTo(b.x, b.y);
+        ctx.lineTo(b.x + b.speedX * 15, b.y + b.speedY * 15);
+        ctx.stroke();
+      }
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = "#38bdf8";
+      ctx.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
+
+      drawBall(ball);
+      extraBalls.forEach(drawBall);
+
+      if (gameOver) {
+        ctx.fillStyle = "#e5e7eb";
+        ctx.font = "28px system-ui";
+        ctx.fillText("Game Over", canvas.width / 2 - 80, canvas.height / 2);
+      }
+    }
+
+    function loop() {
+      update();
+      draw();
+      requestAnimationFrame(loop);
+    }
+
+    restartBtn.addEventListener("click", () => {
+      score = 0;
+      scoreSpan.textContent = score;
+
+      gameOver = false;
+      gameOverHandled = false;
+
+      paddle.y = canvas.height / 2 - paddle.height / 2;
+      paddle.height = paddle.baseHeight;
+      paddle.speed = paddle.baseSpeed;
+
+      ball.radius = ball.baseRadius;
+      resetBall();
+      hideScores("leaderboard");
+
+      // reset cheats
+      cheatWallLeftEnabled = false;
+      cheatWallRightEnabled = false;
+      cheatMagnetEnabled = false;
+      cheatAutoPaddleEnabled = false;
+      cheatInvincibleBallEnabled = false;
+      cheatScoreLocked = false;
+      cheatScoreInfinite = false;
+      cheatGravityInverted = false;
+      cheatChaosEnabled = false;
+      cheatSlowGlobal = false;
+      cheatFastGlobal = false;
+      cheatMatrixEnabled = false;
+      cheatZenEnabled = false;
+      cheatBossEnabled = false;
+      window.cheatZigzagEnabled = false;
+
+      // reset contrôle parental timer
+      window.parentalStartTime = Date.now();
+    });
+
+    loop();
+  </script>
+
+  <script>
+    // toggle menu cheat via bouton secret
+    const cheatMenu = document.getElementById("cheat-menu");
+    const secretBtn = document.getElementById("secret-btn");
+
+    function toggleCheatMenu() {
+      cheatMenu.classList.toggle("show");
+    }
+
+    secretBtn.addEventListener("click", toggleCheatMenu);
+    secretBtn.addEventListener("touchstart", (e) => {
+      e.preventDefault();
+      toggleCheatMenu();
+    });
+  </script>
+
+  <script>
+    // contrôle parental
+    const parentalBtn = document.getElementById("parental-btn");
+    const parentalPanel = document.getElementById("parental-panel");
+    const parentalLogin = document.getElementById("parental-login");
+    const parentalSettings = document.getElementById("parental-settings");
+    const parentalPass = document.getElementById("parental-pass");
+    const PARENTAL_PASSWORD = "1234"; // volontairement visible dans le code
+
+    parentalBtn.addEventListener("click", () => {
+      parentalPanel.style.display = "block";
+    });
+
+    parentalLogin.addEventListener("click", () => {
+      if (parentalPass.value === PARENTAL_PASSWORD) {
+        parentalSettings.style.display = "block";
+      } else {
+        alert("Mot de passe incorrect");
+      }
+    });
+
+    document.getElementById("parental-save").addEventListener("click", () => {
+      window.parentalTimeLimit = parseInt(document.getElementById("limit-time").value) || 60;
+      window.parentalDisableCheats = document.getElementById("disable-cheats").checked;
+      window.parentalStartTime = Date.now();
+
+      document.getElementById("cheat-logs").textContent =
+        window.cheatLogs.join("\n");
+
+      alert("Paramètres enregistrés");
+    });
+  </script>
+</body>
+</html>
+
+
+
+
+
+
