@@ -4,13 +4,14 @@
 
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background: #111;
-  color: #eee;
+  font-family: 'Segoe UI', sans-serif;
+  background: #0a0a0a;
+  color: #f0f0f0;
 }
 
 h1, h2, h3 {
   margin: 0 0 10px;
+  font-weight: 600;
 }
 
 button {
@@ -21,6 +22,7 @@ button {
   border-radius: 6px;
   cursor: pointer;
   margin-top: 10px;
+  transition: background 0.2s;
 }
 
 button:hover {
@@ -33,10 +35,16 @@ button:hover {
 
 .top-bar {
   background: #222;
-  padding: 15px;
+  padding: 15px 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  border-bottom: 2px solid #333;
+}
+
+.top-bar h1 {
+  font-size: 22px;
+  color: #4af;
 }
 
 /* ========================= */
@@ -48,11 +56,19 @@ button:hover {
   padding: 20px;
   margin: 20px;
   border-radius: 10px;
+  box-shadow: 0 0 10px #000;
+}
+
+.panel h2 {
+  font-size: 18px;
+  color: #4af;
+  margin-bottom: 15px;
 }
 
 .panel label {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   margin: 10px 0;
 }
 
@@ -70,10 +86,10 @@ button:hover {
 }
 
 .cheat-category-title {
-  margin-top: 20px;
-  font-size: 18px;
-  color: #4af;
-  border-bottom: 1px solid #444;
+  margin-top: 30px;
+  font-size: 17px;
+  color: #ffcc00;
+  border-bottom: 1px solid #555;
   padding-bottom: 5px;
 }
 
@@ -81,6 +97,16 @@ button:hover {
   display: flex;
   justify-content: space-between;
   padding: 6px 0;
+  border-bottom: 1px dashed #333;
+}
+
+.cheat-item label {
+  flex: 1;
+}
+
+.cheat-item input {
+  width: 80px;
+  text-align: center;
 }
 
 /* ========================= */
@@ -91,7 +117,7 @@ button:hover {
   position: fixed;
   top: 0; left: 0;
   width: 100%; height: 100%;
-  background: rgba(0,0,0,0.6);
+  background: rgba(0,0,0,0.7);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -104,10 +130,17 @@ button:hover {
 
 .dialog-content {
   background: #222;
-  padding: 20px;
-  border-radius: 10px;
+  padding: 25px;
+  border-radius: 12px;
   text-align: center;
-  width: 300px;
+  width: 320px;
+  box-shadow: 0 0 20px #000;
+}
+
+.dialog-content h3 {
+  margin-bottom: 15px;
+  font-size: 18px;
+  color: #4af;
 }
 
 .dialog-content button {
@@ -115,13 +148,14 @@ button:hover {
   width: 100%;
   margin: 8px 0;
   padding: 10px;
-  background: #444;
+  background: #333;
   color: white;
   border: none;
   border-radius: 6px;
   cursor: pointer;
+  font-weight: bold;
 }
 
 .dialog-content button:hover {
-  background: #666;
+  background: #555;
 }
