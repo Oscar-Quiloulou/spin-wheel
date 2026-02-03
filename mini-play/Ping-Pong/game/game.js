@@ -99,12 +99,16 @@ function update() {
   // Collision raquette joueur
   if (checkCollisionWithPaddle(state.ball, state.paddle)) {
     state.ball.vx = Math.abs(state.ball.vx); // repart vers la droite
-    state.score += 1;
+
+    // 🔥 Correction : scorePerHitMultiplier appliqué + arrondi entier
+    const mult = currentCheats.scorePerHitMultiplier || 1;
+    state.score += Math.floor(mult);
+
     updateScoreUI();
     onBallHitPaddleCheats(state);
   }
 
-  // Collision raquette IA (optionnel, on peut la laisser juste décorative)
+  // Collision raquette IA
   if (checkCollisionWithPaddle(state.ball, state.ai)) {
     state.ball.vx = -Math.abs(state.ball.vx);
   }
@@ -114,11 +118,16 @@ function update() {
     if (!isNoGameOverCheatActive()) {
       onGameOver();
     } else {
-      // Exemple : replacer la balle au centre si cheat actif
       state.ball.x = canvas.width / 2;
       state.ball.y = canvas.height / 2;
       state.ball.vx = Math.abs(state.ball.vx);
     }
+  }
+
+  // 🔥 Correction : arrondi du scorePerSecond pour éviter les virgules
+  if (currentCheats.cheatsEnabled && currentCheats.scorePerSecond > 0) {
+    state.score += Math.floor(currentCheats.scorePerSecond / 60);
+    updateScoreUI();
   }
 }
 
