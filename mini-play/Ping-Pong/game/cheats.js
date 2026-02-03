@@ -252,3 +252,22 @@ function updateCheatsUI() {
     cheatsListUI.appendChild(li);
   });
 }
+function onBallHitPaddleCheats(state) {
+  if (!currentCheats.cheatsEnabled) return;
+
+  // Exemple : accélération progressive
+  if (currentCheats.ballSpeedMultiplier > 1) {
+    state.ball.vx *= currentCheats.ballSpeedMultiplier;
+    state.ball.vy *= currentCheats.ballSpeedMultiplier;
+  }
+
+  // Exemple : sticky paddle
+  if (currentCheats.paddleSticky) {
+    state.ball.vx = 0;
+    state.ball.vy = 0;
+    setTimeout(() => {
+      state.ball.vx = 4;
+      state.ball.vy = 2;
+    }, 500);
+  }
+}
