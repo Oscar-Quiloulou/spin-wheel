@@ -157,7 +157,7 @@ function attachAdminListeners() {
 // ------------------------------------------------------------
 function saveSettingsToFirebase() {
   const settings = {
-    maxPlayMinutes: parseInt(maxPlayMinutesInput.value),
+    maxPlayMinutes: parseInt(maxPlayMinutesInput.value) || 20,
     parentalEnabled: parentalEnabledInput.checked,
     cheatsEnabled: cheatsEnabledInput.checked,
     maintenanceMode: maintenanceModeInput.checked
