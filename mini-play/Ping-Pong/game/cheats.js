@@ -81,6 +81,34 @@ function initCheatsListener() {
 }
 
 // ------------------------------------------------------------
+// 🔹 Boutons locaux ON/OFF (uniquement si admin a activé le cheat)
+// ------------------------------------------------------------
+function generateLocalCheatButtons() {
+  const container = document.getElementById("localCheatsButtons");
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  Object.entries(currentCheats).forEach(([key, value]) => {
+    if (value === true || (typeof value === "number" && value !== 1)) {
+
+      localCheats[key] = false;
+
+      const btn = document.createElement("button");
+      btn.textContent = `${key} : OFF`;
+
+      btn.addEventListener("click", () => {
+        localCheats[key] = !localCheats[key];
+        btn.textContent = `${key} : ${localCheats[key] ? "ON" : "OFF"}`;
+      });
+
+      container.appendChild(btn);
+    }
+  });
+}
+
+
+// ------------------------------------------------------------
 // 🔹 Firebase (lecture unique)
 // ------------------------------------------------------------
 function fetchCheatsFromFirebase() {
