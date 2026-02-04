@@ -270,7 +270,7 @@ Object.entries(localCheats).forEach(([key, isOn]) => {
     state.ball.vx += (Math.random() - 0.5) * 2;
     state.ball.vy += (Math.random() - 0.5) * 2;
   }
-}
+
 
 // ------------------------------------------------------------
 // 🔹 Game Over override
