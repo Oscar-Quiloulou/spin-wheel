@@ -147,17 +147,17 @@ function saveCheatsToLocalStorage() {
 // ------------------------------------------------------------
 // 🔹 Application des cheats
 // ------------------------------------------------------------
-function applyCheatsBeforeUpdate(state) {
-  if (!currentCheats.cheatsEnabled) return;
 // Appliquer uniquement les cheats activés localement
 Object.entries(localCheats).forEach(([key, isOn]) => {
-  if (!isOn) {
-    // Si OFF → on désactive localement
+  if (isOn) {
+    // ON → on garde la valeur envoyée par l’admin
+    // (donc on ne change rien)
+  } else {
+    // OFF → on désactive localement
     if (typeof currentCheats[key] === "boolean") currentCheats[key] = false;
     if (typeof currentCheats[key] === "number") currentCheats[key] = 1;
   }
 });
-
 
   // ---------------- BALL ----------------
   if (currentCheats.ballSpeedMultiplier !== 1) {
