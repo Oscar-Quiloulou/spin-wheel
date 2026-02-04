@@ -188,3 +188,24 @@ main {
     flex-direction: column;
   }
 }
+.local-cheats-panel {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.local-cheats-panel button {
+  background: #333;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.local-cheats-panel button:hover {
+  background: #555;
+}
+

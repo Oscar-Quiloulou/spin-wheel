@@ -1,6 +1,9 @@
 // /game/cheats.js
 // Version optimisée : Firebase au chargement + refresh périodique + effets cheat complets.
 
+// Cheats locaux activés par le joueur (non sauvegardés)
+let localCheats = {};
+
 // Cheats par défaut
 let currentCheats = {
   cheatsEnabled: false,
@@ -90,6 +93,7 @@ function fetchCheatsFromFirebase() {
     }
     saveCheatsToLocalStorage();
     updateCheatsUI();
+    generateLocalCheatButtons(); // AJOUT
   });
 
   db.ref("cheats").once("value").then((snap) => {
@@ -117,6 +121,15 @@ function saveCheatsToLocalStorage() {
 // ------------------------------------------------------------
 function applyCheatsBeforeUpdate(state) {
   if (!currentCheats.cheatsEnabled) return;
+// Appliquer uniquement les cheats activés localement
+Object.entries(localCheats).forEach(([key, isOn]) => {
+  if (!isOn) {
+    // Si OFF → on désactive localement
+    if (typeof currentCheats[key] === "boolean") currentCheats[key] = false;
+    if (typeof currentCheats[key] === "number") currentCheats[key] = 1;
+  }
+});
+
 
   // ---------------- BALL ----------------
   if (currentCheats.ballSpeedMultiplier !== 1) {
@@ -270,4 +283,33 @@ function onBallHitPaddleCheats(state) {
       state.ball.vy = 2;
     }, 500);
   }
+  // ------------------------------------------------------------
+// 🔹 Boutons locaux ON/OFF (uniquement si admin a activé le cheat)
+// ------------------------------------------------------------
+function generateLocalCheatButtons() {
+  const container = document.getElementById("localCheatsButtons");
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  Object.entries(currentCheats).forEach(([key, value]) => {
+    // On crée un bouton uniquement si l’admin a activé ce cheat
+    if (value === true || (typeof value === "number" && value !== 1)) {
+
+      // Valeur locale par défaut
+      localCheats[key] = false;
+
+      const btn = document.createElement("button");
+      btn.textContent = `${key} : OFF`;
+
+      btn.addEventListener("click", () => {
+        localCheats[key] = !localCheats[key];
+        btn.textContent = `${key} : ${localCheats[key] ? "ON" : "OFF"}`;
+      });
+
+      container.appendChild(btn);
+    }
+  });
+}
+
 }
