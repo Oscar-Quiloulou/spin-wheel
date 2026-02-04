@@ -1,77 +1,132 @@
-// game.js
-// Gestion du canvas, de la balle, de la raquette, du score, du game over.
+// /game/game.js
+// Version propre et compatible avec cheats.js reconstruit
 
-let canvas, ctx;
-let gameRunning = false;
+// ------------------------------------------------------------
+// 🔹 Canvas & contexte
+// ------------------------------------------------------------
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
 
-const state = {
-  score: 0,
+// ------------------------------------------------------------
+// 🔹 État du jeu
+// ------------------------------------------------------------
+let state = {
   ball: {
-    x: 400,
-    y: 225,
+    x: canvas.width / 2,
+    y: canvas.height / 2,
     vx: 4,
-    vy: 3,
-    radius: 8
+    vy: 2,
+    radius: 10
   },
+
   paddle: {
-    x: 40,
-    y: 225 - 40,
-    width: 12,
+    x: 20,
+    y: canvas.height / 2 - 40,
+    width: 10,
     height: 80,
     speed: 6,
     moveUp: false,
     moveDown: false
   },
+
   ai: {
-    x: 800 - 40 - 12,
-    y: 225 - 40,
-    width: 12,
+    x: canvas.width - 30,
+    y: canvas.height / 2 - 40,
+    width: 10,
     height: 80,
     speed: 4
-  }
+  },
+
+  score: 0
 };
 
-window.addEventListener("load", () => {
-  canvas = document.getElementById("gameCanvas");
-  ctx = canvas.getContext("2d");
-
-  initControls(state);
-  initParentalControl();
-  initCheatsListener();
-  initLeaderboardListener();
-
-  resetGame();
-  startGameLoop();
-
-  document.getElementById("btnRestart").addEventListener("click", () => {
-    hideGameOver();
-    resetGame();
-  });
+// ------------------------------------------------------------
+// 🔹 Input joueur
+// ------------------------------------------------------------
+document.addEventListener("keydown", (e) => {
+  if (e.key === "ArrowUp") state.paddle.moveUp = true;
+  if (e.key === "ArrowDown") state.paddle.moveDown = true;
 });
 
-function resetGame() {
-  state.score = 0;
-  updateScoreUI();
+document.addEventListener("keyup", (e) => {
+  if (e.key === "ArrowUp") state.paddle.moveUp = false;
+  if (e.key === "ArrowDown") state.paddle.moveDown = false;
+});
+
+// ------------------------------------------------------------
+// 🔹 Clamp paddle
+// ------------------------------------------------------------
+function clampPaddle(p) {
+  if (p.y < 0) p.y = 0;
+  if (p.y + p.height > canvas.height) p.y = canvas.height - p.height;
+}
+
+// ------------------------------------------------------------
+// 🔹 IA simple
+// ------------------------------------------------------------
+function updateAI(state) {
+  if (state.ai.y + state.ai.height / 2 < state.ball.y) {
+    state.ai.y += state.ai.speed;
+  } else {
+    state.ai.y -= state.ai.speed;
+  }
+  clampPaddle(state.ai);
+}
+
+// ------------------------------------------------------------
+// 🔹 Collisions balle / murs / raquettes
+// ------------------------------------------------------------
+function handleCollisions(state) {
+  const ball = state.ball;
+
+  // Mur haut/bas
+  if (ball.y - ball.radius < 0 || ball.y + ball.radius > canvas.height) {
+    ball.vy *= -1;
+  }
+
+  // Raquette joueur
+  if (
+    ball.x - ball.radius < state.paddle.x + state.paddle.width &&
+    ball.y > state.paddle.y &&
+    ball.y < state.paddle.y + state.paddle.height
+  ) {
+    ball.vx *= -1;
+    state.score += currentCheats.scorePerHitMultiplier || 1;
+
+    onBallHitPaddleCheats(state);
+  }
+
+  // Raquette IA
+  if (
+    ball.x + ball.radius > state.ai.x &&
+    ball.y > state.ai.y &&
+    ball.y < state.ai.y + state.ai.height
+  ) {
+    ball.vx *= -1;
+  }
+
+  // Game over (si pas de cheat)
+  if (ball.x < 0 && !isNoGameOverCheatActive()) {
+    resetBall();
+  }
+}
+
+// ------------------------------------------------------------
+// 🔹 Reset balle
+// ------------------------------------------------------------
+function resetBall() {
   state.ball.x = canvas.width / 2;
   state.ball.y = canvas.height / 2;
   state.ball.vx = 4;
-  state.ball.vy = 3;
-  gameRunning = true;
-  setStatus("Playing");
+  state.ball.vy = 2;
 }
 
-function startGameLoop() {
-  function loop() {
-    if (gameRunning && !isParentalBlocked()) {
-      update();
-      draw();
-    }
-    requestAnimationFrame(loop);
-  }
-  loop();
-}
-
+// ------------------------------------------------------------
+// 🔹 Update (boucle logique)
+// ------------------------------------------------------------
 function update() {
+
+  // 🔥 Application des cheats AVANT la physique
   applyCheatsBeforeUpdate(state);
 
   // Déplacement raquette joueur
@@ -79,132 +134,53 @@ function update() {
   if (state.paddle.moveDown) state.paddle.y += state.paddle.speed;
   clampPaddle(state.paddle);
 
-  // Déplacement IA simple
+  // Déplacement IA
   updateAI(state);
 
   // Déplacement balle
   state.ball.x += state.ball.vx;
   state.ball.y += state.ball.vy;
 
-  // Rebond haut/bas
-  if (state.ball.y - state.ball.radius < 0 || state.ball.y + state.ball.radius > canvas.height) {
-    state.ball.vy *= -1;
-  }
+  // Collisions
+  handleCollisions(state);
 
-  // Rebond mur droit (toujours rebond)
-  if (state.ball.x + state.ball.radius > canvas.width) {
-    state.ball.vx *= -1;
-  }
-
-  // Collision raquette joueur
-  if (checkCollisionWithPaddle(state.ball, state.paddle)) {
-    state.ball.vx = Math.abs(state.ball.vx); // repart vers la droite
-
-    // 🔥 Correction : scorePerHitMultiplier appliqué + arrondi entier
-    const mult = currentCheats.scorePerHitMultiplier || 1;
-    state.score += Math.floor(mult);
-
-    updateScoreUI();
-    onBallHitPaddleCheats(state);
-  }
-
-  // Collision raquette IA
-  if (checkCollisionWithPaddle(state.ball, state.ai)) {
-    state.ball.vx = -Math.abs(state.ball.vx);
-  }
-
-  // Sortie à gauche = game over (sauf cheat)
-  if (state.ball.x + state.ball.radius < 0) {
-    if (!isNoGameOverCheatActive()) {
-      onGameOver();
-    } else {
-      state.ball.x = canvas.width / 2;
-      state.ball.y = canvas.height / 2;
-      state.ball.vx = Math.abs(state.ball.vx);
-    }
-  }
-
-  // 🔥 Correction : arrondi du scorePerSecond pour éviter les virgules
-  if (currentCheats.cheatsEnabled && currentCheats.scorePerSecond > 0) {
-    state.score += Math.floor(currentCheats.scorePerSecond / 60);
-    updateScoreUI();
-  }
-}
-
-function draw() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  // Fond
-  ctx.fillStyle = "#050510";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-  // File centrale
-  ctx.strokeStyle = "rgba(0,245,255,0.4)";
-  ctx.setLineDash([10, 10]);
-  ctx.beginPath();
-  ctx.moveTo(canvas.width / 2, 0);
-  ctx.lineTo(canvas.width / 2, canvas.height);
-  ctx.stroke();
-  ctx.setLineDash([]);
-
-  // Balle
-  ctx.fillStyle = "#00f5ff";
-  ctx.beginPath();
-  ctx.arc(state.ball.x, state.ball.y, state.ball.radius, 0, Math.PI * 2);
-  ctx.fill();
-
-  // Raquette joueur
-  ctx.fillStyle = "#ff00ff";
-  ctx.fillRect(state.paddle.x, state.paddle.y, state.paddle.width, state.paddle.height);
-
-  // Raquette IA
-  ctx.fillStyle = "#8888ff";
-  ctx.fillRect(state.ai.x, state.ai.y, state.ai.width, state.ai.height);
-}
-
-function clampPaddle(paddle) {
-  if (paddle.y < 0) paddle.y = 0;
-  if (paddle.y + paddle.height > canvas.height) {
-    paddle.y = canvas.height - paddle.height;
-  }
-}
-
-function updateAI(state) {
-  const targetY = state.ball.y - state.ai.height / 2;
-  if (state.ai.y < targetY) state.ai.y += state.ai.speed;
-  else if (state.ai.y > targetY) state.ai.y -= state.ai.speed;
-  clampPaddle(state.ai);
-}
-
-function checkCollisionWithPaddle(ball, paddle) {
-  return (
-    ball.x - ball.radius < paddle.x + paddle.width &&
-    ball.x + ball.radius > paddle.x &&
-    ball.y + ball.radius > paddle.y &&
-    ball.y - ball.radius < paddle.y + paddle.height
-  );
-}
-
-function onGameOver() {
-  gameRunning = false;
-  setStatus("Game Over");
-  document.getElementById("finalScore").textContent = state.score;
-  showGameOver();
-  pushScoreToLeaderboard(state.score);
-}
-
-function updateScoreUI() {
+  // Score UI
   document.getElementById("score").textContent = Math.floor(state.score);
 }
 
-function setStatus(text) {
-  document.getElementById("status").textContent = text;
+// ------------------------------------------------------------
+// 🔹 Draw
+// ------------------------------------------------------------
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Balle
+  ctx.beginPath();
+  ctx.arc(state.ball.x, state.ball.y, state.ball.radius, 0, Math.PI * 2);
+  ctx.fillStyle = "white";
+  ctx.fill();
+
+  // Raquette joueur
+  ctx.fillRect(state.paddle.x, state.paddle.y, state.paddle.width, state.paddle.height);
+
+  // Raquette IA
+  ctx.fillRect(state.ai.x, state.ai.y, state.ai.width, state.ai.height);
 }
 
-function showGameOver() {
-  document.getElementById("gameOverOverlay").classList.remove("hidden");
+// ------------------------------------------------------------
+// 🔹 Boucle de jeu
+// ------------------------------------------------------------
+function startGameLoop() {
+  function loop() {
+    update();
+    draw();
+    requestAnimationFrame(loop);
+  }
+  loop();
 }
 
-function hideGameOver() {
-  document.getElementById("gameOverOverlay").classList.add("hidden");
-}
+// ------------------------------------------------------------
+// 🔹 Lancement
+// ------------------------------------------------------------
+initCheatsListener();
+startGameLoop();

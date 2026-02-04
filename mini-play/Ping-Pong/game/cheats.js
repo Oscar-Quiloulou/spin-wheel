@@ -1,14 +1,13 @@
 // /game/cheats.js
-// Version optimisée : Firebase au chargement + refresh périodique + effets cheat complets.
+// Version propre, stable, complète
 
-// Cheats locaux activés par le joueur (non sauvegardés)
+// Cheats locaux activés par le joueur
 let localCheats = {};
 
-// Valeurs telles que définies par l'admin (Firebase)
+// Valeurs admin (Firebase)
 let adminCheats = {};
 
-
-// Cheats par défaut
+// Cheats actifs (admin + local)
 let currentCheats = {
   cheatsEnabled: false,
 
@@ -85,7 +84,7 @@ function initCheatsListener() {
 }
 
 // ------------------------------------------------------------
-// 🔹 Boutons locaux ON/OFF (uniquement si admin a activé le cheat)
+// 🔹 Boutons locaux ON/OFF
 // ------------------------------------------------------------
 function generateLocalCheatButtons() {
   const container = document.getElementById("localCheatsButtons");
@@ -93,13 +92,13 @@ function generateLocalCheatButtons() {
 
   container.innerHTML = "";
 
-  Object.entries(currentCheats).forEach(([key, value]) => {
+  Object.entries(adminCheats).forEach(([key, value]) => {
     if (value === true || (typeof value === "number" && value !== 1)) {
 
-      localCheats[key] = false;
+      if (!(key in localCheats)) localCheats[key] = true;
 
       const btn = document.createElement("button");
-      btn.textContent = `${key} : OFF`;
+      btn.textContent = `${key} : ${localCheats[key] ? "ON" : "OFF"}`;
 
       btn.addEventListener("click", () => {
         localCheats[key] = !localCheats[key];
@@ -111,13 +110,13 @@ function generateLocalCheatButtons() {
   });
 }
 
-
 // ------------------------------------------------------------
-// 🔹 Firebase (lecture unique)
+// 🔹 Firebase
 // ------------------------------------------------------------
 function fetchCheatsFromFirebase() {
   if (!window.db) return;
 
+  // settings
   db.ref("settings").once("value").then((snap) => {
     const data = snap.val();
     if (data && typeof data.cheatsEnabled !== "undefined") {
@@ -127,19 +126,17 @@ function fetchCheatsFromFirebase() {
     updateCheatsUI();
   });
 
-db.ref("cheats").once("value").then((snap) => {
-  const data = snap.val();
-  if (data) {
-    // On garde une copie des valeurs admin
-    adminCheats = { ...currentCheats, ...data };
-    // currentCheats commence identique aux valeurs admin
-    Object.assign(currentCheats, adminCheats);
-  }
-  saveCheatsToLocalStorage();
-  updateCheatsUI();
-  generateLocalCheatButtons();
-});
-
+  // cheats
+  db.ref("cheats").once("value").then((snap) => {
+    const data = snap.val();
+    if (data) {
+      adminCheats = { ...currentCheats, ...data };
+      Object.assign(currentCheats, adminCheats);
+    }
+    saveCheatsToLocalStorage();
+    updateCheatsUI();
+    generateLocalCheatButtons();
+  });
 }
 
 // ------------------------------------------------------------
@@ -155,29 +152,23 @@ function saveCheatsToLocalStorage() {
 }
 
 // ------------------------------------------------------------
-// 🔹 Application des cheats
+// 🔹 Application des cheats (appelée depuis game.js)
 // ------------------------------------------------------------
-// Reconstruire currentCheats à partir des valeurs admin + boutons locaux
-Object.entries(adminCheats).forEach(([key, adminVal]) => {
-  const isOn = localCheats[key] ?? true; // si pas de bouton → ON par défaut
+function applyCheatsBeforeUpdate(state) {
+  if (!currentCheats.cheatsEnabled) return;
 
-  if (!isOn) {
-    // OFF → valeur neutre
-    if (typeof adminVal === "boolean") {
-      currentCheats[key] = false;
-    } else if (typeof adminVal === "number") {
-      // pour les multiplicateurs / bonus, on neutralise
-      currentCheats[key] = (key.toLowerCase().includes("multiplier")) ? 1 : 0;
+  // Reconstruire currentCheats = admin + local
+  Object.entries(adminCheats).forEach(([key, adminVal]) => {
+    const isOn = localCheats[key] ?? true;
+
+    if (!isOn) {
+      if (typeof adminVal === "boolean") currentCheats[key] = false;
+      else if (typeof adminVal === "number") currentCheats[key] = 1;
+      else currentCheats[key] = adminVal;
     } else {
       currentCheats[key] = adminVal;
     }
-  } else {
-    // ON → on applique la valeur admin
-    currentCheats[key] = adminVal;
-  }
-});
-
-
+  });
 
   // ---------------- BALL ----------------
   if (currentCheats.ballSpeedMultiplier !== 1) {
@@ -290,7 +281,7 @@ Object.entries(adminCheats).forEach(([key, adminVal]) => {
     state.ball.vx += (Math.random() - 0.5) * 2;
     state.ball.vy += (Math.random() - 0.5) * 2;
   }
-
+}
 
 // ------------------------------------------------------------
 // 🔹 Game Over override
@@ -313,16 +304,18 @@ function updateCheatsUI() {
     cheatsListUI.appendChild(li);
   });
 }
+
+// ------------------------------------------------------------
+// 🔹 Paddle hit effects
+// ------------------------------------------------------------
 function onBallHitPaddleCheats(state) {
   if (!currentCheats.cheatsEnabled) return;
 
-  // Exemple : accélération progressive
   if (currentCheats.ballSpeedMultiplier > 1) {
     state.ball.vx *= currentCheats.ballSpeedMultiplier;
     state.ball.vy *= currentCheats.ballSpeedMultiplier;
   }
 
-  // Exemple : sticky paddle
   if (currentCheats.paddleSticky) {
     state.ball.vx = 0;
     state.ball.vy = 0;
@@ -331,32 +324,4 @@ function onBallHitPaddleCheats(state) {
       state.ball.vy = 2;
     }, 500);
   }
-  // ------------------------------------------------------------
-// 🔹 Boutons locaux ON/OFF (uniquement si admin a activé le cheat)
-// ------------------------------------------------------------
-function generateLocalCheatButtons() {
-  const container = document.getElementById("localCheatsButtons");
-  if (!container) return;
-
-  container.innerHTML = "";
-
-  Object.entries(currentCheats).forEach(([key, value]) => {
-    // On crée un bouton uniquement si l’admin a activé ce cheat
-    if (value === true || (typeof value === "number" && value !== 1)) {
-
-      // Valeur locale par défaut
-      localCheats[key] = false;
-
-      const btn = document.createElement("button");
-      btn.textContent = `${key} : OFF`;
-
-      btn.addEventListener("click", () => {
-        localCheats[key] = !localCheats[key];
-        btn.textContent = `${key} : ${localCheats[key] ? "ON" : "OFF"}`;
-      });
-
-      container.appendChild(btn);
-    }
-  });
-}
 }
