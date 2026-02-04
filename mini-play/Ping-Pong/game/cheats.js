@@ -147,7 +147,6 @@ function saveCheatsToLocalStorage() {
 // ------------------------------------------------------------
 // 🔹 Application des cheats
 // ------------------------------------------------------------
-// Appliquer uniquement les cheats activés localement
 function applyCheatsBeforeUpdate(state) {
   if (!currentCheats.cheatsEnabled) return;
 
@@ -158,6 +157,10 @@ function applyCheatsBeforeUpdate(state) {
       if (typeof currentCheats[key] === "number") currentCheats[key] = 1;
     }
   });
+
+  // 🔥 Ici tu remets TOUT ton bloc BALL / PADDLE / AI / SCORE / WTF
+  // (celui que tu m’as envoyé)
+
 
   // ---------------- BALL ----------------
   if (currentCheats.ballSpeedMultiplier !== 1) {
