@@ -194,7 +194,7 @@ function onGameOver() {
 }
 
 function updateScoreUI() {
-  document.getElementById("score").textContent = state.score;
+  document.getElementById("score").textContent = Math.floor(state.score);
 }
 
 function setStatus(text) {

@@ -225,7 +225,7 @@ Object.entries(localCheats).forEach(([key, isOn]) => {
 
   // ---------------- SCORE ----------------
   if (currentCheats.scoreFreeze) state.score = state.score;
-  if (currentCheats.scorePerSecond > 0) state.score += currentCheats.scorePerSecond / 60;
+  if (currentCheats.scorePerSecond > 0) state.score += Math.floor(currentCheats.scorePerSecond / 60);
   if (currentCheats.scoreRandomBonus && Math.random() < 0.01) state.score += 10;
 
   // ---------------- GAME RULES ----------------
