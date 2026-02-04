@@ -4,6 +4,10 @@
 // Cheats locaux activés par le joueur (non sauvegardés)
 let localCheats = {};
 
+// Valeurs telles que définies par l'admin (Firebase)
+let adminCheats = {};
+
+
 // Cheats par défaut
 let currentCheats = {
   cheatsEnabled: false,
@@ -121,15 +125,21 @@ function fetchCheatsFromFirebase() {
     }
     saveCheatsToLocalStorage();
     updateCheatsUI();
-    generateLocalCheatButtons(); // AJOUT
   });
 
-  db.ref("cheats").once("value").then((snap) => {
-    const data = snap.val();
-    if (data) Object.assign(currentCheats, data);
-    saveCheatsToLocalStorage();
-    updateCheatsUI();
-  });
+db.ref("cheats").once("value").then((snap) => {
+  const data = snap.val();
+  if (data) {
+    // On garde une copie des valeurs admin
+    adminCheats = { ...currentCheats, ...data };
+    // currentCheats commence identique aux valeurs admin
+    Object.assign(currentCheats, adminCheats);
+  }
+  saveCheatsToLocalStorage();
+  updateCheatsUI();
+  generateLocalCheatButtons();
+});
+
 }
 
 // ------------------------------------------------------------
@@ -147,19 +157,26 @@ function saveCheatsToLocalStorage() {
 // ------------------------------------------------------------
 // 🔹 Application des cheats
 // ------------------------------------------------------------
-function applyCheatsBeforeUpdate(state) {
-  if (!currentCheats.cheatsEnabled) return;
+// Reconstruire currentCheats à partir des valeurs admin + boutons locaux
+Object.entries(adminCheats).forEach(([key, adminVal]) => {
+  const isOn = localCheats[key] ?? true; // si pas de bouton → ON par défaut
 
-  // Appliquer uniquement les cheats activés localement
-  Object.entries(localCheats).forEach(([key, isOn]) => {
-    if (!isOn) {
-      if (typeof currentCheats[key] === "boolean") currentCheats[key] = false;
-      if (typeof currentCheats[key] === "number") currentCheats[key] = 1;
+  if (!isOn) {
+    // OFF → valeur neutre
+    if (typeof adminVal === "boolean") {
+      currentCheats[key] = false;
+    } else if (typeof adminVal === "number") {
+      // pour les multiplicateurs / bonus, on neutralise
+      currentCheats[key] = (key.toLowerCase().includes("multiplier")) ? 1 : 0;
+    } else {
+      currentCheats[key] = adminVal;
     }
-  });
+  } else {
+    // ON → on applique la valeur admin
+    currentCheats[key] = adminVal;
+  }
+});
 
-  // 🔥 Ici tu remets TOUT ton bloc BALL / PADDLE / AI / SCORE / WTF
-  // (celui que tu m’as envoyé)
 
 
   // ---------------- BALL ----------------
