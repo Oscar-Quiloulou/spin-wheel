@@ -148,16 +148,16 @@ function saveCheatsToLocalStorage() {
 // 🔹 Application des cheats
 // ------------------------------------------------------------
 // Appliquer uniquement les cheats activés localement
-Object.entries(localCheats).forEach(([key, isOn]) => {
-  if (isOn) {
-    // ON → on garde la valeur envoyée par l’admin
-    // (donc on ne change rien)
-  } else {
-    // OFF → on désactive localement
-    if (typeof currentCheats[key] === "boolean") currentCheats[key] = false;
-    if (typeof currentCheats[key] === "number") currentCheats[key] = 1;
-  }
-});
+function applyCheatsBeforeUpdate(state) {
+  if (!currentCheats.cheatsEnabled) return;
+
+  // Appliquer uniquement les cheats activés localement
+  Object.entries(localCheats).forEach(([key, isOn]) => {
+    if (!isOn) {
+      if (typeof currentCheats[key] === "boolean") currentCheats[key] = false;
+      if (typeof currentCheats[key] === "number") currentCheats[key] = 1;
+    }
+  });
 
   // ---------------- BALL ----------------
   if (currentCheats.ballSpeedMultiplier !== 1) {
@@ -270,7 +270,7 @@ Object.entries(localCheats).forEach(([key, isOn]) => {
     state.ball.vx += (Math.random() - 0.5) * 2;
     state.ball.vy += (Math.random() - 0.5) * 2;
   }
-
+}
 
 // ------------------------------------------------------------
 // 🔹 Game Over override
@@ -339,5 +339,4 @@ function generateLocalCheatButtons() {
     }
   });
 }
-
 }
