@@ -1,5 +1,5 @@
 // /game/game.js
-// Version propre et compatible avec cheats.js reconstruit
+// Version propre et compatible avec cheats.js + leaderboard
 
 // ------------------------------------------------------------
 // 🔹 Canvas & contexte
@@ -205,4 +205,8 @@ function startGameLoop() {
 // 🔹 Lancement
 // ------------------------------------------------------------
 initCheatsListener();
+
+// 🔥🔥🔥 Leaderboard affiché dès le chargement
+displayScores("pong", "leaderboardList");
+
 startGameLoop();
