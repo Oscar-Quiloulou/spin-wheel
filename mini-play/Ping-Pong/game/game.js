@@ -207,6 +207,6 @@ function startGameLoop() {
 initCheatsListener();
 
 // 🔥🔥🔥 Leaderboard affiché dès le chargement
-displayScores("pong", "leaderboardList");
+displayScores("scores/JEU4_scores", "leaderboardList");
 
 startGameLoop();
