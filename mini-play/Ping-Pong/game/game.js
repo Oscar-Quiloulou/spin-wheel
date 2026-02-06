@@ -107,7 +107,7 @@ function handleCollisions(state) {
 
   // Game over (si pas de cheat)
   if (ball.x < 0 && !isNoGameOverCheatActive()) {
-    resetBall();
+    endGame();
   }
 }
 
@@ -120,6 +120,28 @@ function resetBall() {
   state.ball.vx = 4;
   state.ball.vy = 2;
 }
+
+// ------------------------------------------------------------
+// 🔹 GAME OVER
+// ------------------------------------------------------------
+function endGame() {
+  // Affiche l’overlay Game Over
+  document.getElementById("finalScore").textContent = Math.floor(state.score);
+  document.getElementById("gameOverOverlay").classList.remove("hidden");
+
+  // Enregistre le score dans Firebase
+  saveScore("pong", Math.floor(state.score));
+
+  // Met à jour le leaderboard
+  displayScores("pong", "leaderboardList");
+}
+
+// Bouton Rejouer
+document.getElementById("btnRestart").addEventListener("click", () => {
+  state.score = 0;
+  resetBall();
+  document.getElementById("gameOverOverlay").classList.add("hidden");
+});
 
 // ------------------------------------------------------------
 // 🔹 Update (boucle logique)
