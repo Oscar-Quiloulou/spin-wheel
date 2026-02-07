@@ -5,11 +5,22 @@
 </head>
 
 <body>
- <p>Vous serez redirigé vers une nouvelle page dans 0 secondes.</p>
+ <p>Vous serez redirigé vers une nouvelle page dans 10 secondes. Veuillez lire attentivement ce qui suit...</p>
+ <p>Si vous n'êtes pas redirigé automatiquement, <a href="GTA/games/2023/unity2/gta-simulator/index.html">cliquez ici</a>.</p>
+ <p>Si le lien ne fonctionne pas, veuillez cliquer sur le lien : <a href="https://d23tskfudfp1j.cloudfront.net/games/2023/unity2/gta-simulator/index.html">lien alternatif</a></p>
+ <p>Le jeu en lui meme est buggé... Le chargement ne s'effectue pas correctement. Veuillez nous excuser pour la gêne occasionnée. Pour acceder au jeu, nous avons un site mirroir disponible avec le lien alternatif.</p>
 </body>
 
 <script>
-  window.location.href = "GTA/games/2023/unity2/gta-simulator/index.html";
+window.addEventListener("load", () => {
+    setTimeout(() => {
+        // Ton code ici
+          window.location.href = "GTA/games/2023/unity2/gta-simulator/index.html";
+        console.log("Le script s'exécute après 10 secondes");
+    }, 10000); // 10 000 ms = 10 secondes
+});
 </script>
+
+  window.location.href = "GTA/games/2023/unity2/gta-simulator/index.html";
 
 </html>
