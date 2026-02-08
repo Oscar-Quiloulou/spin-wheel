@@ -1,0 +1,2 @@
+ATTENTION : REGLER LE PROBLEME DES POINT DANS LE PING PONG V2
+2. Firebase a vider tout les jours (attentions surcharge avec les scores qui s'envoie a l'infini)
