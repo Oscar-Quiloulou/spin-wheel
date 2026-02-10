@@ -1,5 +1,6 @@
 // /game/game.js
 // Version propre et compatible avec cheats.js + leaderboard
+let gameRunning = true;
 
 // ------------------------------------------------------------
 // 🔹 Canvas & contexte
