@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Sandbox Dimitri Edition</title>
+  <style>
+    body {
+      background: #111;
+      color: white;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+    }
+
+    #toolbar {
+      padding: 10px;
+      background: #222;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 6px;
+      border-bottom: 2px solid #333;
+    }
+
+    #toolbar button {
+      padding: 6px 10px;
+      background: #333;
+      border: 1px solid #555;
+      color: white;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
+    #toolbar button.active {
+      background: #666;
+      border-color: #aaa;
+    }
+
+    canvas {
+      margin-top: 10px;
+      image-rendering: pixelated;
+      border: 2px solid #444;
+      background: black;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="toolbar">
+    <button data-mat="SAND">Sable</button>
+    <button data-mat="WATER">Eau</button>
+    <button data-mat="LAVA">Lave</button>
+    <button data-mat="STONE">Pierre</button>
+    <button data-mat="FIRE">Feu</button>
+    <button data-mat="SMOKE">Fumée</button>
+    <button data-mat="STEAM">Vapeur</button>
+    <button data-mat="OIL">Huile</button>
+    <button data-mat="ACID">Acide</button>
+    <button data-mat="METAL">Métal</button>
+    <button data-mat="METAL_MOLTEN">Métal fondu</button>
+    <button data-mat="ICE">Glace</button>
+    <button data-mat="GAS">Gaz</button>
+
+    <button data-mat="WOOD">Bois</button>
+    <button data-mat="PLANT">Plante</button>
+    <button data-mat="LIFE">Vie</button>
+
+    <button data-mat="EXPLOSIVE">Explosif</button>
+    <button data-mat="BOMB">Bombe</button>
+    <button data-mat="NUKE">Nuke</button>
+
+    <button data-mat="SHOT">Tir</button>
+    <button data-mat="FLAME_JET">Lance-flammes</button>
+
+    <button data-mat="WIRE">Fil</button>
+    <button data-mat="SPARK">Étincelle</button>
+    <button data-mat="SWITCH">Interrupteur</button>
+    <button data-mat="BATTERY">Batterie</button>
+
+    <button data-mat="ERASE">Gomme</button>
+    <button id="clear">Clear</button>
+  </div>
+
+  <canvas id="canvas" width="300" height="200"></canvas>
+
+  <script src="main.js"></script>
+</body>
+</html>
