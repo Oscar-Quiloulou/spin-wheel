@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>JEU8 - Tetris</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Ruffle CDN -->
+    <script src="https://unpkg.com/@ruffle-rs/ruffle"></script>
+
+    <style>
+        /* Fond animé */
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: linear-gradient(135deg, #0d0d0d, #1a1a1a);
+            background-size: 400% 400%;
+            animation: gradientMove 12s ease infinite;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+        }
+
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Loader */
+        #loader {
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            border: 10px solid #333;
+            border-top: 10px solid #00eaff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Player */
+        ruffle-player {
+            width: 80vw;
+            height: 80vh;
+            max-width: 900px;
+            max-height: 700px;
+            display: none;
+            box-shadow: 0 0 25px rgba(0, 255, 255, 0.4);
+            border-radius: 10px;
+        }
+
+        /* Bouton fullscreen */
+        #fullscreenBtn {
+            position: absolute;
+            bottom: 25px;
+            right: 25px;
+            padding: 12px 20px;
+            background: rgba(0, 255, 255, 0.2);
+            border: 1px solid #00eaff;
+            color: #00eaff;
+            border-radius: 8px;
+            cursor: pointer;
+            backdrop-filter: blur(4px);
+            transition: 0.2s;
+            display: none;
+        }
+
+        #fullscreenBtn:hover {
+            background: rgba(0, 255, 255, 0.4);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Loader -->
+    <div id="loader"></div>
+
+    <!-- Player -->
+    <ruffle-player id="player">
+        <source src="JEU8/tetris.swf" type="application/x-shockwave-flash">
+    </ruffle-player>
+
+    <!-- Fullscreen button -->
+    <button id="fullscreenBtn">Plein écran</button>
+
+    <script>
+        const player = document.getElementById("player");
+        const loader = document.getElementById("loader");
+        const fullscreenBtn = document.getElementById("fullscreenBtn");
+
+        // Quand Ruffle est prêt → afficher le jeu
+        window.addEventListener("load", () => {
+            setTimeout(() => {
+                loader.style.display = "none";
+                player.style.display = "block";
+                fullscreenBtn.style.display = "block";
+            }, 1200);
+        });
+
+        // Fullscreen
+        fullscreenBtn.onclick = () => {
+            if (player.requestFullscreen) player.requestFullscreen();
+        };
+    </script>
+
+</body>
+</html>
