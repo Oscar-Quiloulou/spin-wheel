@@ -3,11 +3,67 @@
 <head>
   <meta charset="UTF-8">
   <title>Sandbox 2D</title>
-  <link rel="stylesheet" href="style.css">
+
+  <style>
+    body {
+      margin: 0;
+      background: #111;
+      color: #eee;
+      font-family: sans-serif;
+    }
+
+    #toolbar {
+      display: flex;
+      gap: 8px;
+      padding: 8px;
+      background: #222;
+      border-bottom: 1px solid #333;
+      flex-wrap: wrap;
+    }
+
+    #toolbar button {
+      padding: 6px 10px;
+      background: #333;
+      border: 1px solid #555;
+      color: #eee;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    #toolbar button.active {
+      background: #555;
+      border-color: #fff;
+    }
+
+    #toolbar input[type=range] {
+      margin-left: 10px;
+    }
+
+    canvas {
+      display: block;
+      margin: auto;
+      image-rendering: pixelated;
+      border: 1px solid #444;
+      background: #000;
+    }
+  </style>
 </head>
+
 <body>
 
-  <div id="toolbar"></div>
+  <div id="toolbar">
+    <button data-tool="EMPTY">Vide</button>
+    <button data-tool="WALL">Mur</button>
+    <button data-tool="WATER">Eau</button>
+    <button data-tool="OIL">Huile</button>
+    <button data-tool="FIRE">Feu</button>
+    <button data-tool="LAVA">Lave</button>
+    <button data-tool="BOMB">Bombe</button>
+    <button data-tool="GRENADE">Grenade</button>
+
+    <span style="margin-left:20px;">Taille :</span>
+    <input type="range" id="brush" min="1" max="8" value="3">
+  </div>
 
   <canvas id="game" width="200" height="150"></canvas>
 
