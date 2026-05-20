@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>JEU8 - Tetris HTML5</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<a id="backBtn" href="https://0sc4r.vercel.app/mini-play/index.html">← Retour</a>
+
+<!-- Boutons tactiles -->
+<div id="touchControls">
+    <div class="touch-btn" id="btnLeft">←</div>
+    <div class="touch-btn" id="btnRotate">⟳</div>
+    <div class="touch-btn" id="btnRight">→</div>
+    <div class="touch-btn" id="btnDrop">↓</div>
+    <div class="touch-btn" id="btnHard">⤓</div>
+</div>
+
+<div class="wrapper">
+    <canvas id="game" width="240" height="480"></canvas>
+
+    <div class="sidebar">
+        <div class="panel">
+            <h2>Score</h2>
+            <div class="value" id="score">0</div>
+        </div>
+
+        <div class="panel">
+            <h2>Niveau</h2>
+            <div class="value" id="level">1</div>
+        </div>
+
+        <div class="panel">
+            <h2>Lignes</h2>
+            <div class="value" id="lines">0</div>
+        </div>
+
+        <div class="panel">
+            <h2>Prochaine pièce</h2>
+            <canvas id="nextCanvas" width="80" height="80"></canvas>
+        </div>
+
+        <div class="panel controls">
+            <h2>Contrôles</h2>
+            ← → : déplacer<br>
+            ↑ : rotation<br>
+            ↓ : descente rapide<br>
+            Espace : chute instantanée<br>
+            P : pause
+
+            <div class="btn-row">
+                <button id="btnStart">Start</button>
+                <button id="btnPause">Pause</button>
+            </div>
+        </div>
+
+        <div class="status" id="status"></div>
+    </div>
+</div>
+
+<!-- Overlay Game Over -->
+<div id="gameOverOverlay">
+    <div class="go-box">
+        <h1>Game Over</h1>
+        <p>Score : <span id="goScore">0</span></p>
+        <button id="goRestart">Rejouer</button>
+    </div>
+</div>
+
+<script defer src="game-over.js"></script>
+<script defer src="games.js"></script>
+</body>
+</html>

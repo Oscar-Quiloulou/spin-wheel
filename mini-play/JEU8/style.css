@@ -1,0 +1,178 @@
+body {
+    margin: 0;
+    background: linear-gradient(135deg, #0a0a0a, #1a1a1a, #0a0a0a);
+    background-size: 400% 400%;
+    animation: bgMove 12s ease infinite;
+    color: #eee;
+    font-family: system-ui, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+@keyframes bgMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Bouton retour */
+#backBtn {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    padding: 8px 14px;
+    background: rgba(0, 255, 255, 0.15);
+    border: 1px solid #0ff;
+    color: #0ff;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    backdrop-filter: blur(4px);
+    transition: 0.2s;
+    z-index: 999;
+    text-decoration: none;
+}
+#backBtn:hover {
+    background: rgba(0, 255, 255, 0.3);
+}
+
+.wrapper {
+    display: flex;
+    gap: 20px;
+    padding: 20px 30px;
+    background: rgba(0,0,0,0.8);
+    border-radius: 16px;
+    box-shadow: 0 0 30px rgba(0,255,255,0.3);
+}
+
+canvas {
+    background: #111;
+    border-radius: 6px;
+    box-shadow:
+        0 0 20px rgba(0,255,255,0.4),
+        0 0 40px rgba(0,255,255,0.2);
+}
+
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-width: 160px;
+}
+
+.panel {
+    background: #151515;
+    border-radius: 8px;
+    padding: 10px 12px;
+    box-shadow: inset 0 0 8px rgba(0,0,0,0.7);
+}
+
+.panel h2 {
+    margin: 0 0 6px;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #0ff;
+}
+
+.panel .value {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+#nextCanvas {
+    background: #111;
+    border-radius: 4px;
+    margin-top: 4px;
+}
+
+.controls {
+    font-size: 12px;
+    line-height: 1.5;
+    color: #ccc;
+}
+
+.btn-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+button {
+    flex: 1;
+    padding: 6px 8px;
+    border-radius: 6px;
+    border: 1px solid #0ff;
+    background: rgba(0,255,255,0.1);
+    color: #0ff;
+    cursor: pointer;
+    font-size: 12px;
+}
+button:hover {
+    background: rgba(0,255,255,0.25);
+}
+
+.status {
+    font-size: 13px;
+    color: #f66;
+    min-height: 18px;
+}
+
+/* Boutons tactiles */
+#touchControls {
+    position: absolute;
+    bottom: 20px;
+    width: 100%;
+    display: none;
+    justify-content: center;
+    gap: 20px;
+    z-index: 999;
+}
+
+.touch-btn {
+    width: 60px;
+    height: 60px;
+    background: rgba(0,255,255,0.15);
+    border: 1px solid #0ff;
+    border-radius: 10px;
+    backdrop-filter: blur(4px);
+    color: #0ff;
+    font-size: 22px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    user-select: none;
+}
+.touch-btn:active {
+    background: rgba(0,255,255,0.3);
+}
+
+/* Overlay Game Over */
+#gameOverOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+#gameOverOverlay .go-box {
+    background: #111;
+    border-radius: 12px;
+    padding: 20px 30px;
+    box-shadow: 0 0 25px rgba(0,255,255,0.4);
+    text-align: center;
+}
+#gameOverOverlay h1 {
+    margin: 0 0 10px;
+    color: #0ff;
+}
+#gameOverOverlay p {
+    margin: 0 0 15px;
+}
+#gameOverOverlay button {
+    min-width: 120px;
+}
