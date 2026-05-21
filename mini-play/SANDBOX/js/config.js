@@ -10,6 +10,15 @@ export const LAVA = 5;
 export const BOMB = 6;
 export const GRENADE = 7;
 
+export const SAND = 8;
+export const ACID = 9;
+export const SMOKE = 10;
+export const STEAM = 11;
+export const METAL = 12;
+export const WOOD = 13;
+export const TORCH = 14;
+export const BARREL = 15;
+
 export const COLORS = {
     [EMPTY]: [0, 0, 0],
     [WALL]: [120, 120, 120],
@@ -19,4 +28,13 @@ export const COLORS = {
     [LAVA]: [255, 60, 0],
     [BOMB]: [80, 80, 80],
     [GRENADE]: [40, 160, 40],
+
+    [SAND]: [194, 178, 128],
+    [ACID]: [0, 255, 0],
+    [SMOKE]: [120, 120, 120],
+    [STEAM]: [180, 180, 255],
+    [METAL]: [180, 180, 200],
+    [WOOD]: [120, 80, 40],
+    [TORCH]: [200, 100, 20],
+    [BARREL]: [100, 40, 20],
 };
