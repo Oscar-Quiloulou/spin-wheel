@@ -1,4 +1,3 @@
-// js/grid.js
 import { WIDTH, HEIGHT, EMPTY } from "./config.js";
 
 export let grid = new Array(WIDTH * HEIGHT).fill(EMPTY);

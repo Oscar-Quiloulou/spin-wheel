@@ -1,4 +1,3 @@
-// js/input.js
 import { setCell } from "./grid.js";
 import { EMPTY, WALL, WATER, OIL, FIRE, LAVA, BOMB, GRENADE } from "./config.js";
 

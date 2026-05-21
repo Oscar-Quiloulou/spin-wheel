@@ -1,9 +1,6 @@
-// js/config.js
-
 export const WIDTH = 200;
 export const HEIGHT = 150;
 
-// Types de particules
 export const EMPTY = 0;
 export const WALL = 1;
 export const WATER = 2;
@@ -13,7 +10,6 @@ export const LAVA = 5;
 export const BOMB = 6;
 export const GRENADE = 7;
 
-// Couleurs (rendu)
 export const COLORS = {
     [EMPTY]: [0, 0, 0],
     [WALL]: [120, 120, 120],
