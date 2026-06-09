@@ -1,6 +1,6 @@
 import { getCell, setCell } from "../grid.js";
 import { 
-    FIRE, EMPTY, WOOD, OIL, SMOKE, STEAM
+    FIRE, EMPTY, WOOD, OIL, METAL, SAND, SMOKE
 } from "../config.js";
 
 export function updateFire() {
@@ -9,25 +9,75 @@ export function updateFire() {
 
             if (getCell(x, y) !== FIRE) continue;
 
-            // Animation
-            animateFirePixel(x, y);
-
+            const fuel = fuelAround(x, y);
             const oxy = oxygenLevel(x, y);
 
-            // 🔥 1) EXTINCTION SI MANQUE D’OXYGÈNE
+            // 🔥 1) EXTINCTION SI PAS DE COMBUSTIBLE
+            if (!fuel) {
+                if (Math.random() < 0.3) setCell(x, y, SMOKE);
+                continue;
+            }
+
+            // 🔥 2) EXTINCTION SI PAS D’OXYGÈNE
             if (oxy === 0) {
                 if (Math.random() < 0.5) setCell(x, y, SMOKE);
                 continue;
             }
 
-            // 🔥 2) EXTINCTION NATURELLE (rare)
-            if (Math.random() < 0.01) {
-                setCell(x, y, SMOKE);
-                continue;
-            }
+            // 🔥 3) COMBUSTION DU COMBUSTIBLE
+            burnFuel(x, y);
 
-            // 🔥 3) PROPAGATION PROPORTIONNELLE À L’OXYGÈNE
+            // 🔥 4) PROPAGATION
             spreadFire(x, y, oxy);
+        }
+    }
+}
+
+// ------------------------------------------------------------
+// 🔥 DÉTECTION DE COMBUSTIBLE AUTOUR DU FEU
+// ------------------------------------------------------------
+function fuelAround(x, y) {
+    const dirs = [
+        [1, 0], [-1, 0],
+        [0, 1], [0, -1]
+    ];
+
+    for (const [dx, dy] of dirs) {
+        const cell = getCell(x + dx, y + dy);
+        if (cell === WOOD || cell === OIL) return true;
+    }
+    return false;
+}
+
+// ------------------------------------------------------------
+// 🔥 COMBUSTION : transformation du matériau
+// ------------------------------------------------------------
+function burnFuel(x, y) {
+    const dirs = [
+        [1, 0], [-1, 0],
+        [0, 1], [0, -1]
+    ];
+
+    for (const [dx, dy] of dirs) {
+        const cx = x + dx;
+        const cy = y + dy;
+        const cell = getCell(cx, cy);
+
+        // Bois → devient fumée puis vide
+        if (cell === WOOD) {
+            if (Math.random() < 0.3) setCell(cx, cy, SMOKE);
+            if (Math.random() < 0.1) setCell(cx, cy, EMPTY);
+        }
+
+        // Huile → brûle très vite
+        if (cell === OIL) {
+            if (Math.random() < 0.8) setCell(cx, cy, FIRE);
+            if (Math.random() < 0.2) setCell(cx, cy, SMOKE);
+        }
+
+        // Métal → chauffe mais ne brûle pas
+        if (cell === METAL) {
+            // Option : chauffe → devient rouge (si tu veux)
         }
     }
 }
@@ -50,48 +100,22 @@ function oxygenLevel(x, y) {
 // 🔥 PROPAGATION RÉALISTE
 // ------------------------------------------------------------
 function spreadFire(x, y, oxy) {
-
-    // oxygène = facteur de propagation
-    const spreadChance = oxy * 0.1; // 0.0 → 0.4
-
     const dirs = [
-        [1, 0],
-        [-1, 0],
-        [0, 1],
-        [0, -1]
+        [1, 0], [-1, 0],
+        [0, 1], [0, -1]
     ];
+
+    const chance = oxy * 0.1; // oxygène → propagation
 
     for (const [dx, dy] of dirs) {
         const cx = x + dx;
         const cy = y + dy;
-
         const cell = getCell(cx, cy);
 
-        // Bois → brûle facilement
-        if (cell === WOOD && Math.random() < spreadChance + 0.2) {
+        if (cell === WOOD && Math.random() < chance + 0.2)
             setCell(cx, cy, FIRE);
-        }
 
-        // Huile → brûle très vite
-        if (cell === OIL && Math.random() < spreadChance + 0.5) {
+        if (cell === OIL && Math.random() < chance + 0.5)
             setCell(cx, cy, FIRE);
-        }
-
-        // Fumée → peut s’enflammer si très chaud
-        if (cell === SMOKE && Math.random() < spreadChance * 0.5) {
-            setCell(cx, cy, FIRE);
-        }
-
-        // Vide → feu se propage légèrement
-        if (cell === EMPTY && Math.random() < spreadChance * 0.05) {
-            setCell(cx, cy, FIRE);
-        }
     }
-}
-
-// ------------------------------------------------------------
-// 🔥 ANIMATION DU FEU (scintillement)
-// ------------------------------------------------------------
-function animateFirePixel(x, y) {
-    // Animation simple (optionnel)
 }
