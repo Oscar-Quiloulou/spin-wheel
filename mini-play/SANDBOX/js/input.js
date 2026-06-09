@@ -1,10 +1,16 @@
 import { setCell } from "./grid.js";
-import { EMPTY, WALL, WATER, OIL, FIRE, LAVA, BOMB, GRENADE } from "./config.js";
+import { 
+    EMPTY, WALL, WATER, OIL, FIRE, LAVA, BOMB, GRENADE,
+    SAND, ACID, SMOKE, STEAM, METAL, WOOD, TORCH, BARREL
+} from "./config.js";
 
 export let currentTool = WALL;
 export let brushSize = 3;
 
-const TOOL_MAP = { EMPTY, WALL, WATER, OIL, FIRE, LAVA, BOMB, GRENADE };
+const TOOL_MAP = {
+  EMPTY, WALL, WATER, OIL, FIRE, LAVA, BOMB, GRENADE,
+  SAND, ACID, SMOKE, STEAM, METAL, WOOD, TORCH, BARREL
+};
 
 let lastX = null;
 let lastY = null;
