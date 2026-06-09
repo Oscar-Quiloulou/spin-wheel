@@ -1,5 +1,7 @@
 import { getCell, setCell } from "../grid.js";
-import { FIRE, EMPTY, WOOD, OIL } from "../config.js";
+import { 
+    FIRE, EMPTY, WOOD, OIL, SMOKE, STEAM
+} from "../config.js";
 
 export function updateFire() {
     for (let y = 0; y < 150; y++) {
@@ -7,46 +9,89 @@ export function updateFire() {
 
             if (getCell(x, y) !== FIRE) continue;
 
-            // Animation du feu : variation de couleur
+            // 1) Animation du feu (scintillement)
             animateFirePixel(x, y);
 
-            // Extinction aléatoire (évite les feux éternels)
-            if (Math.random() < 0.01) {
-                setCell(x, y, EMPTY);
+            // 2) Extinction si manque d'oxygène
+            if (oxygenLevel(x, y) < 1) {
+                if (Math.random() < 0.2) setCell(x, y, SMOKE);
                 continue;
             }
 
-            // Propagation vers le haut
-            if (getCell(x, y - 1) === WOOD || getCell(x, y - 1) === OIL) {
-                setCell(x, y - 1, FIRE);
+            // 3) Extinction naturelle
+            if (Math.random() < 0.01) {
+                setCell(x, y, SMOKE);
+                continue;
             }
 
-            // Propagation latérale
-            if (getCell(x + 1, y) === WOOD || getCell(x + 1, y) === OIL) {
-                setCell(x + 1, y, FIRE);
-            }
-            if (getCell(x - 1, y) === WOOD || getCell(x - 1, y) === OIL) {
-                setCell(x - 1, y, FIRE);
-            }
-
-            // Propagation vers le bas (rare)
-            if (Math.random() < 0.1) {
-                if (getCell(x, y + 1) === WOOD || getCell(x, y + 1) === OIL) {
-                    setCell(x, y + 1, FIRE);
-                }
-            }
+            // 4) Propagation réaliste
+            spreadFire(x, y);
         }
     }
 }
 
-// Variation de couleur du feu (effet flamme)
-function animateFirePixel(x, y) {
-    // On stocke la couleur dans un buffer temporaire
-    // (le renderer lit COLORS[type], mais on peut ajouter un bruit visuel)
-    const flicker = Math.floor(Math.random() * 40);
+// ------------------------------------------------------------
+// 🔥 OXYGÈNE = nombre de cases vides autour
+// ------------------------------------------------------------
+function oxygenLevel(x, y) {
+    let oxy = 0;
 
-    // On encode la couleur dans une cellule spéciale (option simple)
-    // Ici on ne change pas le type, juste un effet visuel
-    // Le renderer doit lire COLORS[FIRE] normalement
-    // Donc on ne touche pas à la grille, juste à un buffer si tu veux plus tard
+    if (getCell(x+1, y) === EMPTY) oxy++;
+    if (getCell(x-1, y) === EMPTY) oxy++;
+    if (getCell(x, y+1) === EMPTY) oxy++;
+    if (getCell(x, y-1) === EMPTY) oxy++;
+
+    return oxy; // 0 à 4
+}
+
+// ------------------------------------------------------------
+// 🔥 PROPAGATION RÉALISTE
+// ------------------------------------------------------------
+function spreadFire(x, y) {
+
+    const dirs = [
+        [1, 0],
+        [-1, 0],
+        [0, 1],
+        [0, -1]
+    ];
+
+    for (const [dx, dy] of dirs) {
+        const cx = x + dx;
+        const cy = y + dy;
+
+        const cell = getCell(cx, cy);
+
+        // Bois → brûle facilement
+        if (cell === WOOD && Math.random() < 0.4) {
+            setCell(cx, cy, FIRE);
+        }
+
+        // Huile → brûle très vite
+        if (cell === OIL && Math.random() < 0.8) {
+            setCell(cx, cy, FIRE);
+        }
+
+        // Fumée → peut s'enflammer si très chaud
+        if (cell === SMOKE && Math.random() < 0.1) {
+            setCell(cx, cy, FIRE);
+        }
+
+        // Vapeur → ne brûle pas
+        if (cell === STEAM) continue;
+
+        // Vide → feu se propage un peu (effet brasier)
+        if (cell === EMPTY && Math.random() < 0.02) {
+            setCell(cx, cy, FIRE);
+        }
+    }
+}
+
+// ------------------------------------------------------------
+// 🔥 ANIMATION DU FEU (scintillement)
+// ------------------------------------------------------------
+function animateFirePixel(x, y) {
+    // Ici on ne modifie pas la grille, juste un effet visuel
+    // Ton renderer lit COLORS[FIRE], donc on peut ajouter un bruit
+    // en modifiant la couleur dans config.js plus tard si tu veux
 }
