@@ -1,4 +1,8 @@
+// js/input.js
+
 import { setCell } from "./grid.js";
+import { forcedFire } from "./grid.js";
+
 import { 
     EMPTY, WALL, WATER, OIL, FIRE, LAVA, BOMB, GRENADE,
     SAND, ACID, SMOKE, STEAM, METAL, WOOD, TORCH, BARREL
@@ -12,11 +16,11 @@ const TOOL_MAP = {
   SAND, ACID, SMOKE, STEAM, METAL, WOOD, TORCH, BARREL
 };
 
+let mouseDown = false;
 let lastX = null;
 let lastY = null;
 
 export function initInput(canvas) {
-    let mouseDown = false;
 
     canvas.addEventListener("mousedown", e => {
         mouseDown = true;
@@ -25,6 +29,7 @@ export function initInput(canvas) {
 
     canvas.addEventListener("mouseup", () => {
         mouseDown = false;
+        forcedFire.fill(0); // briquet relâché
         lastX = null;
         lastY = null;
     });
@@ -82,7 +87,16 @@ function paintPoint(x, y) {
     for (let dy = -brushSize; dy <= brushSize; dy++) {
         for (let dx = -brushSize; dx <= brushSize; dx++) {
             if (dx*dx + dy*dy <= brushSize*brushSize) {
-                setCell(x + dx, y + dy, currentTool);
+
+                const px = x + dx;
+                const py = y + dy;
+
+                setCell(px, py, currentTool);
+
+                // 🔥 FEU FORCÉ (briquet)
+                if (currentTool === FIRE) {
+                    forcedFire[py * 200 + px] = 1;
+                }
             }
         }
     }

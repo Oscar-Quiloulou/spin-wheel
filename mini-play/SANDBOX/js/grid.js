@@ -1,32 +1,26 @@
-import { WIDTH, HEIGHT, EMPTY } from "./config.js";
+// js/grid.js
 
-export let grid = new Array(WIDTH * HEIGHT).fill(EMPTY);
-export let meta  = new Array(WIDTH * HEIGHT).fill(0);
+import { WIDTH, HEIGHT } from "./config.js";
 
-export function idx(x, y) {
-    return y * WIDTH + x;
-}
+export const grid = new Uint8Array(WIDTH * HEIGHT);
 
-export function inBounds(x, y) {
-    return x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT;
-}
+// 🔥 FEU FORCÉ (briquet)
+export const forcedFire = new Uint8Array(WIDTH * HEIGHT);
 
 export function getCell(x, y) {
-    if (!inBounds(x, y)) return null;
-    return grid[idx(x, y)];
+    if (x < 0 || y < 0 || x >= WIDTH || y >= HEIGHT) return 0;
+    return grid[y * WIDTH + x];
 }
 
-export function setCell(x, y, type, metaVal = 0) {
-    if (!inBounds(x, y)) return;
-    const i = idx(x, y);
-    grid[i] = type;
-    meta[i] = metaVal;
+export function setCell(x, y, type) {
+    if (x < 0 || y < 0 || x >= WIDTH || y >= HEIGHT) return;
+    grid[y * WIDTH + x] = type;
 }
 
 export function swap(x1, y1, x2, y2) {
-    if (!inBounds(x1, y1) || !inBounds(x2, y2)) return;
-    const i1 = idx(x1, y1);
-    const i2 = idx(x2, y2);
-    [grid[i1], grid[i2]] = [grid[i2], grid[i1]];
-    [meta[i1], meta[i2]] = [meta[i2], meta[i1]];
+    const i1 = y1 * WIDTH + x1;
+    const i2 = y2 * WIDTH + x2;
+    const tmp = grid[i1];
+    grid[i1] = grid[i2];
+    grid[i2] = tmp;
 }

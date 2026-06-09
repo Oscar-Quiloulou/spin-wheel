@@ -1,4 +1,7 @@
+// js/physics/fire.js
+
 import { getCell, setCell } from "../grid.js";
+import { forcedFire } from "../grid.js";
 import { 
     FIRE, EMPTY, WOOD, OIL, METAL, SAND, SMOKE
 } from "../config.js";
@@ -9,8 +12,17 @@ export function updateFire() {
 
             if (getCell(x, y) !== FIRE) continue;
 
-            const fuel = fuelAround(x, y);
+            const idx = y * 200 + x;
+
+            // 🔥 0) FEU FORCÉ (briquet)
+            if (forcedFire[idx] === 1) {
+                burnFuel(x, y);
+                spreadFire(x, y, 4); // oxygène max
+                continue;
+            }
+
             const oxy = oxygenLevel(x, y);
+            const fuel = fuelAround(x, y);
 
             // 🔥 1) EXTINCTION SI PAS DE COMBUSTIBLE
             if (!fuel) {
@@ -34,7 +46,7 @@ export function updateFire() {
 }
 
 // ------------------------------------------------------------
-// 🔥 DÉTECTION DE COMBUSTIBLE AUTOUR DU FEU
+// 🔥 DÉTECTION DE COMBUSTIBLE
 // ------------------------------------------------------------
 function fuelAround(x, y) {
     const dirs = [
@@ -50,7 +62,7 @@ function fuelAround(x, y) {
 }
 
 // ------------------------------------------------------------
-// 🔥 COMBUSTION : transformation du matériau
+// 🔥 COMBUSTION
 // ------------------------------------------------------------
 function burnFuel(x, y) {
     const dirs = [
@@ -63,27 +75,24 @@ function burnFuel(x, y) {
         const cy = y + dy;
         const cell = getCell(cx, cy);
 
-        // Bois → devient fumée puis vide
         if (cell === WOOD) {
             if (Math.random() < 0.3) setCell(cx, cy, SMOKE);
             if (Math.random() < 0.1) setCell(cx, cy, EMPTY);
         }
 
-        // Huile → brûle très vite
         if (cell === OIL) {
             if (Math.random() < 0.8) setCell(cx, cy, FIRE);
             if (Math.random() < 0.2) setCell(cx, cy, SMOKE);
         }
 
-        // Métal → chauffe mais ne brûle pas
         if (cell === METAL) {
-            // Option : chauffe → devient rouge (si tu veux)
+            // Option : chauffe → couleur rouge plus tard
         }
     }
 }
 
 // ------------------------------------------------------------
-// 🔥 OXYGÈNE = cases vides autour
+// 🔥 OXYGÈNE
 // ------------------------------------------------------------
 function oxygenLevel(x, y) {
     let oxy = 0;
@@ -97,7 +106,7 @@ function oxygenLevel(x, y) {
 }
 
 // ------------------------------------------------------------
-// 🔥 PROPAGATION RÉALISTE
+// 🔥 PROPAGATION
 // ------------------------------------------------------------
 function spreadFire(x, y, oxy) {
     const dirs = [
@@ -105,7 +114,7 @@ function spreadFire(x, y, oxy) {
         [0, 1], [0, -1]
     ];
 
-    const chance = oxy * 0.1; // oxygène → propagation
+    const chance = oxy * 0.1;
 
     for (const [dx, dy] of dirs) {
         const cx = x + dx;
