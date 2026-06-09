@@ -1,5 +1,8 @@
 import { getCell, setCell, swap } from "../grid.js";
-import { ACID, EMPTY, WATER, METAL, WOOD, SAND } from "../config.js";
+import { 
+    ACID, EMPTY, WATER,
+    METAL, WOOD, SAND
+} from "../config.js";
 
 export function updateAcid() {
     for (let y = 148; y >= 0; y--) {
@@ -7,17 +10,15 @@ export function updateAcid() {
 
             if (getCell(x, y) !== ACID) continue;
 
-            // Déplacement simple (pas de scan inutile)
             const below = getCell(x, y + 1);
 
+            // Déplacement simple
             if (below === EMPTY || below === WATER) {
                 swap(x, y, x, y + 1);
                 continue;
             }
 
-            // Corrosion optimisée : seulement 4 directions
-            const targets = [METAL, WOOD, SAND];
-
+            // Corrosion optimisée (4 directions)
             const dirs = [
                 [1, 0],
                 [-1, 0],
@@ -29,7 +30,9 @@ export function updateAcid() {
                 const cx = x + dx;
                 const cy = y + dy;
 
-                if (targets.includes(getCell(cx, cy))) {
+                const target = getCell(cx, cy);
+
+                if (target === METAL || target === WOOD || target === SAND) {
                     setCell(cx, cy, EMPTY);
                 }
             }
