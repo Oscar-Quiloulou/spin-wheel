@@ -7,23 +7,34 @@ export function updateAcid() {
 
             if (getCell(x, y) !== ACID) continue;
 
+            // Déplacement simple (pas de scan inutile)
             const below = getCell(x, y + 1);
 
             if (below === EMPTY || below === WATER) {
                 swap(x, y, x, y + 1);
+                continue;
             }
 
-            // corrosion
+            // Corrosion optimisée : seulement 4 directions
             const targets = [METAL, WOOD, SAND];
-            for (let dy = -1; dy <= 1; dy++) {
-                for (let dx = -1; dx <= 1; dx++) {
-                    if (targets.includes(getCell(x + dx, y + dy))) {
-                        setCell(x + dx, y + dy, EMPTY);
-                    }
+
+            const dirs = [
+                [1, 0],
+                [-1, 0],
+                [0, 1],
+                [0, -1]
+            ];
+
+            for (const [dx, dy] of dirs) {
+                const cx = x + dx;
+                const cy = y + dy;
+
+                if (targets.includes(getCell(cx, cy))) {
+                    setCell(cx, cy, EMPTY);
                 }
             }
 
-            // neutralisation
+            // Neutralisation eau <-> acide
             if (below === WATER) {
                 setCell(x, y, EMPTY);
                 setCell(x, y + 1, EMPTY);
