@@ -9,29 +9,31 @@ export function updateFire() {
 
             if (getCell(x, y) !== FIRE) continue;
 
-            // 1) Animation du feu (scintillement)
+            // Animation
             animateFirePixel(x, y);
 
-            // 2) Extinction si manque d'oxygène
-            if (oxygenLevel(x, y) < 1) {
-                if (Math.random() < 0.2) setCell(x, y, SMOKE);
+            const oxy = oxygenLevel(x, y);
+
+            // 🔥 1) EXTINCTION SI MANQUE D’OXYGÈNE
+            if (oxy === 0) {
+                if (Math.random() < 0.5) setCell(x, y, SMOKE);
                 continue;
             }
 
-            // 3) Extinction naturelle
+            // 🔥 2) EXTINCTION NATURELLE (rare)
             if (Math.random() < 0.01) {
                 setCell(x, y, SMOKE);
                 continue;
             }
 
-            // 4) Propagation réaliste
-            spreadFire(x, y);
+            // 🔥 3) PROPAGATION PROPORTIONNELLE À L’OXYGÈNE
+            spreadFire(x, y, oxy);
         }
     }
 }
 
 // ------------------------------------------------------------
-// 🔥 OXYGÈNE = nombre de cases vides autour
+// 🔥 OXYGÈNE = cases vides autour
 // ------------------------------------------------------------
 function oxygenLevel(x, y) {
     let oxy = 0;
@@ -47,7 +49,10 @@ function oxygenLevel(x, y) {
 // ------------------------------------------------------------
 // 🔥 PROPAGATION RÉALISTE
 // ------------------------------------------------------------
-function spreadFire(x, y) {
+function spreadFire(x, y, oxy) {
+
+    // oxygène = facteur de propagation
+    const spreadChance = oxy * 0.1; // 0.0 → 0.4
 
     const dirs = [
         [1, 0],
@@ -63,25 +68,22 @@ function spreadFire(x, y) {
         const cell = getCell(cx, cy);
 
         // Bois → brûle facilement
-        if (cell === WOOD && Math.random() < 0.4) {
+        if (cell === WOOD && Math.random() < spreadChance + 0.2) {
             setCell(cx, cy, FIRE);
         }
 
         // Huile → brûle très vite
-        if (cell === OIL && Math.random() < 0.8) {
+        if (cell === OIL && Math.random() < spreadChance + 0.5) {
             setCell(cx, cy, FIRE);
         }
 
-        // Fumée → peut s'enflammer si très chaud
-        if (cell === SMOKE && Math.random() < 0.1) {
+        // Fumée → peut s’enflammer si très chaud
+        if (cell === SMOKE && Math.random() < spreadChance * 0.5) {
             setCell(cx, cy, FIRE);
         }
 
-        // Vapeur → ne brûle pas
-        if (cell === STEAM) continue;
-
-        // Vide → feu se propage un peu (effet brasier)
-        if (cell === EMPTY && Math.random() < 0.02) {
+        // Vide → feu se propage légèrement
+        if (cell === EMPTY && Math.random() < spreadChance * 0.05) {
             setCell(cx, cy, FIRE);
         }
     }
@@ -91,7 +93,5 @@ function spreadFire(x, y) {
 // 🔥 ANIMATION DU FEU (scintillement)
 // ------------------------------------------------------------
 function animateFirePixel(x, y) {
-    // Ici on ne modifie pas la grille, juste un effet visuel
-    // Ton renderer lit COLORS[FIRE], donc on peut ajouter un bruit
-    // en modifiant la couleur dans config.js plus tard si tu veux
+    // Animation simple (optionnel)
 }
