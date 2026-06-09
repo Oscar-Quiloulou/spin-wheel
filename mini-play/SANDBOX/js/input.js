@@ -29,7 +29,10 @@ export function initInput(canvas) {
 
     canvas.addEventListener("mouseup", () => {
         mouseDown = false;
-        forcedFire.fill(0); // briquet relâché
+
+        // 🔥 IMPORTANT : on libère le briquet
+        forcedFire.fill(0);
+
         lastX = null;
         lastY = null;
     });
@@ -44,10 +47,16 @@ export function initToolbar() {
 
     buttons.forEach(btn => {
         btn.addEventListener("click", () => {
+
+            // Réactive la sélection correcte
             buttons.forEach(b => b.classList.remove("active"));
             btn.classList.add("active");
 
+            // Sélectionne l’outil
             currentTool = TOOL_MAP[btn.dataset.tool];
+
+            // 🔥 IMPORTANT : si on change d’outil, on coupe le briquet
+            forcedFire.fill(0);
         });
     });
 
@@ -86,6 +95,7 @@ function drawLine(x1, y1, x2, y2) {
 function paintPoint(x, y) {
     for (let dy = -brushSize; dy <= brushSize; dy++) {
         for (let dx = -brushSize; dx <= brushSize; dx++) {
+
             if (dx*dx + dy*dy <= brushSize*brushSize) {
 
                 const px = x + dx;
