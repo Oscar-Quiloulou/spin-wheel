@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Mode Web - Vidéo Win7</title>
+<style>
+    body { margin: 0; overflow: hidden; background: black; }
+    canvas { display: block; }
+</style>
+</head>
+<body>
+
+<video id="vid" src="video.mp4" autoplay muted playsinline loop style="display:none"></video>
+<canvas id="c"></canvas>
+
+<script>
+const canvas = document.getElementById("c");
+const ctx = canvas.getContext("2d");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+const video = document.getElementById("vid");
+
+// 🔥 Correction : forcer le démarrage quand la vidéo est prête
+video.addEventListener("canplay", () => {
+    video.play().catch(e => console.log("Autoplay bloqué :", e));
+});
+
+const windows = [];
+const COUNT = 40;
+
+for (let i = 0; i < COUNT; i++) {
+    let w = 250 + Math.random() * 200;
+    let h = w * 0.6;
+
+    windows.push({
+        x: Math.random() * (canvas.width - w),
+        y: Math.random() * (canvas.height - h),
+        w: w,
+        h: h,
+        vx: (Math.random() > 0.5 ? 1 : -1) * (2 + Math.random() * 3),
+        vy: (Math.random() > 0.5 ? 1 : -1) * (2 + Math.random() * 3),
+        angle: (Math.random() - 0.5) * 10
+    });
+}
+
+function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    windows.forEach(win => {
+        ctx.save();
+        ctx.translate(win.x + win.w/2, win.y + win.h/2);
+        ctx.rotate(win.angle * Math.PI / 180);
+        ctx.drawImage(video, -win.w/2, -win.h/2, win.w, win.h);
+        ctx.restore();
+
+        win.x += win.vx;
+        win.y += win.vy;
+
+        if (win.x < 0 || win.x + win.w > canvas.width) win.vx *= -1;
+        if (win.y < 0 || win.y + win.h > canvas.height) win.vy *= -1;
+    });
+
+    requestAnimationFrame(animate);
+}
+
+animate();
+</script>
+
+</body>
+</html>
