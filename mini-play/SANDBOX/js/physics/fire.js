@@ -1,9 +1,8 @@
 // js/physics/fire.js
 
-import { getCell, setCell } from "../grid.js";
-import { forcedFire } from "../grid.js";
+import { getCell, setCell, inBounds, heat, smokeCounter } from "../grid.js";
 import { 
-    FIRE, EMPTY, WOOD, OIL, METAL, SAND, SMOKE
+    FIRE, EMPTY, WOOD, OIL, METAL, SAND, SMOKE, CHARCOAL
 } from "../config.js";
 
 export function updateFire() {
@@ -14,117 +13,159 @@ export function updateFire() {
 
             const idx = y * 200 + x;
 
-            // 🔥 0) FEU FORCÉ (briquet)
-            if (forcedFire[idx] === 1) {
-                burnFuel(x, y);
-                spreadFire(x, y, 4); // oxygène max
+            // 🔥 Ajout de chaleur
+            heat[idx] = Math.min(200, heat[idx] + 5);
+
+            // 🔥 Diffusion de chaleur
+            spreadHeat(x, y);
+
+            // 🔥 Extinction si pas de combustible
+            if (!fuelAround(x, y)) {
+                if (Math.random() < 0.2) setCell(x, y, SMOKE);
                 continue;
             }
 
-            const oxy = oxygenLevel(x, y);
-            const fuel = fuelAround(x, y);
-
-            // 🔥 1) EXTINCTION SI PAS DE COMBUSTIBLE
-            if (!fuel) {
-                if (Math.random() < 0.3) setCell(x, y, SMOKE);
-                continue;
-            }
-
-            // 🔥 2) EXTINCTION SI PAS D’OXYGÈNE
-            if (oxy === 0) {
-                if (Math.random() < 0.5) setCell(x, y, SMOKE);
-                continue;
-            }
-
-            // 🔥 3) COMBUSTION DU COMBUSTIBLE
+            // 🔥 Combustion
             burnFuel(x, y);
 
-            // 🔥 4) PROPAGATION
-            spreadFire(x, y, oxy);
+            // 🔥 Propagation
+            spreadFire(x, y);
         }
     }
+
+    // 🔥 Gestion de la fumée accumulée
+    clearSmokeAtTop();
 }
 
 // ------------------------------------------------------------
-// 🔥 DÉTECTION DE COMBUSTIBLE
+// 🔥 CHALEUR
 // ------------------------------------------------------------
-function fuelAround(x, y) {
+function spreadHeat(x, y) {
+    const idx = y * 200 + x;
+    const h = heat[idx];
+
     const dirs = [
-        [1, 0], [-1, 0],
-        [0, 1], [0, -1]
+        [1,0], [-1,0], [0,1], [0,-1]
     ];
 
     for (const [dx, dy] of dirs) {
-        const cell = getCell(x + dx, y + dy);
-        if (cell === WOOD || cell === OIL) return true;
+        const cx = x + dx;
+        const cy = y + dy;
+        if (!inBounds(cx, cy)) continue;
+
+        const cidx = cy * 200 + cx;
+
+        // diffusion douce
+        heat[cidx] += (h - heat[cidx]) * 0.1;
+    }
+
+    // refroidissement naturel
+    heat[idx] *= 0.98;
+}
+
+// ------------------------------------------------------------
+// 🔥 COMBUSTIBLE
+// ------------------------------------------------------------
+function fuelAround(x, y) {
+    const dirs = [
+        [1,0], [-1,0], [0,1], [0,-1]
+    ];
+
+    for (const [dx, dy] of dirs) {
+        const c = getCell(x+dx, y+dy);
+        if (c === WOOD || c === OIL) return true;
     }
     return false;
 }
 
 // ------------------------------------------------------------
-// 🔥 COMBUSTION
+// 🔥 COMBUSTION AVANCÉE (bois → feu → charbon → cendre)
 // ------------------------------------------------------------
 function burnFuel(x, y) {
     const dirs = [
-        [1, 0], [-1, 0],
-        [0, 1], [0, -1]
+        [1,0], [-1,0], [0,1], [0,-1]
     ];
 
     for (const [dx, dy] of dirs) {
         const cx = x + dx;
         const cy = y + dy;
-        const cell = getCell(cx, cy);
+        if (!inBounds(cx, cy)) continue;
 
+        const cell = getCell(cx, cy);
+        const idx = cy * 200 + cx;
+
+        // Bois → chauffe → feu → charbon → cendre
         if (cell === WOOD) {
-            if (Math.random() < 0.3) setCell(cx, cy, SMOKE);
-            if (Math.random() < 0.1) setCell(cx, cy, EMPTY);
+
+            // chauffe
+            heat[idx] += 3;
+
+            // prend feu
+            if (heat[idx] > 60 && Math.random() < 0.4) {
+                setCell(cx, cy, FIRE);
+                continue;
+            }
+
+            // devient charbon
+            if (heat[idx] > 120 && Math.random() < 0.2) {
+                setCell(cx, cy, CHARCOAL);
+                continue;
+            }
         }
 
+        // Charbon → fumée → cendre
+        if (cell === CHARCOAL) {
+            if (Math.random() < 0.1) setCell(cx, cy, SMOKE);
+            if (Math.random() < 0.05) setCell(cx, cy, EMPTY);
+        }
+
+        // Huile → brûle très vite
         if (cell === OIL) {
             if (Math.random() < 0.8) setCell(cx, cy, FIRE);
-            if (Math.random() < 0.2) setCell(cx, cy, SMOKE);
-        }
-
-        if (cell === METAL) {
-            // Option : chauffe → couleur rouge plus tard
         }
     }
 }
 
 // ------------------------------------------------------------
-// 🔥 OXYGÈNE
-// ------------------------------------------------------------
-function oxygenLevel(x, y) {
-    let oxy = 0;
-
-    if (getCell(x+1, y) === EMPTY) oxy++;
-    if (getCell(x-1, y) === EMPTY) oxy++;
-    if (getCell(x, y+1) === EMPTY) oxy++;
-    if (getCell(x, y-1) === EMPTY) oxy++;
-
-    return oxy; // 0 à 4
-}
-
-// ------------------------------------------------------------
 // 🔥 PROPAGATION
 // ------------------------------------------------------------
-function spreadFire(x, y, oxy) {
+function spreadFire(x, y) {
     const dirs = [
-        [1, 0], [-1, 0],
-        [0, 1], [0, -1]
+        [1,0], [-1,0], [0,1], [0,-1]
     ];
-
-    const chance = oxy * 0.1;
 
     for (const [dx, dy] of dirs) {
         const cx = x + dx;
         const cy = y + dy;
+        if (!inBounds(cx, cy)) continue;
+
         const cell = getCell(cx, cy);
 
-        if (cell === WOOD && Math.random() < chance + 0.2)
+        if (cell === WOOD && Math.random() < 0.2)
             setCell(cx, cy, FIRE);
 
-        if (cell === OIL && Math.random() < chance + 0.5)
+        if (cell === OIL && Math.random() < 0.5)
             setCell(cx, cy, FIRE);
+    }
+}
+
+// ------------------------------------------------------------
+// ☁️ FUMÉE : ÉVITER L’ACCUMULATION EN HAUT
+// ------------------------------------------------------------
+function clearSmokeAtTop() {
+    for (let x = 0; x < 200; x++) {
+
+        // si fumée en haut
+        if (getCell(x, 0) === SMOKE) {
+            smokeCounter[x]++;
+        } else {
+            smokeCounter[x] = 0;
+        }
+
+        // si trop de fumée accumulée → on la dissipe
+        if (smokeCounter[x] > 20) {
+            setCell(x, 0, EMPTY);
+            smokeCounter[x] = 0;
+        }
     }
 }
