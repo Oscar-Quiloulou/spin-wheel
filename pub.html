@@ -2,56 +2,256 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Publicités</title>
+  <title>Dashboard Futuriste + Pubs</title>
 
   <style>
     body {
       margin: 0;
       padding: 0;
-      background: #0a0a0a;
-      color: white;
-      font-family: Arial, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      flex-direction: column;
-      text-align: center;
+      background: #050505;
+      color: #00eaff;
+      font-family: "Consolas", monospace;
+      overflow-x: hidden;
     }
 
     h1 {
-      margin-bottom: 20px;
+      text-align: center;
+      margin: 20px 0;
+      font-size: 32px;
+      text-shadow: 0 0 10px #00eaff;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 20px;
+      padding: 20px;
+      margin-top: 80px; /* espace pour pub du haut */
+      margin-bottom: 80px; /* espace pour pub du bas */
+      margin-left: 120px; /* espace pour pub gauche */
+      margin-right: 120px; /* espace pour pub droite */
+    }
+
+    .card {
+      background: rgba(0, 255, 255, 0.05);
+      border: 1px solid #00eaff55;
+      border-radius: 10px;
+      padding: 20px;
+      backdrop-filter: blur(6px);
+      box-shadow: 0 0 15px #00eaff33;
+    }
+
+    #map {
+      height: 350px;
+      border-radius: 10px;
+      margin-top: 10px;
+    }
+
+    .value {
+      font-size: 20px;
+      margin-top: 10px;
+      color: #fff;
+    }
+
+    .label {
+      opacity: 0.7;
     }
   </style>
+
+  <!-- Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 </head>
 
 <body>
 
-  <h1>Page de Publicités</h1>
-  <p>Cette page affiche une publicité A‑Ads.</p>
+<h1>DASHBOARD FUTURISTE</h1>
 
-  <!-- BEGIN AADS AD UNIT 2443330 -->
-  <div style="position: absolute; z-index: 99999">
-    <input autocomplete="off" type="checkbox" id="aadsstickymq9grplj" hidden />
-    <div style="padding-top: 0; padding-bottom: auto;">
-      <div style="width:100%;height:auto;position:fixed;text-align:center;font-size:0;bottom:0;left:0;right:0;margin:auto">
-        <label for="aadsstickymq9grplj" style="top: 50%;transform: translateY(-50%);right:24px; position: absolute;border-radius: 4px; background: rgba(248, 248, 249, 0.70); padding: 4px;z-index: 99999;cursor:pointer">
-          <svg fill="#000000" height="16px" width="16px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 490 490">
-            <polygon points="456.851,0 245,212.564 33.149,0 0.708,32.337 212.669,245.004 0.708,457.678 33.149,490 245,277.443 456.851,490 489.292,457.678 277.331,245.004 489.292,32.337 "/>
-          </svg>
-        </label>
-        <div id="frame" style="width: 100%;margin: auto;position: relative; z-index: 99998;">
-          <iframe data-aa="2443330" src="//acceptable.a-ads.com/2443330/?size=Adaptive" style="border:0; padding:0; width:70%; height:auto; overflow:hidden; margin: auto"></iframe>
+<!-- ======================= -->
+<!--     PUB HAUT (2443332)  -->
+<!-- ======================= -->
+<!-- BEGIN AADS AD UNIT 2443332 -->
+<div style="position: fixed; top:0; left:0; right:0; z-index:99999;">
+      <input autocomplete="off" type="checkbox" id="aadsstickymq9h0a1m" hidden />
+      <div>
+        <div style="width:100%;text-align:center;font-size:0;">
+          <label for="aadsstickymq9h0a1m" style="top: 50%;transform: translateY(-50%);right:24px; position: absolute;border-radius: 4px; background: rgba(248, 248, 249, 0.70); padding: 4px;cursor:pointer">
+            ✖
+          </label>
+          <div id="frame" style="width: 100%;margin: auto;position: relative;">
+            <iframe data-aa=2443332 src=//acceptable.a-ads.com/2443332/?size=Adaptive style='border:0; padding:0; width:70%; height:auto; overflow:hidden; margin:auto'></iframe>
+          </div>
         </div>
       </div>
-      <style>
-        #aadsstickymq9grplj:checked + div {
-          display: none;
-        }
-      </style>
-    </div>
+</div>
+<!-- END AADS AD UNIT 2443332 -->
+
+<!-- ======================= -->
+<!--     PUB BAS (2443330)   -->
+<!-- ======================= -->
+<!-- BEGIN AADS AD UNIT 2443330 -->
+<div style="position: fixed; bottom:0; left:0; right:0; z-index:99999;">
+      <input autocomplete="off" type="checkbox" id="aadsstickymq9grplj" hidden />
+      <div>
+        <div style="width:100%;text-align:center;font-size:0;">
+          <label for="aadsstickymq9grplj" style="top: 50%;transform: translateY(-50%);right:24px; position: absolute;border-radius: 4px; background: rgba(248, 248, 249, 0.70); padding: 4px;cursor:pointer">
+            ✖
+          </label>
+          <div id="frame" style="width: 100%;margin: auto;position: relative;">
+            <iframe data-aa=2443330 src=//acceptable.a-ads.com/2443330/?size=Adaptive style='border:0; padding:0; width:70%; height:auto; overflow:hidden; margin:auto'></iframe>
+          </div>
+        </div>
+      </div>
+</div>
+<!-- END AADS AD UNIT 2443330 -->
+
+<!-- ======================= -->
+<!--   PUB GAUCHE (2443333)  -->
+<!-- ======================= -->
+<!-- BEGIN AADS AD UNIT 2443333 -->
+<div style="position: fixed; left:0; top:0; bottom:0; z-index:99999; width:120px;">
+      <input autocomplete="off" type="checkbox" id="aadsstickymq9h210p" hidden />
+      <div style="height:100%;">
+        <div style="width:100%;height:100%;text-align:center;font-size:0;display:flex;flex-direction:column;justify-content:center;">
+          <label for="aadsstickymq9h210p" style="margin:auto; position:absolute; bottom:10px; left:50%; transform:translateX(-50%); border-radius:4px; background:rgba(248,248,249,0.70); padding:4px; cursor:pointer">
+            ✖
+          </label>
+          <iframe data-aa=2443333 src=//acceptable.a-ads.com/2443333/?size=Adaptive style='border:0; padding:0; width:100%; height:70%; overflow:hidden; margin:auto'></iframe>
+        </div>
+      </div>
+</div>
+<!-- END AADS AD UNIT 2443333 -->
+
+<!-- ======================= -->
+<!--   PUB DROITE (2443334)  -->
+<!-- ======================= -->
+<!-- BEGIN AADS AD UNIT 2443334 -->
+<div style="position: fixed; right:0; top:0; bottom:0; z-index:99999; width:120px;">
+      <input autocomplete="off" type="checkbox" id="aadsstickymq9h2ucs" hidden />
+      <div style="height:100%;">
+        <div style="width:100%;height:100%;text-align:center;font-size:0;display:flex;flex-direction:column;justify-content:center;">
+          <label for="aadsstickymq9h2ucs" style="margin:auto; position:absolute; bottom:10px; left:50%; transform:translateX(-50%); border-radius:4px; background:rgba(248,248,249,0.70); padding:4px; cursor:pointer">
+            ✖
+          </label>
+          <iframe data-aa=2443334 src=//acceptable.a-ads.com/2443334/?size=Adaptive style='border:0; padding:0; width:100%; height:70%; overflow:hidden; margin:auto'></iframe>
+        </div>
+      </div>
+</div>
+<!-- END AADS AD UNIT 2443334 -->
+
+<!-- ======================= -->
+<!--   CONTENU DU DASHBOARD  -->
+<!-- ======================= -->
+
+<div class="grid">
+
+  <div class="card">
+    <h2>🕒 Heure locale</h2>
+    <div class="value" id="time">Chargement...</div>
   </div>
-  <!-- END AADS AD UNIT 2443330 -->
+
+  <div class="card">
+    <h2>🌍 IP & Localisation</h2>
+    <div class="value"><span class="label">IP :</span> <span id="ip"></span></div>
+    <div class="value"><span class="label">Pays :</span> <span id="country"></span></div>
+    <div class="value"><span class="label">Ville :</span> <span id="city"></span></div>
+    <div class="value"><span class="label">Latitude :</span> <span id="lat"></span></div>
+    <div class="value"><span class="label">Longitude :</span> <span id="lon"></span></div>
+  </div>
+
+  <div class="card">
+    <h2>⛅ Météo détaillée</h2>
+    <div class="value" id="temp"></div>
+    <div class="value" id="humidity"></div>
+    <div class="value" id="uv"></div>
+    <div class="value" id="rain"></div>
+    <div class="value" id="wind"></div>
+    <div class="value" id="pressure"></div>
+  </div>
+
+  <div class="card">
+    <h2>💻 Infos Système</h2>
+    <div class="value"><span class="label">CPU :</span> <span id="cpu">Non disponible</span></div>
+    <div class="value"><span class="label">RAM :</span> <span id="ram">Non disponible</span></div>
+    <div class="value"><span class="label">GPU :</span> <span id="gpu">Non disponible</span></div>
+  </div>
+
+  <div class="card">
+    <h2>⚡ Vitesse Internet</h2>
+    <div class="value" id="speed">Test en cours...</div>
+    <div class="value" id="ping">Ping en cours...</div>
+  </div>
+
+  <div class="card" style="grid-column: 1 / -1;">
+    <h2>🗺️ Carte</h2>
+    <div id="map"></div>
+  </div>
+
+</div>
+
+<script>
+  // Heure locale
+  fetch("https://worldtimeapi.org/api/ip")
+    .then(r => r.json())
+    .then(d => document.getElementById("time").textContent = d.datetime);
+
+  // IP + Localisation
+  fetch("https://ipapi.co/json/")
+    .then(r => r.json())
+    .then(data => {
+      document.getElementById("ip").textContent = data.ip;
+      document.getElementById("country").textContent = data.country_name;
+      document.getElementById("city").textContent = data.city;
+      document.getElementById("lat").textContent = data.latitude;
+      document.getElementById("lon").textContent = data.longitude;
+
+      // Météo
+      fetch(`https://api.open-meteo.com/v1/forecast?latitude=${data.latitude}&longitude=${data.longitude}&current_weather=true&hourly=relativehumidity_2m,uv_index,precipitation,pressure_msl`)
+        .then(r => r.json())
+        .then(w => {
+          const cw = w.current_weather;
+          document.getElementById("temp").textContent = "Température : " + cw.temperature + "°C";
+          document.getElementById("wind").textContent = "Vent : " + cw.windspeed + " km/h";
+          document.getElementById("pressure").textContent = "Pression : " + w.hourly.pressure_msl[0] + " hPa";
+          document.getElementById("humidity").textContent = "Humidité : " + w.hourly.relativehumidity_2m[0] + "%";
+          document.getElementById("uv").textContent = "UV : " + w.hourly.uv_index[0];
+          document.getElementById("rain").textContent = "Pluie : " + w.hourly.precipitation[0] + " mm";
+        });
+
+      // Carte
+      const map = L.map('map').setView([data.latitude, data.longitude], 13);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
+      L.marker([data.latitude, data.longitude]).addTo(map).bindPopup("Tu es ici").openPopup();
+    });
+
+  // Infos système
+  if (navigator.deviceMemory) document.getElementById("ram").textContent = navigator.deviceMemory + " Go";
+  if (navigator.hardwareConcurrency) document.getElementById("cpu").textContent = navigator.hardwareConcurrency + " threads";
+
+  if (navigator.gpu) {
+    navigator.gpu.requestAdapter().then(a => {
+      if (a) document.getElementById("gpu").textContent = a.name;
+    });
+  }
+
+  // Vitesse internet
+  const start = performance.now();
+  fetch("https://speed.cloudflare.com/__down?bytes=1000000")
+    .then(() => {
+      const end = performance.now();
+      const seconds = (end - start) / 1000;
+      const mbps = (1 / seconds).toFixed(2);
+      document.getElementById("speed").textContent = "Download : " + mbps + " MB/s";
+    });
+
+  // Ping
+  const pingStart = performance.now();
+  fetch("https://cloudflare.com")
+    .then(() => {
+      const pingEnd = performance.now();
+      document.getElementById("ping").textContent = "Ping : " + Math.round(pingEnd - pingStart) + " ms";
+    });
+</script>
 
 </body>
 </html>
