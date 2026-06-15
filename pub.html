@@ -51,6 +51,18 @@
       margin-top: 6px;
     }
 
+    .ad-wrapper {
+      margin-top: 22px;
+      padding: 16px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px dashed rgba(0, 200, 255, 0.35);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 120px;
+    }
+
     .back-link {
       margin-top: 18px;
       font-size: 16px;
@@ -75,22 +87,17 @@
 
   <div class="card">
     <h1>Merci de soutenir le Sandbox ❤️</h1>
-    <p>Cette page déclenche une pub HilltopAds pour financer le jeu.</p>
+    <p>Chaque pub affichée aide à financer le développement du jeu.</p>
     <p class="hint">Tu peux revenir jouer quand tu veux, la pub est déjà comptée.</p>
 
-    <!-- TON SCRIPT HILLTOPADS (popunder officiel) -->
-    <script>
-    (function(lgtf){
-      var d = document,
-          s = d.createElement('script'),
-          l = d.scripts[d.scripts.length - 1];
-      s.settings = lgtf || {};
-      s.src = "//inconsequentialdear.com/CID.906/bw2a5D1/SQWeQI9/NwxZEhsOXD_k/2uMtSN013/MYTtM/4GOoTrYA1k";
-      s.async = true;
-      s.referrerPolicy = 'no-referrer-when-downgrade';
-      l.parentNode.insertBefore(s, l);
-    })({});
-    </script>
+    <div class="ad-wrapper">
+    <iframe data-aa='2444134'
+        src='//ad.a-ads.com/2444134/?size=728x90'
+        style='border:0; padding:0; width:728px; height:90px; overflow:hidden;display: block;margin: auto'></iframe>
+
+        </iframe>
+      </div>
+    </div>
 
     <a class="back-link" href="/">⬅ Retour au jeu</a>
   </div>
