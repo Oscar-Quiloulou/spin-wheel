@@ -2,105 +2,70 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Soutenir le Sandbox ❤️</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ads Reload</title>
 
   <style>
-    * { box-sizing: border-box; }
-
     body {
-      margin: 0;
-      padding: 0;
-      background: radial-gradient(circle at top, #0a0a15, #020204);
-      color: #e8e8e8;
-      font-family: system-ui, sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-height: 100vh;
-      padding: 40px 10px;
-      gap: 30px;
-    }
-
-    .card {
-      width: 100%;
-      max-width: 900px;
-      background: rgba(15, 15, 30, 0.9);
-      border-radius: 16px;
-      border: 1px solid rgba(0, 200, 255, 0.4);
-      box-shadow: 0 0 25px rgba(0, 200, 255, 0.25);
-      padding: 28px 20px 32px;
+      background: #0a0a0a;
+      color: white;
+      font-family: Arial, sans-serif;
       text-align: center;
+      padding-top: 40px;
     }
 
-    h1 {
-      margin: 0 0 10px;
-      font-size: 28px;
-      letter-spacing: 0.03em;
+    #ad-container {
+      width: 100%;
+      margin: auto;
+      position: relative;
+      z-index: 99998;
     }
 
-    p {
-      margin: 4px 0;
-      font-size: 15px;
-      opacity: 0.9;
-    }
-
-    .hint {
-      font-size: 13px;
-      opacity: 0.7;
-      margin-top: 6px;
-    }
-
-    .ad-wrapper {
-      margin-top: 22px;
-      padding: 16px;
-      border-radius: 12px;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px dashed rgba(0, 200, 255, 0.35);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 120px;
-    }
-
-    .back-link {
-      margin-top: 18px;
-      font-size: 16px;
-      color: #00c8ff;
-      text-decoration: none;
-      padding: 10px 18px;
-      border-radius: 999px;
-      border: 1px solid rgba(0, 200, 255, 0.6);
-      background: rgba(0, 200, 255, 0.08);
-      transition: 0.15s ease;
-      display: inline-block;
-    }
-
-    .back-link:hover {
-      background: rgba(0, 200, 255, 0.18);
-      box-shadow: 0 0 12px rgba(0, 200, 255, 0.4);
+    .info {
+      margin-top: 20px;
+      opacity: 0.6;
+      font-size: 14px;
     }
   </style>
 </head>
-
 <body>
 
-  <div class="card">
-    <h1>Merci de soutenir le Sandbox ❤️</h1>
-    <p>Chaque pub affichée aide à financer le développement du jeu.</p>
-    <p class="hint">Tu peux revenir jouer quand tu veux, la pub est déjà comptée.</p>
+  <h2>Publicité A‑Ads (Reload Auto)</h2>
 
-    <div class="ad-wrapper">
-    <iframe data-aa='2444134'
-        src='//ad.a-ads.com/2444134/?size=728x90'
-        style='border:0; padding:0; width:728px; height:90px; overflow:hidden;display: block;margin: auto'></iframe>
+  <div id="ad-container"></div>
 
-        </iframe>
-      </div>
-    </div>
-
-    <a class="back-link" href="/">⬅ Retour au jeu</a>
+  <div class="info">
+    Reload automatique toutes les 30 secondes
   </div>
+
+  <script>
+    function reloadAAds() {
+      const container = document.getElementById("ad-container");
+
+      // On supprime l'ancien iframe
+      container.innerHTML = "";
+
+      // On recrée l'iframe A-Ads
+      const iframe = document.createElement("iframe");
+      iframe.setAttribute("data-aa", "2444134");
+      iframe.src = "//acceptable.a-ads.com/2444134/?size=Adaptive";
+      iframe.style.border = "0";
+      iframe.style.padding = "0";
+      iframe.style.width = "70%";
+      iframe.style.height = "auto";
+      iframe.style.overflow = "hidden";
+      iframe.style.display = "block";
+      iframe.style.margin = "auto";
+
+      container.appendChild(iframe);
+    }
+
+    // Premier affichage
+    reloadAAds();
+
+    // Reload toutes les 30 secondes
+    setInterval(reloadAAds, 30000);
+  </script>
 
 </body>
 </html>
