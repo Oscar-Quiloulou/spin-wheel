@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>MetasploitDB — Modules Explorer</title>
+<style>
+    :root {
+        --bg: #050510;
+        --bg2: #0b0b18;
+        --accent: #00eaff;
+        --accent2: #ff00ff;
+        --text: #e0faff;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+        margin: 0;
+        font-family: Consolas, monospace;
+        background: radial-gradient(circle at top, #111133 0, #050510 40%, #000000 100%);
+        color: var(--text);
+        overflow: hidden;
+    }
+
+    /* Layout */
+    .app {
+        display: grid;
+        grid-template-columns: 260px 1fr;
+        height: 100vh;
+    }
+
+    /* Sidebar */
+    .sidebar {
+        background: linear-gradient(180deg, #050510 0, #0b0b18 40%, #050510 100%);
+        border-right: 1px solid rgba(0, 234, 255, 0.3);
+        padding: 15px;
+        position: relative;
+        box-shadow: 0 0 25px rgba(0, 234, 255, 0.15);
+        overflow-y: auto;
+    }
+
+    .sidebar::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, rgba(0,234,255,0.08), rgba(255,0,255,0.05));
+        mix-blend-mode: screen;
+        pointer-events: none;
+    }
+
+    .logo {
+        font-size: 20px;
+        font-weight: bold;
+        color: var(--accent);
+        text-shadow: 0 0 12px var(--accent);
+        margin-bottom: 10px;
+    }
+
+    .logo span {
+        color: var(--accent2);
+    }
+
+    .section-title {
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-top: 15px;
+        margin-bottom: 5px;
+        color: rgba(255,255,255,0.6);
+    }
+
+    .chip-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    .chip {
+        padding: 4px 8px;
+        border-radius: 999px;
+        border: 1px solid rgba(0,234,255,0.4);
+        font-size: 11px;
+        cursor: pointer;
+        color: var(--accent);
+        background: rgba(0,0,0,0.4);
+        transition: 0.15s;
+    }
+
+    .chip.active {
+        background: var(--accent);
+        color: #000;
+        box-shadow: 0 0 10px rgba(0,234,255,0.7);
+    }
+
+    .chip.type {
+        border-color: rgba(255,0,255,0.5);
+        color: var(--accent2);
+    }
+
+    .chip.type.active {
+        background: var(--accent2);
+        color: #000;
+        box-shadow: 0 0 10px rgba(255,0,255,0.7);
+    }
+
+    .input {
+        width: 100%;
+        padding: 7px 9px;
+        border-radius: 4px;
+        border: 1px solid rgba(0,234,255,0.5);
+        background: #050510;
+        color: var(--accent);
+        font-size: 12px;
+        margin-bottom: 8px;
+    }
+
+    .select {
+        width: 100%;
+        padding: 6px 8px;
+        border-radius: 4px;
+        border: 1px solid rgba(255,0,255,0.5);
+        background: #050510;
+        color: var(--accent2);
+        font-size: 12px;
+        margin-bottom: 8px;
+    }
+
+    /* Main */
+    .main {
+        display: grid;
+        grid-template-rows: 160px 1fr 40px;
+        height: 100vh;
+        background: radial-gradient(circle at bottom, #111133 0, #050510 40%, #000000 100%);
+    }
+
+    /* Terminal header */
+    .terminal {
+        border-bottom: 1px solid rgba(0,234,255,0.3);
+        padding: 10px 15px;
+        background: #050510;
+        box-shadow: 0 0 25px rgba(0,234,255,0.15);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .terminal::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: repeating-linear-gradient(
+            0deg,
+            rgba(0,234,255,0.05),
+            rgba(0,234,255,0.05) 1px,
+            transparent 1px,
+            transparent 3px
+        );
+        mix-blend-mode: soft-light;
+        pointer-events: none;
+    }
+
+    .term-title {
+        font-size: 13px;
+        color: rgba(255,255,255,0.7);
+        margin-bottom: 5px;
+    }
+
+    .term-line {
+        font-size: 12px;
+        color: var(--accent);
+        white-space: nowrap;
+        overflow: hidden;
+    }
+
+    .term-line span.prompt {
+        color: var(--accent2);
+    }
+
+    .term-log {
+        font-size: 11px;
+        color: rgba(0,234,255,0.7);
+        max-height: 90px;
+        overflow-y: auto;
+        margin-top: 5px;
+    }
+
+    /* Toolbar */
+    .toolbar {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 6px 12px;
+        font-size: 11px;
+        color: rgba(255,255,255,0.7);
+        border-bottom: 1px solid rgba(0,234,255,0.2);
+        background: rgba(0,0,0,0.4);
+    }
+
+    .toolbar span {
+        white-space: nowrap;
+    }
+
+    .toolbar .badge {
+        padding: 2px 6px;
+        border-radius: 999px;
+        border: 1px solid rgba(0,234,255,0.5);
+        color: var(--accent);
+    }
+
+    /* Modules list */
+    .modules-container {
+        padding: 10px 15px;
+        overflow-y: auto;
+        position: relative;
+    }
+
+    .module-card {
+        border-radius: 6px;
+        border: 1px solid rgba(0,234,255,0.35);
+        background: rgba(5,5,16,0.9);
+        margin-bottom: 8px;
+        padding: 8px 10px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .module-card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(120deg,
+            rgba(0,234,255,0.12),
+            rgba(255,0,255,0.08),
+            rgba(0,234,255,0.12)
+        );
+        opacity: 0;
+        transition: 0.2s;
+        pointer-events: none;
+    }
+
+    .module-card:hover::before {
+        opacity: 1;
+    }
+
+    .module-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 10px;
+        margin-bottom: 4px;
+    }
+
+    .module-name {
+        font-size: 13px;
+        color: var(--accent);
+    }
+
+    .module-type {
+        font-size: 11px;
+        color: var(--accent2);
+        text-transform: uppercase;
+    }
+
+    .module-desc {
+        font-size: 11px;
+        color: rgba(255,255,255,0.75);
+        margin-bottom: 4px;
+    }
+
+    .module-meta {
+        font-size: 10px;
+        color: rgba(0,234,255,0.8);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .tag {
+        padding: 2px 6px;
+        border-radius: 999px;
+        border: 1px solid rgba(0,234,255,0.4);
+        font-size: 10px;
+        cursor: pointer;
+        background: rgba(0,0,0,0.6);
+    }
+
+    .tag.os {
+        border-color: rgba(255,0,255,0.5);
+        color: var(--accent2);
+    }
+
+    .tag.cve {
+        border-color: rgba(0,234,255,0.8);
+        color: var(--accent);
+    }
+
+    /* Pagination */
+    .pagination {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        padding: 6px 10px;
+        border-top: 1px solid rgba(0,234,255,0.3);
+        background: rgba(0,0,0,0.7);
+        font-size: 11px;
+    }
+
+    .page-btn {
+        padding: 3px 8px;
+        border-radius: 999px;
+        border: 1px solid rgba(0,234,255,0.6);
+        background: #050510;
+        color: var(--accent);
+        cursor: pointer;
+        transition: 0.15s;
+    }
+
+    .page-btn:disabled {
+        opacity: 0.3;
+        cursor: default;
+    }
+
+    .page-btn:hover:not(:disabled) {
+        box-shadow: 0 0 10px rgba(0,234,255,0.7);
+        background: #0b0b18;
+    }
+
+    .page-info {
+        color: rgba(255,255,255,0.7);
+    }
+
+    /* Scrollbars */
+    .sidebar::-webkit-scrollbar,
+    .modules-container::-webkit-scrollbar,
+    .term-log::-webkit-scrollbar {
+        width: 6px;
+    }
+    .sidebar::-webkit-scrollbar-thumb,
+    .modules-container::-webkit-scrollbar-thumb,
+    .term-log::-webkit-scrollbar-thumb {
+        background: rgba(0,234,255,0.4);
+        border-radius: 999px;
+    }
+</style>
+</head>
+<body>
+
+<div class="app">
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="logo">Meta<span>sploitDB</span></div>
+
+        <div class="section-title">Recherche globale</div>
+        <input id="searchInput" class="input" placeholder="exploit/windows/smb, CVE-2017-0144, etc.">
+
+        <div class="section-title">Type de module</div>
+        <div id="typeChips" class="chip-group">
+            <div class="chip type" data-type="">Tous</div>
+            <div class="chip type" data-type="exploit">exploit</div>
+            <div class="chip type" data-type="auxiliary">auxiliary</div>
+            <div class="chip type" data-type="post">post</div>
+            <div class="chip type" data-type="payload">payload</div>
+            <div class="chip type" data-type="encoder">encoder</div>
+            <div class="chip type" data-type="nop">nop</div>
+        </div>
+
+        <div class="section-title">Filtre OS (plateforme)</div>
+        <div id="osChips" class="chip-group">
+            <!-- rempli dynamiquement -->
+        </div>
+
+        <div class="section-title">Tri</div>
+        <select id="sortSelect" class="select">
+            <option value="name_asc">Nom A→Z</option>
+            <option value="name_desc">Nom Z→A</option>
+            <option value="type">Type</option>
+            <option value="cve_count">Nombre de CVE</option>
+        </select>
+
+        <div class="section-title">CVE rapide</div>
+        <input id="cveInput" class="input" placeholder="ex: CVE-2017-0144">
+    </div>
+
+    <!-- MAIN -->
+    <div class="main">
+        <!-- TERMINAL HEADER -->
+        <div class="terminal">
+            <div class="term-title">msfconsole — Metasploit Framework</div>
+            <div class="term-line">
+                <span class="prompt">msf6 &gt; </span>
+                <span id="termCommand">search type:exploit platform:windows</span>
+            </div>
+            <div id="termLog" class="term-log"></div>
+        </div>
+
+        <!-- TOOLBAR -->
+        <div class="toolbar">
+            <span class="badge" id="countBadge">0 modules</span>
+            <span>Type: <span id="currentType">Tous</span></span>
+            <span>OS: <span id="currentOS">Tous</span></span>
+            <span>Tri: <span id="currentSort">Nom A→Z</span></span>
+        </div>
+
+        <!-- MODULES LIST -->
+        <div id="modulesContainer" class="modules-container"></div>
+
+        <!-- PAGINATION -->
+        <div class="pagination">
+            <button id="prevPage" class="page-btn">◀ Précédent</button>
+            <span class="page-info" id="pageInfo">Page 1 / 1</span>
+            <button id="nextPage" class="page-btn">Suivant ▶</button>
+        </div>
+    </div>
+</div>
+
+<script>
+const API_URL = "https://metasploit.com/modules.json"; // à adapter si besoin
+
+let allModules = [];
+let filteredModules = [];
+let currentPage = 1;
+const pageSize = 25;
+
+let currentTypeFilter = "";
+let currentOSFilter = "";
+let currentSort = "name_asc";
+let currentSearch = "";
+let currentCVE = "";
+
+const modulesContainer = document.getElementById("modulesContainer");
+const countBadge = document.getElementById("countBadge");
+const currentTypeSpan = document.getElementById("currentType");
+const currentOSSpan = document.getElementById("currentOS");
+const currentSortSpan = document.getElementById("currentSort");
+const pageInfo = document.getElementById("pageInfo");
+const prevPageBtn = document.getElementById("prevPage");
+const nextPageBtn = document.getElementById("nextPage");
+const termLog = document.getElementById("termLog");
+const termCommand = document.getElementById("termCommand");
+
+async function loadModules() {
+    logTerminal("Initialisation de la connexion à MetasploitDB...");
+    try {
+        const res = await fetch(API_URL);
+        const data = await res.json();
+        allModules = data;
+        logTerminal(`Chargé ${allModules.length} modules depuis MetasploitDB.`);
+        buildOSChips();
+        applyFilters();
+    } catch (e) {
+        logTerminal("Erreur: impossible de récupérer modules.json");
+        console.error(e);
+    }
+}
+
+function logTerminal(msg) {
+    const line = document.createElement("div");
+    line.textContent = msg;
+    termLog.appendChild(line);
+    termLog.scrollTop = termLog.scrollHeight;
+}
+
+function buildOSChips() {
+    const osSet = new Set();
+    allModules.forEach(m => {
+        if (m.platform) {
+            m.platform.split(",").forEach(p => {
+                const os = p.trim();
+                if (os) osSet.add(os);
+            });
+        }
+    });
+    const osChips = document.getElementById("osChips");
+    osChips.innerHTML = "";
+    const allChip = document.createElement("div");
+    allChip.className = "chip";
+    allChip.textContent = "Tous";
+    allChip.dataset.os = "";
+    osChips.appendChild(allChip);
+
+    [...osSet].sort().forEach(os => {
+        const chip = document.createElement("div");
+        chip.className = "chip os";
+        chip.textContent = os;
+        chip.dataset.os = os;
+        osChips.appendChild(chip);
+    });
+
+    // events
+    osChips.addEventListener("click", e => {
+        if (!e.target.classList.contains("chip")) return;
+        [...osChips.children].forEach(c => c.classList.remove("active"));
+        e.target.classList.add("active");
+        currentOSFilter = e.target.dataset.os;
+        currentOSSpan.textContent = currentOSFilter || "Tous";
+        updateCommandLine();
+        applyFilters();
+    });
+}
+
+function setupTypeChips() {
+    const typeChips = document.getElementById("typeChips");
+    typeChips.addEventListener("click", e => {
+        if (!e.target.classList.contains("chip")) return;
+        [...typeChips.children].forEach(c => c.classList.remove("active"));
+        e.target.classList.add("active");
+        currentTypeFilter = e.target.dataset.type;
+        currentTypeSpan.textContent = currentTypeFilter || "Tous";
+        updateCommandLine();
+        applyFilters();
+    });
+    // activer "Tous" par défaut
+    typeChips.querySelector(".chip[data-type='']").classList.add("active");
+}
+
+function setupInputs() {
+    document.getElementById("searchInput").addEventListener("input", e => {
+        currentSearch = e.target.value.toLowerCase();
+        updateCommandLine();
+        applyFilters();
+    });
+
+    document.getElementById("cveInput").addEventListener("input", e => {
+        currentCVE = e.target.value.trim();
+        updateCommandLine();
+        applyFilters();
+    });
+
+    document.getElementById("sortSelect").addEventListener("change", e => {
+        currentSort = e.target.value;
+        currentSortSpan.textContent = e.target.options[e.target.selectedIndex].text;
+        updateCommandLine();
+        applyFilters();
+    });
+
+    prevPageBtn.addEventListener("click", () => {
+        if (currentPage > 1) {
+            currentPage--;
+            renderModules();
+        }
+    });
+
+    nextPageBtn.addEventListener("click", () => {
+        const totalPages = Math.max(1, Math.ceil(filteredModules.length / pageSize));
+        if (currentPage < totalPages) {
+            currentPage++;
+            renderModules();
+        }
+    });
+}
+
+function updateCommandLine() {
+    let cmd = "search";
+    if (currentTypeFilter) cmd += ` type:${currentTypeFilter}`;
+    if (currentOSFilter) cmd += ` platform:${currentOSFilter}`;
+    if (currentSearch) cmd += ` text:"${currentSearch}"`;
+    if (currentCVE) cmd += ` cve:${currentCVE}`;
+    cmd += ` sort:${currentSort}`;
+    termCommand.textContent = cmd;
+}
+
+function applyFilters() {
+    filteredModules = allModules.filter(m => {
+        // type
+        if (currentTypeFilter && m.type !== currentTypeFilter) return false;
+        // OS
+        if (currentOSFilter) {
+            const platforms = (m.platform || "").toLowerCase();
+            if (!platforms.split(",").map(p => p.trim()).includes(currentOSFilter.toLowerCase())) {
+                return false;
+            }
+        }
+        // search global
+        if (currentSearch) {
+            const text = [
+                m.fullname,
+                m.name,
+                m.description,
+                m.platform,
+                (m.references || []).join(" ")
+            ].join(" ").toLowerCase();
+            if (!text.includes(currentSearch)) return false;
+        }
+        // CVE
+        if (currentCVE) {
+            const refs = (m.references || []).join(" ");
+            if (!refs.toUpperCase().includes(currentCVE.toUpperCase())) return false;
+        }
+        return true;
+    });
+
+    sortModules();
+    currentPage = 1;
+    countBadge.textContent = `${filteredModules.length} modules`;
+    renderModules();
+}
+
+function sortModules() {
+    filteredModules.sort((a, b) => {
+        if (currentSort === "name_asc") {
+            return (a.fullname || "").localeCompare(b.fullname || "");
+        } else if (currentSort === "name_desc") {
+            return (b.fullname || "").localeCompare(a.fullname || "");
+        } else if (currentSort === "type") {
+            return (a.type || "").localeCompare(b.type || "") ||
+                   (a.fullname || "").localeCompare(b.fullname || "");
+        } else if (currentSort === "cve_count") {
+            const ca = (a.references || []).length;
+            const cb = (b.references || []).length;
+            return cb - ca || (a.fullname || "").localeCompare(b.fullname || "");
+        }
+        return 0;
+    });
+}
+
+function renderModules() {
+    modulesContainer.innerHTML = "";
+    const totalPages = Math.max(1, Math.ceil(filteredModules.length / pageSize));
+    currentPage = Math.min(currentPage, totalPages);
+
+    const start = (currentPage - 1) * pageSize;
+    const end = start + pageSize;
+    const pageItems = filteredModules.slice(start, end);
+
+    pageItems.forEach(m => {
+        const card = document.createElement("div");
+        card.className = "module-card";
+
+        const header = document.createElement("div");
+        header.className = "module-header";
+
+        const name = document.createElement("div");
+        name.className = "module-name";
+        name.textContent = m.fullname || m.name || "(sans nom)";
+
+        const type = document.createElement("div");
+        type.className = "module-type";
+        type.textContent = m.type || "unknown";
+
+        header.appendChild(name);
+        header.appendChild(type);
+
+        const desc = document.createElement("div");
+        desc.className = "module-desc";
+        desc.textContent = m.description || "(pas de description)";
+
+        const meta = document.createElement("div");
+        meta.className = "module-meta";
+
+        const platformTag = document.createElement("span");
+        platformTag.className = "tag os";
+        platformTag.textContent = m.platform || "n/a";
+        platformTag.title = "Filtrer sur cette plateforme";
+        platformTag.addEventListener("click", () => {
+            currentOSFilter = (m.platform || "").split(",")[0].trim();
+            currentOSSpan.textContent = currentOSFilter || "Tous";
+            // activer chip correspondant si présent
+            const osChips = document.getElementById("osChips");
+            [...osChips.children].forEach(c => {
+                c.classList.toggle("active", c.dataset.os.toLowerCase() === currentOSFilter.toLowerCase());
+            });
+            updateCommandLine();
+            applyFilters();
+        });
+        meta.appendChild(platformTag);
+
+        const refs = m.references || [];
+        refs.forEach(r => {
+            if (!r.toUpperCase().startsWith("CVE-")) return;
+            const cveTag = document.createElement("span");
+            cveTag.className = "tag cve";
+            cveTag.textContent = r;
+            cveTag.title = "Filtrer sur cette CVE";
+            cveTag.addEventListener("click", () => {
+                currentCVE = r;
+                document.getElementById("cveInput").value = r;
+                updateCommandLine();
+                applyFilters();
+            });
+            meta.appendChild(cveTag);
+        });
+
+        card.appendChild(header);
+        card.appendChild(desc);
+        card.appendChild(meta);
+
+        modulesContainer.appendChild(card);
+    });
+
+    pageInfo.textContent = `Page ${currentPage} / ${totalPages}`;
+    prevPageBtn.disabled = currentPage <= 1;
+    nextPageBtn.disabled = currentPage >= totalPages;
+}
+
+// init
+setupTypeChips();
+setupInputs();
+loadModules();
+</script>
+
+</body>
+</html>
