@@ -124,176 +124,320 @@
     </section>
 
     <!-- Semaine 1 -->
-<section class="week" id="week1">
-    <h2>Semaine 1 – Fondations du Hacking Éthique</h2>
+    <section class="week" id="week1">
+        <h2>Semaine 1 – Fondations du Hacking Éthique</h2>
 
-    <p>
-        Cette première semaine pose les bases essentielles du hacking éthique. 
-        Avant d’utiliser des outils, avant de lancer un scan, avant même de toucher 
-        une machine virtuelle, il faut comprendre <strong>la philosophie</strong>, 
-        <strong>le cadre légal</strong>, <strong>les responsabilités</strong> et 
-        <strong>la méthodologie mentale</strong> d’un hacker éthique.
-    </p>
+        <p>
+            Cette première semaine pose les bases essentielles du hacking éthique. 
+            Avant d’utiliser des outils, avant de lancer un scan, avant même de toucher 
+            une machine virtuelle, il faut comprendre <strong>la philosophie</strong>, 
+            <strong>le cadre légal</strong>, <strong>les responsabilités</strong> et 
+            <strong>la méthodologie mentale</strong> d’un hacker éthique.
+        </p>
 
-    <h3>1. Comprendre la logique du hacking éthique</h3>
-    <p>
-        Le hacking éthique n’est pas une activité de “piratage gentil”. 
-        C’est une discipline professionnelle qui repose sur un principe simple :
-    </p>
+        <h3>1. Comprendre la logique du hacking éthique</h3>
+        <p>
+            Le hacking éthique n’est pas une activité de “piratage gentil”. 
+            C’est une discipline professionnelle qui repose sur un principe simple :
+        </p>
 
-    <blockquote>
-        <strong>“Penser comme un attaquant, agir comme un défenseur.”</strong>
-    </blockquote>
+        <blockquote>
+            <strong>“Penser comme un attaquant, agir comme un défenseur.”</strong>
+        </blockquote>
 
-    <p>
-        Cela signifie que tu dois apprendre à analyser un système comme si tu voulais 
-        le compromettre, mais avec l’objectif de le protéger.  
-        Le hacker éthique est un expert en sécurité qui :
+        <p>
+            Cela signifie que tu dois apprendre à analyser un système comme si tu voulais 
+            le compromettre, mais avec l’objectif de le protéger.  
+            Le hacker éthique est un expert en sécurité qui :
+            <ul>
+                <li>identifie les failles avant les criminels,</li>
+                <li>teste les défenses,</li>
+                <li>évalue les risques,</li>
+                <li>propose des solutions concrètes.</li>
+            </ul>
+        </p>
+
+        <h3>2. Les trois profils de hackers</h3>
+        <p>
+            Pour comprendre ton rôle, il faut connaître les trois grandes catégories de hackers :
+        </p>
+
+        <h4>White Hat – Le hacker éthique</h4>
+        <p>
+            Il travaille avec autorisation, dans un cadre légal, pour améliorer la sécurité.  
+            Il documente tout, respecte les règles, et ne cause jamais de dommages.
+        </p>
+
+        <h4>Black Hat – Le cybercriminel</h4>
+        <p>
+            Il exploite les failles pour voler, détruire, extorquer ou nuire.  
+            Il agit sans autorisation et viole la loi.
+        </p>
+
+        <h4>Grey Hat – Entre les deux</h4>
+        <p>
+            Il peut découvrir des failles sans autorisation, parfois pour “aider”, 
+            mais cela reste illégal.  
+            Il n’a pas d’intention criminelle, mais il enfreint la loi.
+        </p>
+
+        <h3>3. Le cadre légal : ce que tu peux faire, ce que tu ne peux pas faire</h3>
+        <p>
+            En France, accéder à un système sans autorisation est un délit puni par :
+            <ul>
+                <li>amende,</li>
+                <li>interdiction professionnelle,</li>
+                <li>peine de prison selon la gravité.</li>
+            </ul>
+        </p>
+
+        <h4>Actions illégales (interdites même pour apprendre)</h4>
         <ul>
-            <li>identifie les failles avant les criminels,</li>
-            <li>teste les défenses,</li>
-            <li>évalue les risques,</li>
-            <li>propose des solutions concrètes.</li>
+            <li>Scanner les ports d’un site qui ne t’appartient pas</li>
+            <li>Tester un mot de passe sur un service public</li>
+            <li>Accéder à une base de données sans autorisation</li>
+            <li>Exploiter une faille sur un site “pour voir”</li>
         </ul>
-    </p>
 
-    <h3>2. Les trois profils de hackers</h3>
-    <p>
-        Pour comprendre ton rôle, il faut connaître les trois grandes catégories de hackers :
-    </p>
-
-    <h4>White Hat – Le hacker éthique</h4>
-    <p>
-        Il travaille avec autorisation, dans un cadre légal, pour améliorer la sécurité.  
-        Il documente tout, respecte les règles, et ne cause jamais de dommages.
-    </p>
-
-    <h4>Black Hat – Le cybercriminel</h4>
-    <p>
-        Il exploite les failles pour voler, détruire, extorquer ou nuire.  
-        Il agit sans autorisation et viole la loi.
-    </p>
-
-    <h4>Grey Hat – Entre les deux</h4>
-    <p>
-        Il peut découvrir des failles sans autorisation, parfois pour “aider”, 
-        mais cela reste illégal.  
-        Il n’a pas d’intention criminelle, mais il enfreint la loi.
-    </p>
-
-    <h3>3. Le cadre légal : ce que tu peux faire, ce que tu ne peux pas faire</h3>
-    <p>
-        En France, accéder à un système sans autorisation est un délit puni par :
+        <h4>Actions légales (autorisées pour apprendre)</h4>
         <ul>
-            <li>amende,</li>
-            <li>interdiction professionnelle,</li>
-            <li>peine de prison selon la gravité.</li>
+            <li>Tester une machine virtuelle que tu as installée</li>
+            <li>Utiliser des plateformes d’entraînement (TryHackMe, HTB, OverTheWire)</li>
+            <li>Participer à des programmes bug bounty autorisés</li>
+            <li>Analyser ton propre réseau local</li>
         </ul>
-    </p>
 
-    <h4>Actions illégales (interdites même pour apprendre)</h4>
-    <ul>
-        <li>Scanner les ports d’un site qui ne t’appartient pas</li>
-        <li>Tester un mot de passe sur un service public</li>
-        <li>Accéder à une base de données sans autorisation</li>
-        <li>Exploiter une faille sur un site “pour voir”</li>
-    </ul>
+        <h3>4. Le périmètre : la règle d’or du hacking éthique</h3>
+        <p>
+            Lors d’un test d’intrusion, tu reçois un document appelé 
+            <strong>“scope”</strong> (périmètre).  
+            Il définit :
+            <ul>
+                <li>les machines autorisées,</li>
+                <li>les adresses IP,</li>
+                <li>les applications,</li>
+                <li>les limites à ne pas dépasser.</li>
+            </ul>
+        </p>
 
-    <h4>Actions légales (autorisées pour apprendre)</h4>
-    <ul>
-        <li>Tester une machine virtuelle que tu as installée</li>
-        <li>Utiliser des plateformes d’entraînement (TryHackMe, HTB, OverTheWire)</li>
-        <li>Participer à des programmes bug bounty autorisés</li>
-        <li>Analyser ton propre réseau local</li>
-    </ul>
+        <p>
+            Si une machine n’est pas dans le périmètre, tu n’y touches pas.  
+            C’est la frontière entre un test légal et un délit.
+        </p>
 
-    <h3>4. Le périmètre : la règle d’or du hacking éthique</h3>
-    <p>
-        Lors d’un test d’intrusion, tu reçois un document appelé 
-        <strong>“scope”</strong> (périmètre).  
-        Il définit :
-        <ul>
-            <li>les machines autorisées,</li>
-            <li>les adresses IP,</li>
-            <li>les applications,</li>
-            <li>les limites à ne pas dépasser.</li>
-        </ul>
-    </p>
+        <h3>5. La mentalité du hacker éthique</h3>
+        <p>
+            Le hacking éthique est une discipline qui demande :
+            <ul>
+                <li><strong>Curiosité</strong> : comprendre comment les systèmes fonctionnent.</li>
+                <li><strong>Patience</strong> : certaines failles prennent des heures à trouver.</li>
+                <li><strong>Rigueur</strong> : documenter chaque action.</li>
+                <li><strong>Analyse</strong> : comprendre les risques.</li>
+                <li><strong>Éthique</strong> : respecter les règles.</li>
+            </ul>
+        </p>
 
-    <p>
-        Si une machine n’est pas dans le périmètre, tu n’y touches pas.  
-        C’est la frontière entre un test légal et un délit.
-    </p>
+        <h3>6. Les responsabilités d’un hacker éthique</h3>
+        <p>
+            Un hacker éthique doit :
+            <ul>
+                <li>respecter le périmètre défini,</li>
+                <li>ne jamais causer de dommages,</li>
+                <li>protéger les données sensibles,</li>
+                <li>minimiser les perturbations,</li>
+                <li>rendre un rapport clair et professionnel.</li>
+            </ul>
+        </p>
 
-    <h3>5. La mentalité du hacker éthique</h3>
-    <p>
-        Le hacking éthique est une discipline qui demande :
-        <ul>
-            <li><strong>Curiosité</strong> : comprendre comment les systèmes fonctionnent.</li>
-            <li><strong>Patience</strong> : certaines failles prennent des heures à trouver.</li>
-            <li><strong>Rigueur</strong> : documenter chaque action.</li>
-            <li><strong>Analyse</strong> : comprendre les risques.</li>
-            <li><strong>Éthique</strong> : respecter les règles.</li>
-        </ul>
-    </p>
+        <h3>7. Mini‑exercices de la semaine</h3>
+        <p>
+            <strong>Exercice 1 :</strong> Liste 5 actions légales que tu peux faire pour t’entraîner.<br><br>
+            <strong>Exercice 2 :</strong> Liste 3 actions illégales que tu ne dois jamais faire.<br><br>
+            <strong>Exercice 3 :</strong> Explique en 3 phrases la différence entre un white hat et un black hat.<br><br>
+            <strong>Exercice 4 :</strong> Imagine un test d’intrusion : écris un exemple de périmètre autorisé.
+        </p>
 
-    <h3>6. Les responsabilités d’un hacker éthique</h3>
-    <p>
-        Un hacker éthique doit :
-        <ul>
-            <li>respecter le périmètre défini,</li>
-            <li>ne jamais causer de dommages,</li>
-            <li>protéger les données sensibles,</li>
-            <li>minimiser les perturbations,</li>
-            <li>rendre un rapport clair et professionnel.</li>
-        </ul>
-    </p>
+        <hr>
 
-    <h3>7. Mini‑exercices de la semaine</h3>
-    <p>
-        <strong>Exercice 1 :</strong> Liste 5 actions légales que tu peux faire pour t’entraîner.<br><br>
-        <strong>Exercice 2 :</strong> Liste 3 actions illégales que tu ne dois jamais faire.<br><br>
-        <strong>Exercice 3 :</strong> Explique en 3 phrases la différence entre un white hat et un black hat.<br><br>
-        <strong>Exercice 4 :</strong> Imagine un test d’intrusion : écris un exemple de périmètre autorisé.
-    </p>
+        <!-- Quiz Semaine 1 -->
+        <div class="quiz" data-week="1">
+            <h3>Quiz Semaine 1 (10 points)</h3>
 
-    <hr>
+            <div class="question">
+                <p>1. Le hacking éthique se fait :</p>
+                <label><input type="radio" name="q1" value="a"> Sans autorisation, si c’est pour apprendre</label><br>
+                <label><input type="radio" name="q1" value="b"> Avec autorisation explicite et dans un cadre légal</label><br>
+                <label><input type="radio" name="q1" value="c"> Uniquement sur des réseaux publics</label>
+            </div>
 
-    <!-- Quiz Semaine 1 -->
-    <div class="quiz" data-week="1">
-        <h3>Quiz Semaine 1 (10 points)</h3>
+            <div class="question">
+                <p>2. Un “white hat” est :</p>
+                <label><input type="radio" name="q2" value="a"> Un pirate qui vole des données</label><br>
+                <label><input type="radio" name="q2" value="b"> Un hacker qui aide à sécuriser les systèmes</label><br>
+                <label><input type="radio" name="q2" value="c"> Un développeur web</label>
+            </div>
 
-        <div class="question">
-            <p>1. Le hacking éthique se fait :</p>
-            <label><input type="radio" name="q1" value="a"> Sans autorisation, si c’est pour apprendre</label><br>
-            <label><input type="radio" name="q1" value="b"> Avec autorisation explicite et dans un cadre légal</label><br>
-            <label><input type="radio" name="q1" value="c"> Uniquement sur des réseaux publics</label>
+            <button onclick="validateQuiz(1, ['b','b'], 10)">Valider le quiz Semaine 1</button>
+            <div class="message" id="quiz-msg-1"></div>
         </div>
-
-        <div class="question">
-            <p>2. Un “white hat” est :</p>
-            <label><input type="radio" name="q2" value="a"> Un pirate qui vole des données</label><br>
-            <label><input type="radio" name="q2" value="b"> Un hacker qui aide à sécuriser les systèmes</label><br>
-            <label><input type="radio" name="q2" value="c"> Un développeur web</label>
-        </div>
-
-        <button onclick="validateQuiz(1, ['b','b'], 10)">Valider le quiz Semaine 1</button>
-        <div class="message" id="quiz-msg-1"></div>
-    </div>
-</section>
+    </section>
 
 
     <!-- Semaine 2 -->
-    <section class="week" id="week2">
-        <h2>Semaine 2 – Réseaux & Linux pour le hacking</h2>
+        <section class="week" id="week2">
+        <h2>Semaine 2 – Réseaux & Linux : Les Fondations Techniques du Hacker Éthique</h2>
+
         <p>
-            Objectifs :
+            Cette semaine est cruciale : tu vas apprendre les bases techniques qui 
+            permettent à un hacker éthique de comprendre comment les machines 
+            communiquent, comment les services fonctionnent, et comment interagir 
+            avec un système via Linux.  
+            Sans ces fondations, impossible de comprendre Nmap, Burp, Metasploit, 
+            les failles web ou les attaques réseau.
+        </p>
+
+        <h3>1. Introduction aux réseaux : comment les machines communiquent</h3>
+        <p>
+            Un réseau informatique est un ensemble de machines qui échangent des 
+            données. Pour comprendre le hacking, il faut comprendre comment ces 
+            données circulent.  
+            Le modèle le plus utilisé pour expliquer cela est le modèle 
+            <strong>TCP/IP</strong>.
+        </p>
+
+        <h4>1.1 Le modèle TCP/IP</h4>
+        <p>
+            TCP/IP est composé de 4 couches :
             <ul>
-                <li>Comprendre les bases de TCP/IP (IP, ports, protocoles)</li>
-                <li>Découvrir les commandes Linux essentielles</li>
-                <li>Préparer un environnement de test (machine virtuelle)</li>
+                <li><strong>Couche Application</strong> – HTTP, HTTPS, FTP, DNS…</li>
+                <li><strong>Couche Transport</strong> – TCP, UDP</li>
+                <li><strong>Couche Internet</strong> – IP (routage des paquets)</li>
+                <li><strong>Couche Accès réseau</strong> – Ethernet, Wi-Fi</li>
             </ul>
         </p>
+
+        <h4>1.2 Les adresses IP</h4>
+        <p>
+            Une adresse IP identifie une machine sur un réseau.  
+            Exemple : <strong>192.168.1.42</strong>  
+            Il existe deux types :
+            <ul>
+                <li><strong>IPv4</strong> – le plus utilisé (4 nombres entre 0 et 255)</li>
+                <li><strong>IPv6</strong> – plus récent, beaucoup plus d’adresses</li>
+            </ul>
+        </p>
+
+        <h4>1.3 Les ports</h4>
+        <p>
+            Un port est une “porte logique” qui permet à un service de communiquer.  
+            Exemple :
+            <ul>
+                <li>Port 80 → HTTP</li>
+                <li>Port 443 → HTTPS</li>
+                <li>Port 22 → SSH</li>
+                <li>Port 21 → FTP</li>
+            </ul>
+            Lors d’un pentest, tu scannes les ports pour savoir quels services sont actifs.
+        </p>
+
+        <h4>1.4 TCP vs UDP</h4>
+        <p>
+            <strong>TCP</strong> : fiable, vérifie que les données arrivent (web, email).<br>
+            <strong>UDP</strong> : rapide, pas de vérification (jeux, streaming).
+        </p>
+
+        <h3>2. Les protocoles essentiels pour le hacking</h3>
+        <p>
+            Voici les protocoles que tu dois absolument connaître :
+            <ul>
+                <li><strong>HTTP/HTTPS</strong> – base du web, cible principale des failles</li>
+                <li><strong>DNS</strong> – résout les noms de domaine</li>
+                <li><strong>SSH</strong> – accès distant sécurisé</li>
+                <li><strong>FTP</strong> – transfert de fichiers</li>
+                <li><strong>SMTP</strong> – emails</li>
+            </ul>
+            Comprendre ces protocoles te permettra d’analyser le trafic, d’intercepter 
+            des requêtes, et de comprendre les failles web.
+        </p>
+
+        <h3>3. Introduction à Linux : l’OS du hacker</h3>
+        <p>
+            La majorité des outils de hacking fonctionnent sur Linux.  
+            Pourquoi ?
+            <ul>
+                <li>Open-source → tu peux tout analyser</li>
+                <li>Puissant pour le réseau</li>
+                <li>Stable et rapide</li>
+                <li>Outils de sécurité intégrés</li>
+            </ul>
+            Les distributions les plus utilisées :
+            <ul>
+                <li><strong>Kali Linux</strong> – orientée pentest</li>
+                <li><strong>Parrot OS</strong> – orientée sécurité</li>
+                <li><strong>Ubuntu</strong> – stable, parfait pour apprendre</li>
+            </ul>
+        </p>
+
+        <h3>4. Les commandes Linux essentielles</h3>
+        <p>
+            Voici les commandes que tout hacker doit connaître :
+        </p>
+
+        <h4>Navigation</h4>
+        <pre>
+    cd dossier/        → entrer dans un dossier
+    cd ..              → revenir en arrière
+    ls                 → lister les fichiers
+    pwd                → afficher le chemin actuel
+        </pre>
+
+        <h4>Manipulation de fichiers</h4>
+        <pre>
+    cp fichier1 fichier2   → copier
+    mv fichier1 fichier2   → déplacer / renommer
+    rm fichier              → supprimer
+    mkdir dossier           → créer un dossier
+    touch fichier.txt       → créer un fichier vide
+        </pre>
+
+        <h4>Réseau</h4>
+        <pre>
+    ifconfig / ip a         → afficher les interfaces réseau
+    ping adresse             → tester la connexion
+    netstat -tulnp          → voir les ports ouverts
+    curl http://site.com    → récupérer une page web
+        </pre>
+
+        <h4>Permissions</h4>
+        <pre>
+    chmod 755 fichier       → changer les permissions
+    sudo commande           → exécuter en administrateur
+        </pre>
+
+        <h3>5. Préparer ton environnement de hacking</h3>
+        <p>
+            Pour t’entraîner légalement, tu dois créer un environnement isolé :
+            <ul>
+                <li>Installer une machine virtuelle (VirtualBox)</li>
+                <li>Installer Kali Linux ou Ubuntu dedans</li>
+                <li>Installer une machine vulnérable (Metasploitable2, DVWA)</li>
+                <li>Créer un réseau interne entre les deux</li>
+            </ul>
+            Cela te permettra de tester des attaques sans aucun risque légal.
+        </p>
+
+        <h3>6. Mini‑exercices de la semaine</h3>
+        <p>
+            <strong>Exercice 1 :</strong> Trouve l’adresse IP de ta machine Linux.<br><br>
+            <strong>Exercice 2 :</strong> Liste les ports ouverts sur ta machine.<br><br>
+            <strong>Exercice 3 :</strong> Crée un dossier, un fichier, copie-le, déplace-le.<br><br>
+            <strong>Exercice 4 :</strong> Utilise <code>curl</code> pour récupérer une page web.<br><br>
+            <strong>Exercice 5 :</strong> Installe une machine virtuelle Linux.
+        </p>
+
+        <hr>
+
+        <!-- Quiz Semaine 2 -->
         <div class="quiz" data-week="2">
             <h3>Quiz Semaine 2 (15 points)</h3>
 
