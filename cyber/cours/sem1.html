@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Cours de Hacking Éthique - Système de Points</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #0b0c10;
+            color: #c5c6c7;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background: #1f2833;
+            padding: 20px;
+            text-align: center;
+            color: #66fcf1;
+        }
+        main {
+            padding: 20px;
+            max-width: 1000px;
+            margin: auto;
+        }
+        .week {
+            border: 1px solid #45a29e;
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            background: #1f2833;
+        }
+        .week h2 {
+            margin-top: 0;
+            color: #66fcf1;
+        }
+        .quiz {
+            margin-top: 10px;
+            padding: 10px;
+            background: #0b0c10;
+            border-radius: 6px;
+        }
+        .question {
+            margin-bottom: 10px;
+        }
+        button {
+            background: #45a29e;
+            border: none;
+            padding: 8px 12px;
+            color: #0b0c10;
+            cursor: pointer;
+            border-radius: 4px;
+            margin-top: 5px;
+        }
+        button:disabled {
+            background: #555;
+            cursor: not-allowed;
+        }
+        #points-panel {
+            border: 1px solid #66fcf1;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            background: #1f2833;
+        }
+        #shop {
+            border: 1px solid #45a29e;
+            padding: 15px;
+            border-radius: 8px;
+            background: #1f2833;
+        }
+        .bonus-item {
+            margin-bottom: 10px;
+        }
+        .bonus-item span {
+            display: inline-block;
+            min-width: 220px;
+        }
+        .message {
+            margin-top: 10px;
+            color: #66fcf1;
+        }
+        .small-note {
+            font-size: 0.85em;
+            color: #c5c6c7;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>Cours de Hacking Éthique</h1>
+    <p>Système de points & boutique de bonus</p>
+</header>
+
+<main>
+    <!-- Panneau de points -->
+    <section id="points-panel">
+        <h2>Points & progression</h2>
+        <p>Points actuels : <strong id="points">0</strong></p>
+        <p>Quiz complétés : <strong id="quizzes-completed">0</strong> / <span id="quizzes-total">4</span></p>
+        <p class="small-note">
+            Tu gagnes des points en répondant correctement aux quiz. Utilise-les dans la boutique pour débloquer des bonus.
+        </p>
+    </section>
+
+    <!-- Boutique de bonus -->
+    <section id="shop">
+        <h2>Boutique de bonus</h2>
+        <div class="bonus-item">
+            <span>📄 Fiche mémo “Commandes Linux essentielles”</span>
+            <span>Coût : 20 points</span>
+            <button onclick="buyBonus(20, 'memo-linux')">Acheter</button>
+        </div>
+        <div class="bonus-item">
+            <span>🧠 Mini-cours “Méthodologie PTES simplifiée”</span>
+            <span>Coût : 35 points</span>
+            <button onclick="buyBonus(35, 'ptes-course')">Acheter</button>
+        </div>
+        <div class="bonus-item">
+            <span>🛠 Liste d’outils pour pentest débutant</span>
+            <span>Coût : 25 points</span>
+            <button onclick="buyBonus(25, 'tools-list')">Acheter</button>
+        </div>
+        <div id="shop-message" class="message"></div>
+    </section>
+
+    <!-- Semaine 1 -->
+    <section class="week" id="week1">
+        <h2>Semaine 1 – Bases du hacking éthique & légalité</h2>
+        <p>
+            Objectifs :
+            <ul>
+                <li>Comprendre ce qu’est le hacking éthique</li>
+                <li>Différencier white hat, black hat, grey hat</li>
+                <li>Connaître l’importance de l’autorisation et du cadre légal</li>
+            </ul>
+        </p>
+        <div class="quiz" data-week="1">
+            <h3>Quiz Semaine 1 (10 points)</h3>
+
+            <div class="question">
+                <p>1. Le hacking éthique se fait :</p>
+                <label><input type="radio" name="q1" value="a"> Sans autorisation, si c’est pour apprendre</label><br>
+                <label><input type="radio" name="q1" value="b"> Avec autorisation explicite et dans un cadre légal</label><br>
+                <label><input type="radio" name="q1" value="c"> Uniquement sur des réseaux publics</label>
+            </div>
+
+            <div class="question">
+                <p>2. Un “white hat” est :</p>
+                <label><input type="radio" name="q2" value="a"> Un pirate qui vole des données</label><br>
+                <label><input type="radio" name="q2" value="b"> Un hacker qui aide à sécuriser les systèmes</label><br>
+                <label><input type="radio" name="q2" value="c"> Un développeur web</label>
+            </div>
+
+            <button onclick="validateQuiz(1, ['b','b'], 10)">Valider le quiz Semaine 1</button>
+            <div class="message" id="quiz-msg-1"></div>
+        </div>
+    </section>
+
+    <!-- Semaine 2 -->
+    <section class="week" id="week2">
+        <h2>Semaine 2 – Réseaux & Linux pour le hacking</h2>
+        <p>
+            Objectifs :
+            <ul>
+                <li>Comprendre les bases de TCP/IP (IP, ports, protocoles)</li>
+                <li>Découvrir les commandes Linux essentielles</li>
+                <li>Préparer un environnement de test (machine virtuelle)</li>
+            </ul>
+        </p>
+        <div class="quiz" data-week="2">
+            <h3>Quiz Semaine 2 (15 points)</h3>
+
+            <div class="question">
+                <p>1. Quel protocole est utilisé pour le web classique ?</p>
+                <label><input type="radio" name="q3" value="a"> FTP</label><br>
+                <label><input type="radio" name="q3" value="b"> HTTP/HTTPS</label><br>
+                <label><input type="radio" name="q3" value="c"> SMTP</label>
+            </div>
+
+            <div class="question">
+                <p>2. Quelle commande Linux permet de lister les fichiers d’un dossier ?</p>
+                <label><input type="radio" name="q4" value="a"> cd</label><br>
+                <label><input type="radio" name="q4" value="b"> ls</label><br>
+                <label><input type="radio" name="q4" value="c"> rm</label>
+            </div>
+
+            <button onclick="validateQuiz(2, ['b','b'], 15)">Valider le quiz Semaine 2</button>
+            <div class="message" id="quiz-msg-2"></div>
+        </div>
+    </section>
+
+    <!-- Semaine 3 -->
+    <section class="week" id="week3">
+        <h2>Semaine 3 – Introduction aux outils de pentest</h2>
+        <p>
+            Objectifs :
+            <ul>
+                <li>Découvrir Nmap (scan de ports)</li>
+                <li>Comprendre le rôle de Burp Suite pour le web</li>
+                <li>Voir Metasploit comme framework d’exploitation</li>
+            </ul>
+        </p>
+        <div class="quiz" data-week="3">
+            <h3>Quiz Semaine 3 (20 points)</h3>
+
+            <div class="question">
+                <p>1. Nmap sert principalement à :</p>
+                <label><input type="radio" name="q5" value="a"> Modifier des pages web</label><br>
+                <label><input type="radio" name="q5" value="b"> Scanner des ports et services sur une machine</label><br>
+                <label><input type="radio" name="q5" value="c"> Créer des bases de données</label>
+            </div>
+
+            <div class="question">
+                <p>2. Burp Suite est utilisé pour :</p>
+                <label><input type="radio" name="q6" value="a"> Intercepter et modifier le trafic HTTP/HTTPS</label><br>
+                <label><input type="radio" name="q6" value="b"> Gérer des machines virtuelles</label><br>
+                <label><input type="radio" name="q6" value="c"> Chiffrer des disques durs</label>
+            </div>
+
+            <button onclick="validateQuiz(3, ['b','a'], 20)">Valider le quiz Semaine 3</button>
+            <div class="message" id="quiz-msg-3"></div>
+        </div>
+    </section>
+
+    <!-- Semaine 4 -->
+    <section class="week" id="week4">
+        <h2>Semaine 4 – Logique d’un pentest complet</h2>
+        <p>
+            Objectifs :
+            <ul>
+                <li>Comprendre les grandes phases d’un test d’intrusion</li>
+                <li>Reconnaissance, scan, exploitation, post-exploitation</li>
+                <li>Introduction au rapport de pentest</li>
+            </ul>
+        </p>
+        <div class="quiz" data-week="4">
+            <h3>Quiz Semaine 4 (25 points)</h3>
+
+            <div class="question">
+                <p>1. La reconnaissance consiste à :</p>
+                <label><input type="radio" name="q7" value="a"> Effacer les logs</label><br>
+                <label><input type="radio" name="q7" value="b"> Collecter des informations sur la cible</label><br>
+                <label><input type="radio" name="q7" value="c"> Chiffrer les données</label>
+            </div>
+
+            <div class="question">
+                <p>2. Le rapport de pentest sert à :</p>
+                <label><input type="radio" name="q8" value="a"> Se vanter des failles trouvées</label><br>
+                <label><input type="radio" name="q8" value="b"> Documenter les failles et proposer des corrections</label><br>
+                <label><input type="radio" name="q8" value="c"> Installer des malwares</label>
+            </div>
+
+            <button onclick="validateQuiz(4, ['b','b'], 25)">Valider le quiz Semaine 4</button>
+            <div class="message" id="quiz-msg-4"></div>
+        </div>
+    </section>
+</main>
+
+<script>
+    let points = 0;
+    let quizzesCompleted = 0;
+    const totalQuizzes = 4;
+    const completedQuizzes = {};
+
+    document.getElementById('quizzes-total').textContent = totalQuizzes;
+
+    function updateUI() {
+        document.getElementById('points').textContent = points;
+        document.getElementById('quizzes-completed').textContent = quizzesCompleted;
+    }
+
+    function validateQuiz(weekNumber, correctAnswers, rewardPoints) {
+        if (completedQuizzes[weekNumber]) {
+            document.getElementById('quiz-msg-' + weekNumber).textContent =
+                "Tu as déjà validé ce quiz. Les points ont déjà été ajoutés.";
+            return;
+        }
+
+        const quizSection = document.querySelector('.quiz[data-week="' + weekNumber + '"]');
+        const inputs = quizSection.querySelectorAll('input[type="radio"]');
+
+        const userAnswers = [];
+        let questionIndex = 0;
+        let currentName = null;
+        let currentSelected = null;
+
+        inputs.forEach(input => {
+            if (currentName !== input.name) {
+                if (currentName !== null) {
+                    userAnswers.push(currentSelected);
+                    questionIndex++;
+                }
+                currentName = input.name;
+                currentSelected = null;
+            }
+            if (input.checked) {
+                currentSelected = input.value;
+            }
+        });
+        if (currentName !== null) {
+            userAnswers.push(currentSelected);
+        }
+
+        if (userAnswers.length !== correctAnswers.length ||
+            userAnswers.some((ans, idx) => ans !== correctAnswers[idx])) {
+            document.getElementById('quiz-msg-' + weekNumber).textContent =
+                "Certaines réponses sont incorrectes. Corrige et réessaie.";
+            return;
+        }
+
+        points += rewardPoints;
+        quizzesCompleted += 1;
+        completedQuizzes[weekNumber] = true;
+        updateUI();
+
+        document.getElementById('quiz-msg-' + weekNumber).textContent =
+            "Bravo ! Quiz validé. Tu gagnes " + rewardPoints + " points.";
+        const button = quizSection.querySelector('button');
+        if (button) button.disabled = true;
+    }
+
+    function buyBonus(cost, bonusId) {
+        const msg = document.getElementById('shop-message');
+        if (points < cost) {
+            msg.textContent = "Pas assez de points pour ce bonus. Continue les quiz !";
+            return;
+        }
+        points -= cost;
+        updateUI();
+
+        let bonusText = "";
+        if (bonusId === 'memo-linux') {
+            bonusText = "Tu as débloqué la fiche mémo Linux. (Dans une vraie version, on afficherait le contenu ici.)";
+        } else if (bonusId === 'ptes-course') {
+            bonusText = "Tu as débloqué le mini-cours PTES. (On pourrait afficher une nouvelle section détaillée.)";
+        } else if (bonusId === 'tools-list') {
+            bonusText = "Tu as débloqué la liste d’outils de pentest débutant.";
+        }
+
+        msg.textContent = bonusText;
+    }
+
+    updateUI();
+</script>
+</body>
+</html>
