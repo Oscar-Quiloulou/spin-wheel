@@ -7,9 +7,6 @@
 <link rel="icon" type="image/x-icon" href="favicon.ico">
 
 <style>
-/* ------------------------------------------------ */
-/* ------------------- THEME FUN ------------------ */
-/* ------------------------------------------------ */
 :root {
   --bg: #000000;
   --card: #ffffff;
@@ -26,14 +23,65 @@ body {
   font-family: "Poppins", system-ui, sans-serif;
   display: flex;
   justify-content: center;
-  padding: 20px;
+  padding: 80px 20px 20px;
   color: var(--text);
   transition: background 0.5s ease, color 0.5s ease;
 }
 
 /* ------------------------------------------------ */
+/* ----------- BOUTON ACCES A LA SUITE ------------ */
+/* ------------------------------------------------ */
+
+.next-site-button {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 10000;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 44px;
+  max-width: calc(100vw - 32px);
+  padding: 11px 18px;
+
+  box-sizing: border-box;
+
+  background: linear-gradient(135deg, #ff3e7f, #ffb800);
+  color: white;
+  text-decoration: none;
+
+  border: 2px solid rgba(255,255,255,0.35);
+  border-radius: 999px;
+
+  font-size: clamp(0.75rem, 2vw, 0.95rem);
+  font-weight: 800;
+  text-align: center;
+  line-height: 1.2;
+
+  box-shadow: 0 8px 25px rgba(255, 62, 127, 0.45);
+
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    filter 0.18s ease;
+}
+
+.next-site-button:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 12px 30px rgba(255, 62, 127, 0.6);
+  filter: brightness(1.08);
+}
+
+.next-site-button:active {
+  transform: scale(0.96);
+}
+
+/* ------------------------------------------------ */
 /* --------------------- LAYOUT ------------------- */
 /* ------------------------------------------------ */
+
 .app {
   width: 100%;
   max-width: 1100px;
@@ -43,7 +91,9 @@ body {
 }
 
 @media (max-width: 900px) {
-  .app { grid-template-columns: 1fr; }
+  .app {
+    grid-template-columns: 1fr;
+  }
 }
 
 .card {
@@ -58,17 +108,19 @@ body {
 /* ------------------------------------------------ */
 /* ---------------------- WHEEL ------------------- */
 /* ------------------------------------------------ */
+
 .wheel-container {
   position: relative;
   display: flex;
   justify-content: center;
+  width: 100%;
 }
 
 .wheel-container::after {
   content: "";
   position: absolute;
-  width: 480px;
-  height: 480px;
+  width: min(480px, 90vw);
+  height: min(480px, 90vw);
   border-radius: 50%;
   background: conic-gradient(#ff3e7f, #ffb800, #00c6ff, #ff3e7f);
   filter: blur(40px);
@@ -79,11 +131,12 @@ body {
 
 @keyframes spinHalo {
   from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
+  to { transform: rotate(360deg); }
 }
 
 canvas {
   max-width: 100%;
+  height: auto;
   border-radius: 50%;
   background: radial-gradient(circle at 30% 30%, #ffffffaa, #00000011);
   box-shadow:
@@ -109,6 +162,7 @@ canvas {
 /* ------------------------------------------------ */
 /* ---------------------- BUTTON ------------------ */
 /* ------------------------------------------------ */
+
 .spin-btn {
   margin-top: 10px;
   padding: 14px 28px;
@@ -123,12 +177,18 @@ canvas {
   transition: 0.15s;
 }
 
-.spin-btn:hover { transform: scale(1.05); }
-.spin-btn:active { transform: scale(0.95); }
+.spin-btn:hover {
+  transform: scale(1.05);
+}
+
+.spin-btn:active {
+  transform: scale(0.95);
+}
 
 /* ------------------------------------------------ */
 /* ---------------------- RESULT ------------------ */
 /* ------------------------------------------------ */
+
 .result-box {
   margin-top: 20px;
   text-align: center;
@@ -159,6 +219,7 @@ canvas {
 /* ------------------------------------------------ */
 /* -------------------- CONFETTIS ----------------- */
 /* ------------------------------------------------ */
+
 .confetti {
   position: fixed;
   width: 12px;
@@ -179,6 +240,7 @@ canvas {
 /* ------------------------------------------------ */
 /* ---------------------- INPUT UI ---------------- */
 /* ------------------------------------------------ */
+
 .input-wrapper {
   display: flex;
   align-items: center;
@@ -202,6 +264,7 @@ canvas {
 
 input {
   flex: 1;
+  min-width: 0;
   border: none;
   background: transparent;
   font-size: 1rem;
@@ -217,13 +280,25 @@ input {
   font-weight: 700;
 }
 
-.btn-primary { background: #ff3e7f; color: white; }
-.btn-danger { background: #ff0000; color: white; }
-.btn-secondary { background: #00c6ff; color: white; }
+.btn-primary {
+  background: #ff3e7f;
+  color: white;
+}
+
+.btn-danger {
+  background: #ff0000;
+  color: white;
+}
+
+.btn-secondary {
+  background: #00c6ff;
+  color: white;
+}
 
 /* ------------------------------------------------ */
 /* ---------------------- CHIPS ------------------- */
 /* ------------------------------------------------ */
+
 .name-chip {
   display: inline-flex;
   align-items: center;
@@ -237,8 +312,15 @@ input {
 }
 
 @keyframes chipIn {
-  from { transform: scale(0.5); opacity: 0; }
-  to   { transform: scale(1); opacity: 1; }
+  from {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 .name-chip button {
@@ -254,6 +336,7 @@ input {
 /* ------------------------------------------------ */
 /* ------------------- AIDE PANEL ----------------- */
 /* ------------------------------------------------ */
+
 .help-button {
   position: fixed;
   bottom: 25px;
@@ -269,6 +352,7 @@ input {
   cursor: pointer;
   box-shadow: 0 10px 25px #00c6ff66;
   animation: helpPulse 4s infinite;
+  z-index: 998;
 }
 
 @keyframes helpPulse {
@@ -281,7 +365,9 @@ input {
   top: 0;
   right: -420px;
   width: 380px;
+  max-width: 100vw;
   height: 100vh;
+  box-sizing: border-box;
   background: white;
   border-left: 4px solid #00c6ff;
   box-shadow: -5px 0 20px #0003;
@@ -291,7 +377,9 @@ input {
   z-index: 999;
 }
 
-.help-panel.open { right: 0; }
+.help-panel.open {
+  right: 0;
+}
 
 .help-close {
   background: transparent;
@@ -302,7 +390,9 @@ input {
   color: #00c6ff;
 }
 
-.accordion { margin-top: 20px; }
+.accordion {
+  margin-top: 20px;
+}
 
 .accordion-item {
   background: #f0faff;
@@ -345,6 +435,7 @@ input {
 /* ------------------------------------------------ */
 /* -------------------- THEMES -------------------- */
 /* ------------------------------------------------ */
+
 .theme-light {
   --bg: #fff7e6;
   --card: #ffffff;
@@ -409,6 +500,7 @@ input {
 /* ------------------------------------------------ */
 /* ----------------- BOUTON SECRET ---------------- */
 /* ------------------------------------------------ */
+
 .secret-button {
   position: fixed;
   bottom: 5px;
@@ -419,9 +511,86 @@ input {
   cursor: pointer;
   z-index: 9999;
 }
+
+/* ------------------------------------------------ */
+/* ------------------- RESPONSIVE ----------------- */
+/* ------------------------------------------------ */
+
+@media (max-width: 600px) {
+
+  body {
+    padding: 76px 10px 15px;
+  }
+
+  .next-site-button {
+    top: 10px;
+    right: 10px;
+    left: 10px;
+    width: auto;
+    max-width: none;
+    min-height: 42px;
+    padding: 9px 14px;
+    font-size: 0.82rem;
+  }
+
+  .card {
+    padding: 15px;
+    border-radius: 14px;
+  }
+
+  .spin-btn {
+    width: 100%;
+    font-size: 1rem;
+  }
+
+  .help-button {
+    width: 55px;
+    height: 55px;
+    right: 15px;
+    bottom: 15px;
+    font-size: 1.2rem;
+  }
+
+  .help-panel {
+    width: 100vw;
+    border-left: none;
+    padding: 15px;
+  }
+
+  .result-box {
+    font-size: 1.5rem;
+  }
+
+  .btn {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 380px) {
+
+  .next-site-button {
+    font-size: 0.75rem;
+    min-height: 40px;
+  }
+
+  .card {
+    padding: 12px;
+  }
+
+  .name-chip {
+    font-size: 0.85rem;
+    padding: 5px 9px;
+  }
+}
 </style>
 </head>
+
 <body class="theme-light">
+
+<!-- BOUTON ACCES A LA SUITE DU SITE -->
+<a href="choix.html" class="next-site-button">
+  Clique pour accéder à la suite du site !
+</a>
 
 <!-- BOUTON SECRET INVISIBLE -->
 <div id="secretBtn" class="secret-button"></div>
@@ -429,110 +598,187 @@ input {
 <div class="app">
 
   <!-- -------------------- WHEEL CARD -------------------- -->
+
   <div class="card">
-    <h2 style="text-align:center; font-size:1.8rem; color:#ff3e7f;">🎉 Roue Stylée 🎉</h2>
+
+    <h2 style="text-align:center; font-size:1.8rem; color:#ff3e7f;">
+      🎉 Roue Stylée 🎉
+    </h2>
 
     <div class="wheel-container">
       <canvas id="wheel" width="420" height="420"></canvas>
       <div class="pointer"></div>
     </div>
 
-    <button id="spinBtn" class="spin-btn">Lancer la roue</button>
-    <p>Allez fouillez dans l'aide. Il y a des petit jeux</p>
+    <button id="spinBtn" class="spin-btn">
+      Lancer la roue
+    </button>
+
+    <p>
+      Allez fouillez dans l'aide. Il y a des petit jeux
+    </p>
 
     <div id="result" class="result-box"></div>
+
   </div>
 
   <!-- -------------------- CONTROL PANEL -------------------- -->
+
   <div class="card">
-    <h2 style="color:#ff3e7f;">Liste des prénoms</h2>
+
+    <h2 style="color:#ff3e7f;">
+      Liste des prénoms
+    </h2>
 
     <div class="input-wrapper">
       <span>✏️</span>
       <input id="nameInput" placeholder="Ajouter un prénom">
     </div>
 
-    <button id="addBtn" class="btn btn-primary" style="margin-top:10px;">Ajouter</button>
+    <button id="addBtn" class="btn btn-primary" style="margin-top:10px;">
+      Ajouter
+    </button>
 
     <div style="margin-top:10px;">
-      <button id="shuffleBtn" class="btn btn-secondary">Mélanger</button>
-      <button id="clearBtn" class="btn btn-danger">Tout effacer</button>
+      <button id="shuffleBtn" class="btn btn-secondary">
+        Mélanger
+      </button>
+
+      <button id="clearBtn" class="btn btn-danger">
+        Tout effacer
+      </button>
     </div>
 
     <div id="nameList" style="margin-top:15px;"></div>
+
   </div>
 
 </div>
 
 <!-- -------------------- HELP BUTTON -------------------- -->
-<button class="help-button" id="helpBtn">❔</button>
+
+<button class="help-button" id="helpBtn">
+  ❔
+</button>
 
 <!-- -------------------- HELP PANEL -------------------- -->
+
 <div class="help-panel" id="helpPanel">
 
-  <button class="help-close" id="helpClose">✖</button>
-  <h2 style="color:#00c6ff; margin-top:10px;">Aide & Tutoriel</h2>
+  <button class="help-close" id="helpClose">
+    ✖
+  </button>
+
+  <h2 style="color:#00c6ff; margin-top:10px;">
+    Aide & Tutoriel
+  </h2>
 
   <div class="accordion">
 
-    <!-- SECTION 1 : COMMENT UTILISER LA ROUE -->
+    <!-- SECTION 1 -->
+
     <div class="accordion-item">
+
       <div class="accordion-header">
         📘 Comment utiliser la roue ?
         <span>▼</span>
       </div>
+
       <div class="accordion-content">
+
         <p><b>1.</b> Ajoute un prénom dans le champ prévu.</p>
         <p><b>2.</b> Appuie sur <b>Entrée</b> ou clique sur <b>Ajouter</b>.</p>
         <p><b>3.</b> Répète pour ajouter plusieurs prénoms.</p>
         <p><b>4.</b> Clique sur <b>Mélanger</b>.</p>
         <p><b>5.</b> Clique sur <b>Lancer la roue</b>.</p>
-        <p><b>6.</b> Le gagnant apparaît avec un effet arc‑en‑ciel 🎉</p>
-        <a href="/choix.html">Voir les mini jeu</a>
+        <p><b>6.</b> Le gagnant apparaît avec un effet arc-en-ciel 🎉</p>
+
+        <a href="/choix.html">
+          Voir les mini jeu
+        </a>
+
       </div>
     </div>
 
-    <!-- SECTION 2 : ASTUCES & TIPS -->
+    <!-- SECTION 2 -->
+
     <div class="accordion-item">
+
       <div class="accordion-header">
         💡 Astuces & Tips
         <span>▼</span>
       </div>
+
       <div class="accordion-content">
-        <p>• Appuie sur <b>Entrée</b> pour ajouter un prénom rapidement.</p>
-        <p>• Tu peux coller une liste entière. Il suffi de mettre <b>; entre</b> chaque prénom</p>
-        <p>• Clique sur <b>❌</b> pour supprimer un prénom.</p>
-        <p>• Les prénoms sont sauvegardés automatiquement dnas le stockage interne. Veuillez ne pas vider le cache.</p>
-        <p>• Fonctionne sur téléphone, tablette et PC.</p>
+
+        <p>
+          • Appuie sur <b>Entrée</b> pour ajouter un prénom rapidement.
+        </p>
+
+        <p>
+          • Tu peux coller une liste entière. Il suffi de mettre
+          <b>;</b> entre chaque prénom
+        </p>
+
+        <p>
+          • Clique sur <b>❌</b> pour supprimer un prénom.
+        </p>
+
+        <p>
+          • Les prénoms sont sauvegardés automatiquement dnas le stockage interne.
+          Veuillez ne pas vider le cache.
+        </p>
+
+        <p>
+          • Fonctionne sur téléphone, tablette et PC.
+        </p>
+
       </div>
     </div>
 
-    <!-- SECTION 3 : FONCTIONNALITÉS FUN -->
+    <!-- SECTION 3 -->
+
     <div class="accordion-item">
+
       <div class="accordion-header">
         🎮 Fonctionnalités fun
         <span>▼</span>
       </div>
+
       <div class="accordion-content">
-        <p>• Halo arc‑en‑ciel autour de la roue.</p>
+
+        <p>• Halo arc-en-ciel autour de la roue.</p>
         <p>• Confettis dynamiques à chaque gagnant.</p>
-        <p>• Animation arc‑en‑ciel sur le gagnant.</p>
+        <p>• Animation arc-en-ciel sur le gagnant.</p>
         <p>• Segments en dégradés stylés.</p>
         <p>• Interface fun et moderne.</p>
+
       </div>
     </div>
 
-    <!-- SECTION 4 : THEME -->
+    <!-- SECTION 4 -->
+
     <div class="accordion-item">
+
       <div class="accordion-header">
         🎨 Thème
         <span>▼</span>
       </div>
-      <div class="accordion-content">
-        <p>Choisis l’ambiance de la roue :</p>
 
-        <label for="themeSelect"><b>Thème :</b></label>
-        <select id="themeSelect" style="margin-top:6px; width:100%; padding:8px; border-radius:8px; border:2px solid #00c6ff55;">
+      <div class="accordion-content">
+
+        <p>
+          Choisis l’ambiance de la roue :
+        </p>
+
+        <label for="themeSelect">
+          <b>Thème :</b>
+        </label>
+
+        <select
+          id="themeSelect"
+          style="margin-top:6px; width:100%; padding:8px; border-radius:8px; border:2px solid #00c6ff55;"
+        >
           <option value="light">Clair</option>
           <option value="dark">Sombre</option>
           <option value="festive">Festif</option>
@@ -542,120 +788,225 @@ input {
         <p style="margin-top:10px; font-size:0.9rem; opacity:0.8;">
           Le thème est sauvegardé automatiquement.
         </p>
+
       </div>
     </div>
 
-    <!-- SECTION 5 : TUTORIEL ANIMÉ -->
+    <!-- SECTION 5 -->
+
     <div class="accordion-item">
+
       <div class="accordion-header">
         🎓 Tutoriel animé
         <span>▼</span>
       </div>
+
       <div class="accordion-content">
-        <p>Voici les éléments importants :</p>
+
+        <p>
+          Voici les éléments importants :
+        </p>
 
         <p><b>Champ d’ajout :</b></p>
+
         <div class="input-wrapper tuto-highlight">
           <span>✏️</span>
           <input placeholder="Exemple">
         </div>
 
-        <p style="margin-top:10px;"><b>Bouton Ajouter :</b></p>
-        <button class="btn btn-primary tuto-highlight">Ajouter</button>
+        <p style="margin-top:10px;">
+          <b>Bouton Ajouter :</b>
+        </p>
 
-        <p style="margin-top:10px;"><b>Bouton Lancer la roue :</b></p>
-        <button class="spin-btn tuto-highlight" style="padding:8px 20px; font-size:1rem;">Lancer</button>
+        <button class="btn btn-primary tuto-highlight">
+          Ajouter
+        </button>
 
-        <p style="margin-top:10px;"><b>Résultat :</b></p>
-        <div class="result-box tuto-highlight" style="transform:scale(0.7); opacity:1;">Exemple</div>
+        <p style="margin-top:10px;">
+          <b>Bouton Lancer la roue :</b>
+        </p>
+
+        <button
+          class="spin-btn tuto-highlight"
+          style="padding:8px 20px; font-size:1rem;"
+        >
+          Lancer
+        </button>
+
+        <p style="margin-top:10px;">
+          <b>Résultat :</b>
+        </p>
+
+        <div
+          class="result-box tuto-highlight"
+          style="transform:scale(0.7); opacity:1;"
+        >
+          Exemple
+        </div>
+
       </div>
     </div>
 
   </div>
 </div>
+
 <script>
+
 /* ------------------------------------------------ */
 /* -------------------- STORAGE ------------------- */
 /* ------------------------------------------------ */
+
 const STORAGE_KEY = "roulette_prenoms_styled";
-let names = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+
+let names = JSON.parse(
+  localStorage.getItem(STORAGE_KEY) || "[]"
+);
 
 function save() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(names));
+  localStorage.setItem(
+    STORAGE_KEY,
+    JSON.stringify(names)
+  );
 }
 
 /* ------------------------------------------------ */
 /* -------------------- THEME --------------------- */
 /* ------------------------------------------------ */
+
 const THEME_KEY = "roulette_theme";
 const root = document.body;
 
 function applyTheme(theme) {
-  root.classList.remove("theme-light", "theme-dark", "theme-festive", "theme-animated");
 
-  if (theme === "dark") root.classList.add("theme-dark");
-  else if (theme === "festive") root.classList.add("theme-festive");
-  else if (theme === "animated") root.classList.add("theme-animated");
-  else root.classList.add("theme-light");
+  root.classList.remove(
+    "theme-light",
+    "theme-dark",
+    "theme-festive",
+    "theme-animated"
+  );
+
+  if (theme === "dark") {
+    root.classList.add("theme-dark");
+  }
+  else if (theme === "festive") {
+    root.classList.add("theme-festive");
+  }
+  else if (theme === "animated") {
+    root.classList.add("theme-animated");
+  }
+  else {
+    root.classList.add("theme-light");
+  }
 }
 
 function loadTheme() {
-  const saved = localStorage.getItem(THEME_KEY) || "light";
+
+  const saved =
+    localStorage.getItem(THEME_KEY) || "light";
+
   applyTheme(saved);
 
-  const select = document.getElementById("themeSelect");
-  if (select) select.value = saved;
+  const select =
+    document.getElementById("themeSelect");
+
+  if (select) {
+    select.value = saved;
+  }
 }
 
 function setTheme(theme) {
+
   applyTheme(theme);
-  localStorage.setItem(THEME_KEY, theme);
+
+  localStorage.setItem(
+    THEME_KEY,
+    theme
+  );
 }
 
 /* ------------------------------------------------ */
 /* ---------------------- DOM --------------------- */
 /* ------------------------------------------------ */
-const nameInput = document.getElementById("nameInput");
-const addBtn = document.getElementById("addBtn");
-const shuffleBtn = document.getElementById("shuffleBtn");
-const clearBtn = document.getElementById("clearBtn");
-const nameList = document.getElementById("nameList");
-const resultEl = document.getElementById("result");
-const spinBtn = document.getElementById("spinBtn");
-const themeSelect = document.getElementById("themeSelect");
-const secretBtn = document.getElementById("secretBtn");
+
+const nameInput =
+  document.getElementById("nameInput");
+
+const addBtn =
+  document.getElementById("addBtn");
+
+const shuffleBtn =
+  document.getElementById("shuffleBtn");
+
+const clearBtn =
+  document.getElementById("clearBtn");
+
+const nameList =
+  document.getElementById("nameList");
+
+const resultEl =
+  document.getElementById("result");
+
+const spinBtn =
+  document.getElementById("spinBtn");
+
+const themeSelect =
+  document.getElementById("themeSelect");
+
+const secretBtn =
+  document.getElementById("secretBtn");
 
 /* ------------------------------------------------ */
 /* ---------------------- LISTE ------------------- */
 /* ------------------------------------------------ */
+
 function renderList() {
+
   nameList.innerHTML = "";
+
   names.forEach((n, i) => {
-    const chip = document.createElement("div");
+
+    const chip =
+      document.createElement("div");
+
     chip.className = "name-chip";
-    chip.innerHTML = `${n} <button>❌</button>`;
+
+    chip.innerHTML =
+      `${n} <button>❌</button>`;
+
     chip.querySelector("button").onclick = () => {
+
       names.splice(i, 1);
+
       save();
       renderList();
       drawWheel();
     };
+
     nameList.appendChild(chip);
   });
 }
 
 function addName() {
-  const raw = nameInput.value.trim();
+
+  const raw =
+    nameInput.value.trim();
+
   if (!raw) return;
 
-  raw.split(/[,;\n]/)
+  raw
+    .split(/[,;\n]/)
     .map(s => s.trim())
     .filter(Boolean)
     .forEach(n => {
-      if (!names.includes(n)) names.push(n);
+
+      if (!names.includes(n)) {
+        names.push(n);
+      }
+
     });
 
   nameInput.value = "";
+
   save();
   renderList();
   drawWheel();
@@ -663,86 +1014,189 @@ function addName() {
 
 addBtn.onclick = addName;
 
-nameInput.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") addName();
-});
+nameInput.addEventListener(
+  "keydown",
+  (e) => {
+
+    if (e.key === "Enter") {
+      addName();
+    }
+
+  }
+);
 
 shuffleBtn.onclick = () => {
-  for (let i = names.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [names[i], names[j]] = [names[j], names[i]];
+
+  for (
+    let i = names.length - 1;
+    i > 0;
+    i--
+  ) {
+
+    const j =
+      Math.floor(
+        Math.random() * (i + 1)
+      );
+
+    [names[i], names[j]] =
+      [names[j], names[i]];
   }
+
   save();
   renderList();
   drawWheel();
 };
 
 clearBtn.onclick = () => {
+
   if (confirm("Tout effacer ?")) {
+
     names = [];
+
     save();
     renderList();
     drawWheel();
   }
+
 };
 
 /* ------------------------------------------------ */
 /* ---------------------- WHEEL ------------------- */
 /* ------------------------------------------------ */
-const canvas = document.getElementById("wheel");
-const ctx = canvas.getContext("2d");
+
+const canvas =
+  document.getElementById("wheel");
+
+const ctx =
+  canvas.getContext("2d");
+
 const size = canvas.width;
 const radius = size / 2;
+
 let currentAngle = 0;
 let spinning = false;
 
 function randomColor(i) {
-  const colors = ["#ff3e7f","#ffb800","#00c6ff","#ff6f00","#00ff9d","#ff00ff"];
-  return colors[i % colors.length];
+
+  const colors = [
+    "#ff3e7f",
+    "#ffb800",
+    "#00c6ff",
+    "#ff6f00",
+    "#00ff9d",
+    "#ff00ff"
+  ];
+
+  return colors[
+    i % colors.length
+  ];
 }
 
 function drawWheel() {
-  ctx.clearRect(0, 0, size, size);
+
+  ctx.clearRect(
+    0,
+    0,
+    size,
+    size
+  );
 
   if (names.length === 0) {
+
     ctx.fillStyle = "#999";
     ctx.font = "bold 18px Poppins";
     ctx.textAlign = "center";
-    ctx.fillText("Ajoute des prénoms", radius, radius);
+
+    ctx.fillText(
+      "Ajoute des prénoms",
+      radius,
+      radius
+    );
+
     return;
   }
 
-  const slice = (Math.PI * 2) / names.length;
+  const slice =
+    (Math.PI * 2) / names.length;
 
   ctx.save();
-  ctx.translate(radius, radius);
+
+  ctx.translate(
+    radius,
+    radius
+  );
+
   ctx.rotate(currentAngle);
 
-  for (let i = 0; i < names.length; i++) {
-    const start = i * slice;
-    const end = start + slice;
+  for (
+    let i = 0;
+    i < names.length;
+    i++
+  ) {
 
-    const grad = ctx.createLinearGradient(0, 0, radius, radius);
-    grad.addColorStop(0, randomColor(i));
-    grad.addColorStop(1, "#ffffff55");
+    const start =
+      i * slice;
+
+    const end =
+      start + slice;
+
+    const grad =
+      ctx.createLinearGradient(
+        0,
+        0,
+        radius,
+        radius
+      );
+
+    grad.addColorStop(
+      0,
+      randomColor(i)
+    );
+
+    grad.addColorStop(
+      1,
+      "#ffffff55"
+    );
+
     ctx.fillStyle = grad;
 
     ctx.beginPath();
+
     ctx.moveTo(0, 0);
-    ctx.arc(0, 0, radius - 10, start, end);
+
+    ctx.arc(
+      0,
+      0,
+      radius - 10,
+      start,
+      end
+    );
+
     ctx.closePath();
+
     ctx.fill();
 
     ctx.lineWidth = 4;
     ctx.strokeStyle = "#fff";
+
     ctx.stroke();
 
     ctx.save();
-    ctx.rotate(start + slice / 2);
+
+    ctx.rotate(
+      start + slice / 2
+    );
+
     ctx.textAlign = "right";
     ctx.fillStyle = "white";
     ctx.font = "bold 18px Poppins";
-    ctx.fillText(names[i], radius - 20, 0);
+
+    ctx.fillText(
+      names[i],
+      radius - 20,
+      0
+    );
+
     ctx.restore();
   }
 
@@ -750,103 +1204,222 @@ function drawWheel() {
 }
 
 function getWinner(angle) {
-  const slice = (Math.PI * 2) / names.length;
-  const normalized = (Math.PI * 2 - (angle % (Math.PI * 2))) % (Math.PI * 2);
-  return names[Math.floor(normalized / slice)];
+
+  const slice =
+    (Math.PI * 2) / names.length;
+
+  const normalized =
+    (
+      Math.PI * 2 -
+      (angle % (Math.PI * 2))
+    ) %
+    (Math.PI * 2);
+
+  return names[
+    Math.floor(
+      normalized / slice
+    )
+  ];
 }
 
 /* ------------------------------------------------ */
 /* -------------------- CONFETTIS ----------------- */
 /* ------------------------------------------------ */
+
 function spawnConfetti() {
+
   for (let i = 0; i < 80; i++) {
-    const c = document.createElement("div");
+
+    const c =
+      document.createElement("div");
+
     c.className = "confetti";
-    c.style.left = Math.random() * 100 + "vw";
-    c.style.background = randomColor(i);
-    c.style.animationDuration = 1.8 + Math.random() * 1.2 + "s";
+
+    c.style.left =
+      Math.random() * 100 + "vw";
+
+    c.style.background =
+      randomColor(i);
+
+    c.style.animationDuration =
+      1.8 +
+      Math.random() * 1.2 +
+      "s";
+
     document.body.appendChild(c);
-    setTimeout(() => c.remove(), 2500);
+
+    setTimeout(
+      () => c.remove(),
+      2500
+    );
   }
 }
 
 /* ------------------------------------------------ */
 /* ----------------------- SPIN ------------------- */
 /* ------------------------------------------------ */
+
 spinBtn.onclick = () => {
-  if (spinning || names.length === 0) return;
+
+  if (
+    spinning ||
+    names.length === 0
+  ) {
+    return;
+  }
+
   spinning = true;
   spinBtn.disabled = true;
+
   resultEl.classList.remove("show");
 
-  const extra = 4 + Math.random() * 3;
-  const finalAngle = currentAngle + extra * Math.PI * 2 + Math.random() * Math.PI * 2;
-  const duration = 2600 + Math.random() * 800;
-  const start = performance.now();
-  const startAngle = currentAngle;
+  const extra =
+    4 + Math.random() * 3;
+
+  const finalAngle =
+    currentAngle +
+    extra * Math.PI * 2 +
+    Math.random() * Math.PI * 2;
+
+  const duration =
+    2600 +
+    Math.random() * 800;
+
+  const start =
+    performance.now();
+
+  const startAngle =
+    currentAngle;
 
   function animate(now) {
-    const t = Math.min(1, (now - start) / duration);
-    const eased = 1 - Math.pow(1 - t, 3);
-    currentAngle = startAngle + (finalAngle - startAngle) * eased;
+
+    const t =
+      Math.min(
+        1,
+        (now - start) / duration
+      );
+
+    const eased =
+      1 - Math.pow(1 - t, 3);
+
+    currentAngle =
+      startAngle +
+      (finalAngle - startAngle) *
+      eased;
+
     drawWheel();
 
-    if (t < 1) requestAnimationFrame(animate);
+    if (t < 1) {
+
+      requestAnimationFrame(
+        animate
+      );
+
+    }
     else {
+
       spinning = false;
       spinBtn.disabled = false;
 
-      const winner = getWinner(currentAngle);
-      resultEl.innerHTML = winner;
-      resultEl.classList.add("show");
+      const winner =
+        getWinner(currentAngle);
+
+      resultEl.innerHTML =
+        winner;
+
+      resultEl.classList.add(
+        "show"
+      );
 
       spawnConfetti();
     }
   }
 
-  requestAnimationFrame(animate);
+  requestAnimationFrame(
+    animate
+  );
 };
 
 /* ------------------------------------------------ */
 /* -------------------- HELP PANEL ---------------- */
 /* ------------------------------------------------ */
-const helpBtn = document.getElementById("helpBtn");
-const helpPanel = document.getElementById("helpPanel");
-const helpClose = document.getElementById("helpClose");
 
-helpBtn.onclick = () => helpPanel.classList.add("open");
-helpClose.onclick = () => helpPanel.classList.remove("open");
+const helpBtn =
+  document.getElementById("helpBtn");
+
+const helpPanel =
+  document.getElementById("helpPanel");
+
+const helpClose =
+  document.getElementById("helpClose");
+
+helpBtn.onclick = () =>
+  helpPanel.classList.add("open");
+
+helpClose.onclick = () =>
+  helpPanel.classList.remove("open");
 
 /* ------------------------------------------------ */
-/* --------------------- ACCORDÉON ---------------- */
+/* --------------------- ACCORDEON ---------------- */
 /* ------------------------------------------------ */
-document.querySelectorAll(".accordion-header").forEach(header => {
-  header.addEventListener("click", () => {
-    const content = header.nextElementSibling;
-    content.classList.toggle("open");
+
+document
+  .querySelectorAll(".accordion-header")
+  .forEach(header => {
+
+    header.addEventListener(
+      "click",
+      () => {
+
+        const content =
+          header.nextElementSibling;
+
+        content.classList.toggle(
+          "open"
+        );
+      }
+    );
+
   });
-});
 
 /* ------------------------------------------------ */
 /* ------------------ THEME SELECTOR -------------- */
 /* ------------------------------------------------ */
+
 if (themeSelect) {
-  themeSelect.addEventListener("change", () => {
-    setTheme(themeSelect.value);
-  });
+
+  themeSelect.addEventListener(
+    "change",
+    () => {
+
+      setTheme(
+        themeSelect.value
+      );
+
+    }
+  );
 }
 
 /* ------------------------------------------------ */
 /* ------------------ SECRET BUTTON --------------- */
 /* ------------------------------------------------ */
+
 secretBtn.onclick = () => {
-  window.location.href = "youtube.html";
+
+  window.location.href =
+    "youtube.html";
+
 };
 
 /* ------------------------------------------------ */
 /* ------------------------ INIT ------------------ */
 /* ------------------------------------------------ */
+
 renderList();
 drawWheel();
 loadTheme();
+
 </script>
+
+</body>
+</html>
