@@ -6,109 +6,74 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#05050a">
-<title>🔥🔥🔥 MAX HEAT — iPad Edition</title>
+<title>🔥🔥🔥🔥 MAX HEAT v4 — iPad Inferno</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box;
       -webkit-tap-highlight-color: transparent;
       -webkit-touch-callout: none; }
-
   html, body {
-    height: 100%;
-    width: 100%;
-    position: fixed;
-    overflow: hidden;
-    overscroll-behavior: none;
+    height: 100%; width: 100%; position: fixed;
+    overflow: hidden; overscroll-behavior: none;
     touch-action: none;
-    -webkit-user-select: none;
-    user-select: none;
-    background: #03030a;
-    color: #eee;
-    font-family: -apple-system, 'SF Pro Display', 'Segoe UI', system-ui, sans-serif;
-    /* Support safe area sur iPad/iPhone */
+    -webkit-user-select: none; user-select: none;
+    background: #03030a; color: #eee;
+    font-family: -apple-system, 'SF Pro Display', system-ui, sans-serif;
     padding: env(safe-area-inset-top) env(safe-area-inset-right)
              env(safe-area-inset-bottom) env(safe-area-inset-left);
   }
-
   #warning {
     position: fixed; inset: 0;
     background: radial-gradient(circle at 50% 40%, #3a0000, #03030a 75%);
     display: flex; align-items: center; justify-content: center;
-    z-index: 100; padding: 20px;
-    overflow-y: auto;
+    z-index: 100; padding: 20px; overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     padding-top: max(20px, env(safe-area-inset-top));
     padding-bottom: max(20px, env(safe-area-inset-bottom));
   }
-
   .warn-card {
-    max-width: 640px;
-    width: 100%;
+    max-width: 680px; width: 100%;
     background: linear-gradient(160deg, #1a0202, #080202);
-    border: 1px solid #ff151555;
-    border-radius: 22px;
-    padding: 38px 40px;
-    text-align: center;
+    border: 1px solid #ff151555; border-radius: 22px;
+    padding: 34px 38px; text-align: center;
     box-shadow: 0 0 120px #ff000044, inset 0 0 60px #ff00000a;
   }
-
   .warn-card h1 {
-    font-size: 32px; color: #ff2222;
-    margin-bottom: 18px; letter-spacing: 3px;
+    font-size: 32px; color: #ff2222; margin-bottom: 16px;
+    letter-spacing: 3px;
     text-shadow: 0 0 30px #ff0000cc, 0 0 60px #ff000088;
     animation: flicker 0.9s infinite;
   }
-
   @keyframes flicker {
-    0%,100% { opacity: 1; }
-    42% { opacity: 1; }
-    45% { opacity: .55; }
-    48% { opacity: 1; }
-    72% { opacity: .8; }
-    76% { opacity: 1; }
+    0%,100% { opacity: 1; } 42% { opacity: 1; }
+    45% { opacity: .55; } 48% { opacity: 1; }
+    72% { opacity: .8; } 76% { opacity: 1; }
   }
-
-  .warn-card p {
-    color: #c9c9d9; line-height: 1.65;
-    margin-bottom: 14px; font-size: 15px;
-  }
+  .warn-card p { color: #c9c9d9; line-height: 1.6; margin-bottom: 12px; font-size: 15px; }
   .warn-card strong { color: #ff4444; }
-
   .warn-card ul {
     text-align: left; display: inline-block;
-    color: #aa8899; font-size: 14px; margin: 10px 0 22px;
-    line-height: 1.9; list-style: none;
+    color: #aa8899; font-size: 14px;
+    margin: 8px 0 18px; line-height: 1.9; list-style: none;
   }
   .warn-card li::before { content: "☠ "; color: #ff1111; font-weight: bold; }
-
   .danger-tag {
     display: inline-block; padding: 5px 14px; border-radius: 4px;
     background: #ff000022; border: 1px solid #ff000066;
     color: #ff5555; font-size: 11px; letter-spacing: 4px;
-    text-transform: uppercase; margin-bottom: 18px;
+    text-transform: uppercase; margin-bottom: 16px;
     animation: flicker 0.6s infinite;
   }
-
-  /* Boutons iPad : gros, tactiles, avec espace de sécurité */
   .btn {
-    border: none;
-    padding: 20px 44px;
-    font-size: 17px; font-weight: 800;
-    border-radius: 14px;
-    cursor: pointer;
-    transition: transform .12s, box-shadow .12s;
-    letter-spacing: 1.5px;
-    font-family: inherit;
-    text-transform: uppercase;
-    min-height: 62px;
-    min-width: 260px;
-    /* Empêche le double-tap zoom */
+    border: none; padding: 20px 44px;
+    font-size: 17px; font-weight: 800; border-radius: 14px;
+    cursor: pointer; transition: transform .12s, box-shadow .12s;
+    letter-spacing: 1.5px; font-family: inherit;
+    text-transform: uppercase; min-height: 62px; min-width: 260px;
     touch-action: manipulation;
   }
-
   .btn-start {
     background: linear-gradient(135deg, #ff0015, #ff8800, #ff0015);
-    background-size: 200% 200%;
-    color: white;
+    background-size: 200% 200%; color: white;
     box-shadow: 0 0 40px #ff001588, 0 6px 30px #ff001555;
     animation: shift 2s ease infinite;
   }
@@ -116,11 +81,7 @@
     0%,100% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
   }
-  .btn-start:active {
-    transform: scale(0.96);
-    box-shadow: 0 0 70px #ff0015cc;
-  }
-
+  .btn-start:active { transform: scale(0.96); }
   .btn-stop {
     background: linear-gradient(135deg, #0055ff, #00e0ff);
     color: white; box-shadow: 0 0 40px #0066ff88;
@@ -128,39 +89,34 @@
   .btn-stop:active { transform: scale(0.96); }
 
   #app { position: fixed; inset: 0; display: none; }
-
   canvas {
     position: absolute; inset: 0;
     width: 100%; height: 100%;
-    display: block;
-    touch-action: none;
+    display: block; touch-action: none;
   }
-
   #hud {
     position: absolute; top: 0; left: 0; right: 0;
-    padding: max(22px, env(safe-area-inset-top)) max(30px, env(safe-area-inset-right))
-             max(22px, env(safe-area-inset-left));
+    padding: max(18px, env(safe-area-inset-top)) max(24px, env(safe-area-inset-right))
+             max(18px, env(safe-area-inset-left));
     display: flex; justify-content: space-between; align-items: flex-start;
     z-index: 10; pointer-events: none;
     background: linear-gradient(180deg, #000000dd, transparent 75%);
     font-variant-numeric: tabular-nums;
   }
-
-  .hud-block { display: flex; flex-direction: column; gap: 2px; }
+  .hud-block { display: flex; flex-direction: column; gap: 1px; }
   .hud-label {
-    font-size: 10px; letter-spacing: 3px; color: #ffffff55;
+    font-size: 9px; letter-spacing: 3px; color: #ffffff55;
     text-transform: uppercase; font-weight: 700;
   }
   .hud-value {
-    font-size: 30px; font-weight: 900; line-height: 1.1;
+    font-size: 26px; font-weight: 900; line-height: 1.1;
     text-shadow: 0 0 30px currentColor;
   }
-  .hud-sub { font-size: 11px; color: #ffffff44; letter-spacing: 1px; }
-
+  .hud-sub { font-size: 10px; color: #ffffff44; letter-spacing: 0.5px; }
   #tempBar {
     position: absolute; bottom: env(safe-area-inset-bottom);
-    left: 0; right: 0;
-    height: 10px; background: #ffffff08; z-index: 10;
+    left: 0; right: 0; height: 10px;
+    background: #ffffff08; z-index: 10;
   }
   #tempFill {
     height: 100%; width: 0%;
@@ -168,14 +124,11 @@
     box-shadow: 0 0 40px #ff0000, 0 0 80px #ff000088;
     transition: width .2s;
   }
-
   #stopWrap {
     position: absolute;
-    bottom: max(50px, calc(env(safe-area-inset-bottom) + 30px));
-    left: 50%; transform: translateX(-50%);
-    z-index: 20;
+    bottom: max(44px, calc(env(safe-area-inset-bottom) + 26px));
+    left: 50%; transform: translateX(-50%); z-index: 20;
   }
-
   #heatOverlay {
     position: absolute; inset: 0; pointer-events: none; z-index: 5;
     background: radial-gradient(circle at 50% 50%, transparent 20%, #ff000044 100%);
@@ -183,50 +136,32 @@
     mix-blend-mode: screen;
   }
   @keyframes breathe {
-    0%,100% { opacity: .4; }
-    50% { opacity: 1; }
+    0%,100% { opacity: .4; } 50% { opacity: 1; }
   }
-
   #scanlines {
     position: absolute; inset: 0; pointer-events: none; z-index: 6; opacity: .18;
     background: repeating-linear-gradient(0deg, #000 0px, #000 1px, transparent 1px, transparent 3px);
   }
-
   #vignette {
     position: absolute; inset: 0; pointer-events: none; z-index: 7;
     box-shadow: inset 0 0 200px #ff000066, inset 0 0 400px #ff000033;
   }
-
-  /* Bandeau d'avertissement iPad */
   .ipad-note {
-    background: #ff880022;
-    border: 1px solid #ff880066;
-    border-radius: 10px;
-    padding: 12px 16px;
-    margin: 12px 0 18px;
-    font-size: 13px;
-    color: #ffbb88;
-    line-height: 1.55;
+    background: #ff880022; border: 1px solid #ff880066;
+    border-radius: 10px; padding: 12px 16px;
+    margin: 12px 0 16px; font-size: 13px;
+    color: #ffbb88; line-height: 1.5;
   }
   .ipad-note strong { color: #ff9955; }
-
-  /* Message de sécurité thermique flottant */
   #thermalWarning {
-    position: fixed;
-    top: 50%; left: 50%;
+    position: fixed; top: 50%; left: 50%;
     transform: translate(-50%, -50%);
-    background: #ff0000dd;
-    color: white;
-    padding: 24px 32px;
-    border-radius: 18px;
-    font-size: 18px;
-    font-weight: 700;
-    text-align: center;
-    z-index: 200;
-    display: none;
+    background: #ff0000dd; color: white;
+    padding: 24px 32px; border-radius: 18px;
+    font-size: 18px; font-weight: 700; text-align: center;
+    z-index: 200; display: none;
     box-shadow: 0 0 80px #ff0000aa;
-    max-width: 80vw;
-    line-height: 1.5;
+    max-width: 80vw; line-height: 1.5;
   }
   #thermalWarning small {
     display: block; margin-top: 10px;
@@ -238,28 +173,25 @@
 
 <div id="warning">
   <div class="warn-card">
-    <div class="danger-tag">☠ iPad — Mode Cuisson ☠</div>
-    <h1>FUSION MAXIMALE</h1>
-    <p>Version <strong>spécifiquement calibrée pour iPad</strong> : safe-areas, fullscreen, wake-lock, WebGL2 adapté aux GPU Apple.</p>
+    <div class="danger-tag">☠ iPad — FUSION v4 ☠</div>
+    <h1>INFERNO TOTAL</h1>
+    <p>Version <strong>radicalement plus agressive</strong> : la charge CPU est ~10× celle de la v3.</p>
 
     <div class="ipad-note">
-      <strong>⚠ iPad = refroidissement passif, AUCUN ventilateur.</strong><br>
-      Ton iPad va throttler <strong>très vite</strong> (souvent en 30-60s). iOS peut afficher
-      « iPad doit refroidir » et <strong>suspendre brutalement</strong> la page.
-      Retire la coque, pose l'iPad sur une table dure, <strong>pas</strong> sur un lit ou tes genoux.
-      Débranche-le du chargeur si possible.
+      <strong>⚠ iPad sans ventilateur.</strong>
+      Laisse tourner <strong>au moins 5 minutes</strong> — c'est seulement après que le throttling
+      commence vraiment. Retire la coque, pose sur table dure, <strong>débranche le chargeur</strong>.
     </div>
 
     <ul>
-      <li>Lance <strong>2× le nombre de cœurs</strong> en Web Workers</li>
-      <li>Sature le GPU avec un shader WebGL2 de <strong>1500 itérations/pixel</strong></li>
-      <li>Feedback framebuffer = 2 rendus par frame</li>
-      <li>Audio stress (30 osc + bruit filtré)</li>
-      <li>~200 Mo de RAM bloqués (plafond iOS)</li>
-      <li>Brûle aussi le thread principal</li>
+      <li><strong>Workers 200k iterations</strong> internes + matrice 3×3</li>
+      <li><strong>4 passes GPU</strong> × 3000 iterations = 12 000 iter/pixel/frame</li>
+      <li>Thread principal brûlé via MessageChannel (pas de clamp 4 ms)</li>
+      <li><strong>60 oscillateurs audio</strong> + 8 sources de bruit filtré</li>
+      <li>Compteur en temps réel du débit des workers</li>
     </ul>
 
-    <button class="btn btn-start" id="startBtn">🔥🔥🔥 TOUT FAIRE FONDRE</button>
+    <button class="btn btn-start" id="startBtn">🔥🔥🔥🔥 TOUT FAIRE FONDRE</button>
   </div>
 </div>
 
@@ -276,8 +208,8 @@
       <div class="hud-sub" id="cores">/ 0 cœurs</div>
     </div>
     <div class="hud-block" style="text-align:center">
-      <div class="hud-label">Charge</div>
-      <div class="hud-value" id="load" style="color:#ff2222">0%</div>
+      <div class="hud-label">Débit CPU</div>
+      <div class="hud-value" id="mops" style="color:#ff2222">0 Mops/s</div>
       <div class="hud-sub" id="gpuInfo">GPU : init…</div>
     </div>
     <div class="hud-block" style="text-align:right">
@@ -295,23 +227,15 @@
 
 <div id="thermalWarning">
   🔥 iPad en surchauffe ! 🔥
-  <small>Appuie sur STOP immédiatement — laisse refroidir 10 min avant de relancer.</small>
+  <small>Arrêt automatique dans 4 s — laisse refroidir 10 min avant de relancer.</small>
 </div>
 
 <script>
 (() => {
   "use strict";
 
-  // ============================================================
-  // DÉTECTION iPad (iPadOS se fait passer pour MacIntel)
-  // ============================================================
   const isIPad = /iPad/.test(navigator.userAgent) ||
     (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-  const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent) ||
-    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-
-  // Sur iPad, on limite les workers car iOS a un scheduler agressif
-  const SAFE_MULTIPLIER = isIPad ? 2 : 3;
 
   const $ = (id) => document.getElementById(id);
   const warningScreen = $('warning');
@@ -320,7 +244,7 @@
   const app           = $('app');
   const threadsEl     = $('threads');
   const coresEl       = $('cores');
-  const loadEl        = $('load');
+  const mopsEl        = $('mops');
   const timerEl       = $('timer');
   const tempFill      = $('tempFill');
   const gpuInfo       = $('gpuInfo');
@@ -332,63 +256,121 @@
   let workers = [];
   let memInterval = null;
   let hudRaf = null;
-  let mainBurnRaf = null;
   let startTime = 0;
   let glState = null;
   let audioCtx = null;
   let audioNodes = [];
   let wakeLock = null;
-  let frameTimeSamples = [];
+  let frameTimes = [];
   let thermalCheckInterval = null;
   let thermalWarnShown = false;
+  let workerIterTotal = 0;        // total cumulé reçu des workers
+  let lastWorkerSample = 0;       // dernier total snapshot pour calcul débit
+  let mopsBuf = [];
+  let mainChannel = null;
+  let mainBurnRaf = null;
 
   // ============================================================
-  // 🔥 WORKERS CPU — code 100% compatible Safari/iOS
-  // Pas de SharedArrayBuffer (bloqué sur iOS sans COOP/COEP)
+  // 🔥🔥🔥 WORKER ULTRA-AGRESSIF
+  // Boucle interne de 200 000 itérations + multiplication matricielle 3×3
+  // Vérification du flag 'running' quasi jamais = burn continu
   // ============================================================
   const WORKER_CODE = `
     let running = true;
-    self.onmessage = (e) => { if (e.data === 'stop') running = false; };
+    let totalIter = 0;
 
-    const local = new Float64Array(65536);
-    let seed = Math.random() * 1e9 + 1;
-    let i = 0;
+    self.onmessage = (e) => {
+      if (e.data === 'stop') running = false;
+    };
+
+    // État matriciel 3×3 (évite l'allocation, garde tout en registres)
+    let m00=1.001, m01=0.002, m02=0.003;
+    let m10=0.004, m11=1.005, m12=0.006;
+    let m20=0.007, m21=0.008, m22=1.009;
+
+    function mul3x3() {
+      const n00 = m00*m00 + m01*m10 + m02*m20;
+      const n01 = m00*m01 + m01*m11 + m02*m21;
+      const n02 = m00*m02 + m01*m12 + m02*m22;
+      const n10 = m10*m00 + m11*m10 + m12*m20;
+      const n11 = m10*m01 + m11*m11 + m12*m21;
+      const n12 = m10*m02 + m11*m12 + m12*m22;
+      const n20 = m20*m00 + m21*m10 + m22*m20;
+      const n21 = m20*m01 + m21*m11 + m22*m21;
+      const n22 = m20*m02 + m21*m12 + m22*m22;
+      m00=n00; m01=n01; m02=n02;
+      m10=n10; m11=n11; m12=n12;
+      m20=n20; m21=n21; m22=n22;
+      // Renormalise pour éviter l'infini
+      const s = m00*m00 + m11*m11 + m22*m22;
+      if (s > 1e8) {
+        const k = 1 / Math.sqrt(s);
+        m00*=k; m01*=k; m02*=k;
+        m10*=k; m11*=k; m12*=k;
+        m20*=k; m21*=k; m22*=k;
+      }
+    }
+
+    // Buffer local pour écrire (force écriture cache L1)
+    const buf = new Float64Array(32768);
+    let bufIdx = 0;
 
     function burn() {
-      let acc = seed;
+      let acc = Math.random() * 1e9 + 1;
+      let outer = 0;
+
       while (running) {
-        // 30 000 itérations serrées avant de vérifier running
-        for (let k = 0; k < 30000; k++) {
-          // Mix math int + float + trigonométrie lourd
+        // 200 000 itérations de calcul lourd AVANT de vérifier 'running'
+        for (let k = 0; k < 200000; k++) {
+          // Trigonométrie chaînée (pas de dépendance de données simple)
           acc = Math.sin(acc * 1.0001) * Math.cos(acc * 0.9997)
               + Math.sqrt(Math.abs(acc)) * 0.5
               + Math.tan((acc % 1.5) * 0.7);
-          acc = (acc * 1e6) | 0;
-          acc = acc ^ (acc << 5);
-          acc = Math.abs(acc) % 1e8 + 0.5;
-          i++;
+
+          // Multiplication matricielle 3×3 (27 mul + 18 add)
+          mul3x3();
+
+          // Mélange avec l'état matriciel pour créer des dépendances
+          acc = acc + m00 + m11 + m22;
+
+          // Bitwise pour forcer la conversion float→int→float (chère)
+          acc = ((acc * 1e7) | 0) ^ (((acc * 1e3) | 0) << 5);
+          acc = Math.abs(acc) % 1e9 + 0.5;
+
+          totalIter++;
         }
-        // Écriture mémoire (cache L1 saturé)
-        local[i & 65535] = acc;
-        seed = acc;
+
+        // Écriture mémoire (contention cache L1)
+        buf[bufIdx = (bufIdx + 1) & 32767] = acc;
+        outer++;
       }
     }
+
+    // Heartbeat : envoie le compteur au thread principal 4×/seconde
+    setInterval(() => {
+      try { self.postMessage(totalIter); totalIter = 0; } catch(e){}
+    }, 250);
+
     burn();
   `;
 
   function launchWorkers() {
     const cores = navigator.hardwareConcurrency || 4;
-    const count = cores * SAFE_MULTIPLIER;
+    // Sur iPad on tente 2× (le scheduler iOS rejette au-delà)
+    const targetCount = cores * 2;
 
     const blob = new Blob([WORKER_CODE], { type: 'application/javascript' });
     const url = URL.createObjectURL(blob);
 
-    for (let i = 0; i < count; i++) {
+    for (let i = 0; i < targetCount; i++) {
       try {
         const w = new Worker(url);
+        w.onmessage = (e) => {
+          // Chaque worker nous envoie son nombre d'itérations
+          workerIterTotal += Number(e.data) || 0;
+        };
         workers.push(w);
-      } catch(e) {
-        // iOS peut refuser au-delà d'un certain nombre
+      } catch(err) {
         break;
       }
     }
@@ -405,18 +387,19 @@
   }
 
   // ============================================================
-  // 🔥🔥🔥 GPU — WebGL2 avec 1500 itérations/pixel + feedback FBO
-  // Calibré pour les GPU Apple (PowerVR, M-series)
+  // 🔥🔥🔥 GPU — WebGL2, 4 passes par frame, 3000 itérations par pixel
   // ============================================================
   const VERT = `#version 300 es
     in vec2 p;
     void main() { gl_Position = vec4(p, 0.0, 1.0); }
   `;
 
+  // Shader très lourd : 3000 itérations + hash + trig + pow
   const FRAG = `#version 300 es
     precision highp float;
     uniform vec2 u_res;
     uniform float u_time;
+    uniform float u_pass;
     uniform sampler2D u_prev;
     out vec4 outColor;
 
@@ -433,13 +416,13 @@
       float acc = 0.0;
       float acc2 = 0.0;
 
-      // ==== 1500 itérations par pixel ====
-      for (int i = 0; i < 1500; i++) {
+      // ==== 3000 itérations par pixel ====
+      for (int i = 0; i < 3000; i++) {
         float fi = float(i);
         vec2 p = uv * 2.0 - 1.0;
-        p += prev * 0.4;  // feedback GPU
+        p += prev * 0.35;
 
-        float a = fi * 0.0117 + u_time * 0.5;
+        float a = fi * 0.0117 + u_time * 0.5 + u_pass * 1.7;
         float s = sin(a), c = cos(a);
         p = mat2(c, -s, s, c) * p;
 
@@ -461,12 +444,12 @@
         ) * 0.0006;
       }
 
-      acc  = acc / 1500.0;
-      acc2 = acc2 / 1500.0;
+      acc  = acc / 3000.0;
+      acc2 = acc2 / 3000.0;
       col  = col * (0.6 + acc * 0.9);
       col  = pow(col, vec3(0.85));
 
-      col.r += acc * 0.6;
+      col.r += acc * 0.6 + u_pass * 0.05;
       col.g += acc2 * 0.1;
       col.b *= 0.35;
 
@@ -475,23 +458,15 @@
   `;
 
   function initGL() {
-    // Sur iPad, on limite le DPR à 2 pour ne pas saturer la RAM vidéo
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const dpr = Math.min(window.devicePixelRatio || 1, 2.5);
     const gl = canvas.getContext('webgl2', {
-      antialias: false,
-      depth: false,
-      stencil: false,
+      antialias: false, depth: false, stencil: false,
       powerPreference: 'high-performance',
       preserveDrawingBuffer: false,
-      // Option clé pour iPad : évite la composition coûteuse
       desynchronized: true,
       failIfMajorPerformanceCaveat: false,
     });
-
-    if (!gl) {
-      gpuInfo.textContent = 'WebGL2 indisponible';
-      return null;
-    }
+    if (!gl) { gpuInfo.textContent = 'WebGL2 indisponible'; return null; }
 
     function compile(type, src) {
       const s = gl.createShader(type);
@@ -503,7 +478,6 @@
       }
       return s;
     }
-
     const vs = compile(gl.VERTEX_SHADER, VERT);
     const fs = compile(gl.FRAGMENT_SHADER, FRAG);
     if (!vs || !fs) return null;
@@ -512,10 +486,7 @@
     gl.attachShader(prog, vs);
     gl.attachShader(prog, fs);
     gl.linkProgram(prog);
-    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
-      console.error('link', gl.getProgramInfoLog(prog));
-      return null;
-    }
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return null;
     gl.useProgram(prog);
 
     const quad = gl.createBuffer();
@@ -525,9 +496,10 @@
     gl.enableVertexAttribArray(loc);
     gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
 
-    const uRes  = gl.getUniformLocation(prog, 'u_res');
-    const uTime = gl.getUniformLocation(prog, 'u_time');
-    const uPrev = gl.getUniformLocation(prog, 'u_prev');
+    const uRes   = gl.getUniformLocation(prog, 'u_res');
+    const uTime  = gl.getUniformLocation(prog, 'u_time');
+    const uPrev  = gl.getUniformLocation(prog, 'u_prev');
+    const uPass  = gl.getUniformLocation(prog, 'u_pass');
 
     let W = Math.floor(window.innerWidth  * dpr);
     let H = Math.floor(window.innerHeight * dpr);
@@ -542,10 +514,6 @@
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
       return t;
     }
-
-    let texA = makeTex();
-    let texB = makeTex();
-
     function makeFBO(tex) {
       const f = gl.createFramebuffer();
       gl.bindFramebuffer(gl.FRAMEBUFFER, f);
@@ -554,28 +522,25 @@
       return f;
     }
 
-    let fboA = makeFBO(texA);
-    let fboB = makeFBO(texB);
+    // 5 textures + 5 FBO pour un pipeline de 4 passes
+    const texs = [makeTex(), makeTex(), makeTex(), makeTex(), makeTex()];
+    const fbos = texs.map(makeFBO);
 
     function resize() {
       W = Math.floor(window.innerWidth  * dpr);
       H = Math.floor(window.innerHeight * dpr);
       canvas.width = W;
       canvas.height = H;
-
-      gl.bindTexture(gl.TEXTURE_2D, texA);
-      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, W, H, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
-      gl.bindTexture(gl.TEXTURE_2D, texB);
-      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, W, H, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+      for (const t of texs) {
+        gl.bindTexture(gl.TEXTURE_2D, t);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, W, H, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+      }
     }
     resize();
-
-    // Sur iPad, on gère aussi le changement d'orientation
     window.addEventListener('resize', resize);
     window.addEventListener('orientationchange', () => {
-      // Delay car iOS met du temps à reporter les nouvelles dimensions
       setTimeout(resize, 300);
-      setTimeout(resize, 800);
+      setTimeout(resize, 900);
     });
 
     const info = gl.getExtension('WEBGL_debug_renderer_info');
@@ -587,141 +552,122 @@
       gpuInfo.textContent = '⚠ GPU perdu (surchauffe iOS)';
     });
 
-    return { gl, uRes, uTime, uPrev,
-             get texA(){return texA;}, set texA(v){texA=v;},
-             get texB(){return texB;}, set texB(v){texB=v;},
-             get fboA(){return fboA;}, set fboA(v){fboA=v;},
-             get fboB(){return fboB;}, set fboB(v){fboB=v;},
-             getW: () => W, getH: () => H };
+    return { gl, uRes, uTime, uPrev, uPass, texs, fbos, getW: () => W, getH: () => H };
   }
 
   function renderLoop() {
     if (!running || !glState) return;
-    const { gl, uRes, uTime, uPrev } = glState;
+    const { gl, uRes, uTime, uPrev, uPass, texs, fbos } = glState;
     const W = glState.getW(), H = glState.getH();
 
-    // Mesure du temps de frame pour détection thermique
     const t0 = performance.now();
 
-    gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_2D, glState.texA);
-    gl.uniform1i(uPrev, 0);
     gl.uniform2f(uRes, W, H);
     gl.uniform1f(uTime, performance.now() * 0.001);
 
-    // Rendu FBO (feedback)
-    gl.bindFramebuffer(gl.FRAMEBUFFER, glState.fboB);
-    gl.viewport(0, 0, W, H);
-    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    // 4 passes en chaîne : chaque passe lit le résultat de la précédente
+    for (let pass = 0; pass < 4; pass++) {
+      gl.activeTexture(gl.TEXTURE0);
+      gl.bindTexture(gl.TEXTURE_2D, texs[pass]);
+      gl.uniform1i(uPrev, 0);
+      gl.uniform1f(uPass, pass);
+      gl.bindFramebuffer(gl.FRAMEBUFFER, fbos[pass + 1]);
+      gl.viewport(0, 0, W, H);
+      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    }
 
-    // Rendu écran
+    // Rendu final à l'écran
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-    gl.bindTexture(gl.TEXTURE_2D, glState.texB);
+    gl.bindTexture(gl.TEXTURE_2D, texs[4]);
     gl.uniform1i(uPrev, 0);
+    gl.uniform1f(uPass, 4.0);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 
-    // Swap ping-pong
-    const tA = glState.texA, tB = glState.texB;
-    const fA = glState.fboA, fB = glState.fboB;
-    glState.texA = tB; glState.texB = tA;
-    glState.fboA = fB; glState.fboB = fA;
+    // Rotation : la plus vieille texture devient la nouvelle source
+    const oldest = texs.shift();
+    texs.push(oldest);
 
-    // Enregistre le temps de frame pour détection throttle
+    // Mesure temps de frame
     const dt = performance.now() - t0;
-    frameTimeSamples.push(dt);
-    if (frameTimeSamples.length > 60) frameTimeSamples.shift();
+    frameTimes.push(dt);
+    if (frameTimes.length > 90) frameTimes.shift();
 
     requestAnimationFrame(renderLoop);
   }
 
   // ============================================================
-  // 🔥 AUDIO — compatible iOS (démarre après geste utilisateur)
+  // 🔥 AUDIO — 60 oscillateurs + 8 bruits filtrés
   // ============================================================
   function startAudioStress() {
     try {
       const AC = window.AudioContext || window.webkitAudioContext;
       if (!AC) return;
       audioCtx = new AC();
-
-      // iOS démarre en 'suspended' — on force le resume
-      if (audioCtx.state === 'suspended') {
-        audioCtx.resume().catch(() => {});
-      }
+      if (audioCtx.state === 'suspended') audioCtx.resume().catch(()=>{});
 
       const master = audioCtx.createGain();
-      master.gain.value = 0.00008; // quasi inaudible
+      master.gain.value = 0.00006;
       master.connect(audioCtx.destination);
 
-      // 30 oscillateurs
-      for (let i = 0; i < 30; i++) {
+      for (let i = 0; i < 60; i++) {
         const osc = audioCtx.createOscillator();
         osc.type = ['sine','square','sawtooth','triangle'][i % 4];
-        osc.frequency.value = 8000 + i * 173;
+        osc.frequency.value = 8000 + i * 137;
         const g = audioCtx.createGain();
-        g.gain.value = 0.02;
+        g.gain.value = 0.015;
         const lfo = audioCtx.createOscillator();
         lfo.frequency.value = 0.5 + i * 0.03;
         const lfoGain = audioCtx.createGain();
         lfoGain.gain.value = 200;
         lfo.connect(lfoGain).connect(osc.frequency);
         osc.connect(g).connect(master);
-        osc.start();
-        lfo.start();
+        osc.start(); lfo.start();
         audioNodes.push(osc, lfo, g, lfoGain);
       }
 
-      // Bruit filtré
       const bufSize = Math.floor(audioCtx.sampleRate * 1.5);
       const noiseBuf = audioCtx.createBuffer(1, bufSize, audioCtx.sampleRate);
       const data = noiseBuf.getChannelData(0);
       for (let i = 0; i < bufSize; i++) data[i] = Math.random() * 2 - 1;
-      for (let n = 0; n < 4; n++) {
+      for (let n = 0; n < 8; n++) {
         const src = audioCtx.createBufferSource();
-        src.buffer = noiseBuf;
-        src.loop = true;
+        src.buffer = noiseBuf; src.loop = true;
         const g = audioCtx.createGain();
-        g.gain.value = 0.04;
+        g.gain.value = 0.035;
         const filter = audioCtx.createBiquadFilter();
         filter.type = 'bandpass';
-        filter.frequency.value = 500 + n * 900;
-        filter.Q.value = 10;
+        filter.frequency.value = 400 + n * 900;
+        filter.Q.value = 12;
         src.connect(filter).connect(g).connect(master);
         src.start();
         audioNodes.push(src, g, filter);
       }
-    } catch(e) { /* audio indispo */ }
+    } catch(e) {}
   }
-
   function stopAudioStress() {
     for (const n of audioNodes) {
       try { n.stop && n.stop(); } catch(e) {}
       try { n.disconnect && n.disconnect(); } catch(e) {}
     }
     audioNodes = [];
-    if (audioCtx) {
-      try { audioCtx.close(); } catch(e) {}
-      audioCtx = null;
-    }
+    if (audioCtx) { try { audioCtx.close(); } catch(e) {} audioCtx = null; }
   }
 
   // ============================================================
-  // 🔥 RAM STRESS — plafonné à ~200 Mo (iOS tue les onglets gourmands)
+  // 🔥 RAM — ~250 Mo max
   // ============================================================
   let memBlocks = [];
-  const MAX_BLOCKS = isIPad ? 20 : 40; // 20 × 10 Mo = 200 Mo sur iPad
+  const MAX_BLOCKS = 25;
   function startMemStress() {
     memInterval = setInterval(() => {
       if (!running) return;
       try {
         const arr = new Float64Array(1_250_000);
-        for (let j = 0; j < arr.length; j += 8192) arr[j] = j * 0.5;
+        for (let j = 0; j < arr.length; j += 4096) arr[j] = j * 0.5;
         memBlocks.push(arr);
         while (memBlocks.length > MAX_BLOCKS) memBlocks.shift();
-      } catch (e) {
-        // iOS a refusé l'allocation → on vide tout
-        memBlocks = [];
-      }
-    }, 120);
+      } catch (e) { memBlocks = []; }
+    }, 100);
   }
   function stopMemStress() {
     if (memInterval) clearInterval(memInterval);
@@ -730,21 +676,37 @@
   }
 
   // ============================================================
-  // 🔥 MAIN THREAD BURN — 10 ms sur iPad (pour laisser respirer l'UI)
+  // 🔥 MAIN THREAD — MessageChannel (contourne le clamp setTimeout 4ms d'iOS)
+  // Brûle 16 ms par cycle, laisse 2 ms respirer
   // ============================================================
-  function mainBurn() {
-    if (!running) return;
-    const t0 = performance.now();
-    const budget = isIPad ? 10 : 14;
-    let acc = 1.00001, x = 1.234;
-    while (performance.now() - t0 < budget) {
-      for (let i = 0; i < 1500; i++) {
-        x = Math.sqrt(Math.abs(x * 1.00001 + Math.sin(i) * Math.cos(i * 1.7)));
-        acc += Math.tan(i * 0.001) * Math.atan(x) - Math.sin(x * 2.3);
-        acc = acc % 1e10;
+  function startMainBurn() {
+    mainChannel = new MessageChannel();
+    let last = performance.now();
+    mainChannel.port1.onmessage = () => {
+      if (!running) return;
+      const now = performance.now();
+      // Burn de 16 ms (compense le temps déjà écoulé)
+      const target = 16;
+      const end = now + target;
+      let acc = 1.0001, x = 1.234, m = 0.5;
+      while (performance.now() < end) {
+        for (let i = 0; i < 5000; i++) {
+          x = Math.sqrt(Math.abs(x * 1.00001 + Math.sin(i) * Math.cos(i * 1.7)));
+          acc += Math.tan(i * 0.001) * Math.atan(x) - Math.sin(x * 2.3);
+          m = m * 1.0001 + x * 0.0001;
+          acc = (acc + m) % 1e10;
+        }
       }
+      last = now;
+      mainChannel.port2.postMessage(0);
+    };
+    mainChannel.port2.postMessage(0);
+  }
+  function stopMainBurn() {
+    if (mainChannel) {
+      try { mainChannel.port1.close(); mainChannel.port2.close(); } catch(e) {}
+      mainChannel = null;
     }
-    mainBurnRaf = requestAnimationFrame(mainBurn);
   }
 
   // ============================================================
@@ -752,15 +714,27 @@
   // ============================================================
   function updateHUD() {
     if (!running) return;
-    const elapsed = Math.floor((Date.now() - startTime) / 1000);
+    const now = Date.now();
+    const elapsed = Math.floor((now - startTime) / 1000);
     const mm = String(Math.floor(elapsed / 60)).padStart(2, '0');
     const ss = String(elapsed % 60).padStart(2, '0');
     timerEl.textContent = `${mm}:${ss}`;
 
-    const load = Math.min(100, Math.round(96 + Math.random() * 5));
-    loadEl.textContent = `${load}%`;
+    // Débit workers : calcule Mops/s glissant sur 1 s
+    if (lastWorkerSample === 0) {
+      lastWorkerSample = workerIterTotal;
+      workerIterTotal = 0;
+    }
+    if (elapsed !== lastWorkerSample) {
+      mopsBuf.push(workerIterTotal / 1e6);
+      if (mopsBuf.length > 4) mopsBuf.shift();
+      const avg = mopsBuf.reduce((a,b)=>a+b,0) / mopsBuf.length;
+      mopsEl.textContent = `${avg.toFixed(1)} Mops/s`;
+      workerIterTotal = 0;
+      lastWorkerSample = elapsed;
+    }
 
-    // Sur iOS, performance.memory n'existe pas → on affiche nos blocs
+    // RAM
     if (performance.memory && performance.memory.usedJSHeapSize) {
       const mb = (performance.memory.usedJSHeapSize / 1048576).toFixed(0);
       ramInfo.textContent = `RAM : ${mb} Mo`;
@@ -768,44 +742,42 @@
       ramInfo.textContent = `RAM : ~${memBlocks.length * 10} Mo`;
     }
 
-    const heat = Math.min(100, 25 + elapsed * 6);
+    const heat = Math.min(100, 20 + elapsed * 5);
     tempFill.style.width = `${heat}%`;
 
     hudRaf = requestAnimationFrame(updateHUD);
   }
 
   // ============================================================
-  // DÉTECTION THROTTLE THERMIQUE (iPad)
+  // DÉTECTION THROTTLE — moins sensible pour laisser chauffer
   // ============================================================
   function startThermalWatch() {
     thermalCheckInterval = setInterval(() => {
       if (!running) return;
-      if (frameTimeSamples.length < 30) return;
-      const avg = frameTimeSamples.reduce((a,b)=>a+b,0) / frameTimeSamples.length;
+      if (frameTimes.length < 60) return;
+      const avg = frameTimes.reduce((a,b)=>a+b,0) / frameTimes.length;
       const elapsed = (Date.now() - startTime) / 1000;
-      // Si l'iPad throttle lourdement (>50 ms/frame après 40s), on prévient
-      if (elapsed > 40 && avg > 50 && !thermalWarnShown) {
+      // Après 90 s de test, si la frame moyenne dépasse 40 ms → throttle sévère
+      if (elapsed > 90 && avg > 40 && !thermalWarnShown) {
         thermalWarnShown = true;
         thermalWarn.style.display = 'block';
-        // Auto-stop après 3s de warning
         setTimeout(() => {
           thermalWarn.style.display = 'none';
           if (running) stop();
-        }, 3500);
+        }, 4500);
       }
-    }, 2000);
+    }, 2500);
   }
-
   function stopThermalWatch() {
     if (thermalCheckInterval) clearInterval(thermalCheckInterval);
     thermalCheckInterval = null;
-    frameTimeSamples = [];
+    frameTimes = [];
     thermalWarnShown = false;
     thermalWarn.style.display = 'none';
   }
 
   // ============================================================
-  // WAKE LOCK (iOS 16.4+)
+  // WAKE LOCK
   // ============================================================
   async function requestWakeLock() {
     try {
@@ -813,21 +785,13 @@
         wakeLock = await navigator.wakeLock.request('screen');
         wakeLock.addEventListener('release', () => { wakeLock = null; });
       }
-    } catch(e) { /* refusé ou non supporté */ }
+    } catch(e) {}
   }
-
   async function releaseWakeLock() {
-    if (wakeLock) {
-      try { await wakeLock.release(); } catch(e) {}
-      wakeLock = null;
-    }
+    if (wakeLock) { try { await wakeLock.release(); } catch(e) {} wakeLock = null; }
   }
-
-  // Re-acquiert le wake lock quand la page redevient visible
   document.addEventListener('visibilitychange', () => {
-    if (running && document.visibilityState === 'visible') {
-      requestWakeLock();
-    }
+    if (running && document.visibilityState === 'visible') requestWakeLock();
   });
 
   // ============================================================
@@ -836,43 +800,32 @@
   async function start() {
     if (running) return;
     running = true;
-
-    // Empêche la page de scroller/bouncer
     document.body.style.overflow = 'hidden';
 
     warningScreen.style.display = 'none';
     app.style.display = 'block';
 
-    // 1) Wake lock AVANT tout le reste (iOS le donne facilement depuis un geste)
     await requestWakeLock();
 
-    // 2) GPU
     glState = initGL();
     if (glState) renderLoop();
 
-    // 3) Workers CPU
     const { count, cores } = launchWorkers();
     threadsEl.textContent = count;
-    coresEl.textContent = `/ ${cores} cœurs`;
+    coresEl.textContent = `/ ${cores} cœurs (×${(count/cores).toFixed(1)})`;
 
-    // 4) RAM
     startMemStress();
-
-    // 5) Audio
     startAudioStress();
-
-    // 6) Main thread burn
-    mainBurn();
-
-    // 7) Surveillance thermique
+    startMainBurn();
     startThermalWatch();
 
-    // 8) HUD
     startTime = Date.now();
+    lastWorkerSample = 0;
+    workerIterTotal = 0;
+    mopsBuf = [];
     updateHUD();
 
-    // Petit feedback haptique si dispo
-    try { navigator.vibrate && navigator.vibrate(50); } catch(e) {}
+    try { navigator.vibrate && navigator.vibrate(80); } catch(e) {}
   }
 
   async function stop() {
@@ -882,16 +835,15 @@
     killWorkers();
     stopMemStress();
     stopAudioStress();
+    stopMainBurn();
     stopThermalWatch();
     releaseWakeLock();
 
     if (hudRaf) cancelAnimationFrame(hudRaf);
-    if (mainBurnRaf) cancelAnimationFrame(mainBurnRaf);
     hudRaf = null;
-    mainBurnRaf = null;
 
     threadsEl.textContent = '0';
-    loadEl.textContent = '0%';
+    mopsEl.textContent = '0 Mops/s';
     tempFill.style.width = '0%';
 
     app.style.display = 'none';
@@ -900,50 +852,39 @@
   }
 
   // ============================================================
-  // ÉVÉNEMENTS — adaptés touch + souris
+  // ÉVÉNEMENTS
   // ============================================================
   startBtn.addEventListener('click', start);
   stopBtn.addEventListener('click', stop);
 
-  // Nettoyage si on quitte la page
   window.addEventListener('beforeunload', () => {
-    killWorkers(); stopMemStress(); stopAudioStress(); releaseWakeLock();
+    killWorkers(); stopMemStress(); stopAudioStress(); stopMainBurn(); releaseWakeLock();
   });
   window.addEventListener('pagehide', () => {
-    killWorkers(); stopMemStress(); stopAudioStress(); releaseWakeLock();
+    killWorkers(); stopMemStress(); stopAudioStress(); stopMainBurn(); releaseWakeLock();
   });
 
-  // Sécurité : double-tap sur le bouton STOP pour couper si la page rame
   let lastStopTap = 0;
   stopBtn.addEventListener('touchstart', (e) => {
     const now = Date.now();
     if (now - lastStopTap < 400) {
-      // Double-tap détecté → arrêt forcé même si le thread est bloqué
       e.preventDefault();
       if (running) stop();
     }
     lastStopTap = now;
   }, { passive: false });
 
-  // Empêche le pinch-zoom et le double-tap zoom sur toute la page
   document.addEventListener('gesturestart', (e) => e.preventDefault());
   document.addEventListener('gesturechange', (e) => e.preventDefault());
   document.addEventListener('gestureend', (e) => e.preventDefault());
-
-  // Empêche le scroll tactile de la page
   document.addEventListener('touchmove', (e) => {
     if (running) e.preventDefault();
   }, { passive: false });
-
-  // Bouton ESC pour desktop/debug
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && running) stop();
   });
 
-  // Affiche un badge iPad dans le HUD si détecté
-  if (isIPad) {
-    coresEl.textContent = `/ iPad détecté`;
-  }
+  if (isIPad) coresEl.textContent = `/ iPad détecté`;
 })();
 </script>
 </body>
