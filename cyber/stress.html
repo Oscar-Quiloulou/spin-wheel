@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>🍩 Donut Inferno — Calcul Absurde</title>
+<title>🍩 Fractal Donut — Régénération Infinie</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box;
       -webkit-tap-highlight-color: transparent;
@@ -30,14 +30,14 @@
     padding-bottom: max(20px, env(safe-area-inset-bottom));
   }
   .warn-card {
-    max-width: 660px; width: 100%;
+    max-width: 680px; width: 100%;
     background: linear-gradient(160deg, #1a0e02, #080400);
     border: 1px solid #ff880055; border-radius: 22px;
     padding: 34px 38px; text-align: center;
     box-shadow: 0 0 120px #ff660033, inset 0 0 60px #ff660008;
   }
   .warn-card h1 {
-    font-size: 32px; color: #ffaa22; margin-bottom: 16px;
+    font-size: 30px; color: #ffaa22; margin-bottom: 16px;
     letter-spacing: 2px;
     text-shadow: 0 0 30px #ff8800cc, 0 0 60px #ff660088;
     animation: flicker 1.2s infinite;
@@ -92,7 +92,6 @@
     position: absolute; inset: 0;
     width: 100%; height: 100%;
     display: block; touch-action: none;
-    image-rendering: auto;
   }
   #hud {
     position: absolute; top: 0; left: 0; right: 0;
@@ -138,6 +137,26 @@
     font-size: 11px; letter-spacing: 1.5px;
     color: #ffffff66; text-transform: uppercase;
   }
+  #generationBanner {
+    position: absolute;
+    top: 45%; left: 50%; transform: translate(-50%, -50%);
+    z-index: 15; pointer-events: none;
+    font-size: 42px; font-weight: 900;
+    color: #ffcc00; letter-spacing: 4px;
+    text-shadow: 0 0 40px #ff8800, 0 0 80px #ff4400;
+    opacity: 0; transition: opacity .3s;
+    text-align: center;
+  }
+  #generationBanner.show {
+    opacity: 1;
+    animation: genPulse 1.5s ease-out;
+  }
+  @keyframes genPulse {
+    0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+    30% { transform: translate(-50%, -50%) scale(1.15); opacity: 1; }
+    70% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(1.3); opacity: 0; }
+  }
   #thermalWarning {
     position: fixed; top: 50%; left: 50%;
     transform: translate(-50%, -50%);
@@ -158,23 +177,24 @@
 
 <div id="warning">
   <div class="warn-card">
-    <div class="danger-tag">🍩 Calcul Absurde 🍩</div>
-    <h1>DONUT INFERNO</h1>
-    <p>Un donut en ray marching. Simple à l'œil. <strong>Mais chaque pixel coûte ~500 000 opérations.</strong></p>
+    <div class="danger-tag">🍩 Fractal Récursif 🍩</div>
+    <h1>DONUT FRACTAL INFINI</h1>
+    <p>Un donut. Qui contient 4 donuts. Qui contiennent chacun 4 donuts. Etc.</p>
+    <p>Chaque pixel recalcule <strong>tout l'arbre entier</strong> à chaque étape, sans rien mémoriser.</p>
     <ul>
-      <li><strong>sin/cos par série de Taylor</strong> (20 termes au lieu de 5)</li>
-      <li><strong>sqrt par Newton-Raphson</strong> sur-itéré (20 au lieu de 8)</li>
-      <li><strong>Boucle de "vérification"</strong> par étape de ray march — résultat jeté</li>
-      <li><strong>128 étapes de ray march</strong> × ~50 opérations gaspillées chacune</li>
-      <li><strong>Normale calculée 4 fois</strong> (4 appels SDF au lieu d'1)</li>
-      <li><strong>Fond</strong> aussi calculé avec 100 itérations trig</li>
-      <li>Workers CPU en parallèle qui recalculent les mêmes maths</li>
+      <li><strong>Toutes les 15 s, un niveau s'ajoute</strong> → ×4 donuts instantanément</li>
+      <li><strong>Génération 1</strong> : 5 donuts · ~10K calculs/pixel</li>
+      <li><strong>Génération 2</strong> : 21 donuts · ~50K calculs/pixel</li>
+      <li><strong>Génération 3</strong> : 85 donuts · ~250K calculs/pixel</li>
+      <li><strong>Génération 4</strong> : 341 donuts · ~1.5M calculs/pixel</li>
+      <li><strong>Génération 5</strong> : 1365 donuts · ~8M calculs/pixel 💀</li>
+      <li>Workers CPU qui recalculent la même fractale en parallèle</li>
     </ul>
     <p style="font-size:13px;color:#ffaa66;">
-      Le résultat visuel = un donut orange qui tourne. Le coût = un GPU Apple qui fond.
+      Le GPU va d'abord tenir 30 fps, puis 10, puis 2, puis 0.3... Le tout pour afficher des donuts.
     </p>
     <br>
-    <button class="btn btn-start" id="startBtn">🍩🔥 LANCER LE DONUT</button>
+    <button class="btn btn-start" id="startBtn">🍩🔥 LANCER LA RÉCURSION</button>
   </div>
 </div>
 
@@ -182,30 +202,31 @@
   <canvas id="gl"></canvas>
   <div id="hud">
     <div class="hud-block">
-      <div class="hud-label">Résolution</div>
-      <div class="hud-value" id="res" style="color:#ffaa22">0</div>
-      <div class="hud-sub" id="cores">--</div>
+      <div class="hud-label">Génération</div>
+      <div class="hud-value" id="genEl" style="color:#ffaa22">1</div>
+      <div class="hud-sub" id="donutsEl">5 donuts</div>
     </div>
     <div class="hud-block" style="text-align:center">
-      <div class="hud-label">Calculs/pixel</div>
-      <div class="hud-value" id="opsPerPx" style="color:#ff4400">~500K</div>
+      <div class="hud-label">Calculs / pixel</div>
+      <div class="hud-value" id="opsEl" style="color:#ff4400">~10K</div>
       <div class="hud-sub" id="gpuInfo">GPU : init…</div>
     </div>
     <div class="hud-block" style="text-align:right">
       <div class="hud-label">Temps</div>
       <div class="hud-value" id="timer" style="color:#00e0ff">00:00</div>
-      <div class="hud-sub" id="ramInfo">--</div>
+      <div class="hud-sub" id="resEl">--</div>
     </div>
   </div>
   <div id="tempBar"><div id="tempFill"></div></div>
   <div id="fps">--</div>
+  <div id="generationBanner">GÉN 2</div>
   <div id="stopWrap">
     <button class="btn btn-stop" id="stopBtn">■ STOP</button>
   </div>
 </div>
 
 <div id="thermalWarning">
-  🔥 GPU/CPU en surchauffe ! 🔥
+  🔥 GPU en surchauffe ! 🔥
   <small>Arrêt automatique dans 4 s — laisse refroidir.</small>
 </div>
 
@@ -217,20 +238,21 @@
     (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
   const $ = (id) => document.getElementById(id);
-  const warningScreen = $('warning');
-  const startBtn      = $('startBtn');
-  const stopBtn       = $('stopBtn');
-  const app           = $('app');
-  const resEl         = $('res');
-  const coresEl       = $('cores');
-  const opsPerPxEl    = $('opsPerPx');
-  const timerEl       = $('timer');
-  const tempFill      = $('tempFill');
-  const gpuInfo       = $('gpuInfo');
-  const ramInfo       = $('ramInfo');
-  const fpsEl         = $('fps');
-  const canvas        = $('gl');
-  const thermalWarn   = $('thermalWarning');
+  const warningScreen  = $('warning');
+  const startBtn       = $('startBtn');
+  const stopBtn        = $('stopBtn');
+  const app            = $('app');
+  const genEl          = $('genEl');
+  const donutsEl       = $('donutsEl');
+  const opsEl          = $('opsEl');
+  const timerEl        = $('timer');
+  const tempFill       = $('tempFill');
+  const gpuInfo        = $('gpuInfo');
+  const resEl          = $('resEl');
+  const fpsEl          = $('fps');
+  const canvas         = $('gl');
+  const genBanner      = $('generationBanner');
+  const thermalWarn    = $('thermalWarning');
 
   let running = false;
   let glState = null;
@@ -241,68 +263,143 @@
   let wakeLock = null;
   let thermalWarnShown = false;
   let thermalInterval = null;
+  let genInterval = null;
+  let currentGen = 1;
+  const MAX_GEN = 5;
+
+  // Nombre de donuts par génération : 1 + 4 + 16 + 64 + 256 + 1024
+  function donutCount(gen) {
+    let total = 1;      // level 0
+    let layer = 1;      // 4^0 = 1
+    for (let i = 1; i <= gen; i++) {
+      layer *= 4;
+      total += layer;
+    }
+    return total;
+  }
+
+  // Estimation des calculs par pixel (approx)
+  function opsPerPixel(gen) {
+    // 80 ray march steps × N SDFs × ~200 ops par SDF
+    const sdfCount = donutCount(gen);
+    return 80 * sdfCount * 200;
+  }
+
+  function formatOps(n) {
+    if (n >= 1e9) return `~${(n/1e9).toFixed(1)}G`;
+    if (n >= 1e6) return `~${(n/1e6).toFixed(1)}M`;
+    if (n >= 1e3) return `~${(n/1e3).toFixed(0)}K`;
+    return `~${n}`;
+  }
 
   // ============================================================
-  // 🔥 WORKERS CPU — recalculent des maths absurdes en parallèle
-  // Ils font la même chose que le shader, mais sur le CPU
+  // 🔥 WORKERS CPU — recalculent la fractale en parallèle
+  // Chaque worker fait le SDF récursif en pur JS, sans WebGL
   // ============================================================
   const WORKER_CODE = `
     let running = true;
-    self.onmessage = (e) => { if (e.data === 'stop') running = false; };
+    let gen = 1;
 
-    // sin via Taylor, 20 termes
+    self.onmessage = (e) => {
+      if (e.data === 'stop') running = false;
+      if (e.data && e.data.gen) gen = e.data.gen;
+    };
+
+    // sin/cos Taylor 10 termes (moins violent que shader mais coûteux en JS)
     function tsin(x) {
-      x = x - Math.floor((x + Math.PI) / (2*Math.PI)) * 2*Math.PI;
+      x = x - Math.floor((x + 3.14159265) / 6.28318531) * 6.28318531;
       const x2 = x * x;
       let term = x, sum = x;
-      for (let i = 1; i < 20; i++) {
+      for (let i = 1; i < 10; i++) {
         term *= -x2 / ((2*i) * (2*i + 1));
         sum += term;
       }
       return sum;
     }
-    function tcos(x) { return tsin(x + Math.PI/2); }
+    function tcos(x) { return tsin(x + 1.5707963); }
 
-    // sqrt via Newton-Raphson, 25 itérations (converge en 6)
+    // sqrt Newton 12 itérations
     function tsqrt(s) {
       if (s <= 0) return 0;
       let g = s * 0.5 + 0.5;
-      for (let i = 0; i < 25; i++) g = 0.5 * (g + s / g);
+      for (let i = 0; i < 12; i++) g = 0.5 * (g + s / g);
       return g;
     }
 
-    // SDF torus — la version "chère"
-    // Normalement : length(vec2(length(p.xz) - R, p.y)) - r
+    // SDF torus avec vérification inutile
     function sdTorus(px, py, pz, R, r) {
       const rxz2 = px*px + pz*pz;
       const rxz = tsqrt(rxz2);
-
-      // Boucle de vérification bidon
       let check = 0;
-      for (let i = 0; i < 40; i++) {
+      for (let i = 0; i < 10; i++) {
         check += tsin(i * 0.1 + rxz) * tcos(i * 0.2);
       }
-      // check est jeté
-      void check;
-
+      rxz += check * 0.0;
       const qx = rxz - R, qy = py;
       return tsqrt(qx*qx + qy*qy) - r;
     }
 
+    // SDF récursif : même logique que le shader
+    function sceneSDF(px, py, pz, depth, time) {
+      let d = sdTorus(px, py, pz, 1.0, 0.35);
+
+      if (depth < 1) return d;
+
+      const scaleFactor = 0.4;
+
+      for (let i = 0; i < 4; i++) {
+        const a = i * 1.5707963 + time * 0.2;
+        const ox = tcos(a) * 1.2;
+        const oz = tsin(a) * 1.2;
+        const lx = (px - ox) / scaleFactor;
+        const ly = py / scaleFactor;
+        const lz = (pz - oz) / scaleFactor;
+        const d1 = sdTorus(lx, ly, lz, 1.0, 0.4) * scaleFactor;
+        if (d1 < d) d = d1;
+
+        if (depth < 2) continue;
+
+        for (let j = 0; j < 4; j++) {
+          const a2 = j * 1.5707963 - time * 0.3;
+          const s2 = scaleFactor * 0.4;
+          const ox2 = ox + tcos(a2) * 0.5;
+          const oz2 = oz + tsin(a2) * 0.5;
+          const lx2 = (px - ox2) / s2;
+          const ly2 = py / s2;
+          const lz2 = (pz - oz2) / s2;
+          const d2 = sdTorus(lx2, ly2, lz2, 1.0, 0.4) * s2;
+          if (d2 < d) d = d2;
+
+          if (depth < 3) continue;
+
+          for (let k = 0; k < 4; k++) {
+            const a3 = k * 1.5707963 + time * 0.5;
+            const s3 = s2 * 0.4;
+            const ox3 = ox2 + tcos(a3) * 0.2;
+            const oz3 = oz2 + tsin(a3) * 0.2;
+            const lx3 = (px - ox3) / s3;
+            const ly3 = py / s3;
+            const lz3 = (pz - oz3) / s3;
+            const d3 = sdTorus(lx3, ly3, lz3, 1.0, 0.4) * s3;
+            if (d3 < d) d = d3;
+          }
+        }
+      }
+      return d;
+    }
+
     const buf = new Float64Array(4096);
     let bufIdx = 0;
+    let t = 0;
 
     function burn() {
       let total = 0;
-      let t = 0;
       while (running) {
-        // 20 000 itérations internes de calcul de SDF
-        for (let k = 0; k < 20000; k++) {
+        for (let k = 0; k < 5000; k++) {
           const x = tsin(t * 0.1) * 1.5;
           const y = tcos(t * 0.13) * 0.8;
           const z = tsin(t * 0.07) * 1.5;
-          const d = sdTorus(x, y, z, 1.0, 0.4);
-          total += d;
+          total += sceneSDF(x, y, z, gen, t);
           t += 0.001;
         }
         buf[bufIdx = (bufIdx + 1) & 4095] = total;
@@ -313,7 +410,6 @@
 
   function launchWorkers() {
     const cores = navigator.hardwareConcurrency || 4;
-    // iOS : on tente 2× les cœurs, on s'arrête si un worker refuse
     const target = cores * 2;
 
     const blob = new Blob([WORKER_CODE], { type: 'application/javascript' });
@@ -322,6 +418,8 @@
     for (let i = 0; i < target; i++) {
       try {
         const w = new Worker(url);
+        // Configure la profondeur initiale
+        w.postMessage({ gen: currentGen });
         workers.push(w);
       } catch(e) { break; }
     }
@@ -335,115 +433,175 @@
     }
     workers = [];
   }
+  function updateWorkersGen(gen) {
+    for (const w of workers) {
+      try { w.postMessage({ gen }); } catch(e) {}
+    }
+  }
 
   // ============================================================
-  // 🍩 SHADER — DONUT ray-marché avec calculs absurdes
-  // Chaque pixel : ~500 000 opérations pour un simple torus
+  // 🍩🍩🍩 SHADER FRACTAL — 5 niveaux de récursion déroulés
+  // Chaque niveau multiplie le nombre de donuts par 4
   // ============================================================
   const VERT = `#version 300 es
     in vec2 p;
     void main() { gl_Position = vec4(p, 0.0, 1.0); }
   `;
 
+  // Shader : version sur-vitaminée avec Taylor/Newton et SDF récursif
   const FRAG = `#version 300 es
     precision highp float;
     uniform vec2 u_res;
     uniform float u_time;
+    uniform int u_gen;   // 1 à 5
     out vec4 outColor;
 
-    // -------- sin/cos par série de Taylor, 20 termes (overkill) --------
+    const float PI = 3.14159265;
+
+    // ---- sin/cos Taylor 10 termes ----
     float tsin(float x) {
-      // Réduction d'argument sur [-pi, pi]
-      x = x - floor((x + 3.14159265) / 6.28318531) * 6.28318531;
+      x = x - floor((x + PI) / (2.0 * PI)) * 2.0 * PI;
       float x2 = x * x;
       float term = x;
       float sum = x;
-      for (int i = 1; i < 20; i++) {
+      for (int i = 1; i < 10; i++) {
         term *= -x2 / float((2*i) * (2*i + 1));
         sum += term;
       }
       return sum;
     }
-    float tcos(float x) { return tsin(x + 1.5707963); }
+    float tcos(float x) { return tsin(x + PI * 0.5); }
 
-    // -------- sqrt par Newton-Raphson, 25 itérations (overkill) --------
+    // ---- sqrt Newton 12 itérations ----
     float tsqrt(float s) {
       if (s <= 0.0) return 0.0;
       float g = s * 0.5 + 0.5;
-      for (int i = 0; i < 25; i++) {
+      for (int i = 0; i < 12; i++) {
         g = 0.5 * (g + s / g);
       }
       return g;
     }
 
-    // -------- longueurs "chères" --------
-    float tlength2(vec2 v) { return tsqrt(v.x*v.x + v.y*v.y); }
-    float tlength3(vec3 v) { return tsqrt(v.x*v.x + v.y*v.y + v.z*v.z); }
+    float tlen2(vec2 v) { return tsqrt(v.x*v.x + v.y*v.y); }
 
-    // -------- SDF torus — 5 opérations, on en fait ~1000 --------
+    // ---- SDF torus avec vérification gaspillée ----
     float sdTorus(vec3 p, float R, float r) {
-      // Étape 1 : length(p.xz) via Newton sur-itéré
       float rxz2 = p.x*p.x + p.z*p.z;
       float rxz = tsqrt(rxz2);
 
-      // Boucle de "vérification" bidon : 30 itérations de trig
-      // Résultat jeté = travail pur perdu
+      // Boucle de vérification bidon (résultat jeté)
       float check = 0.0;
-      for (int i = 0; i < 30; i++) {
+      for (int i = 0; i < 10; i++) {
         check += tsin(float(i) * 0.1 + rxz) * tcos(float(i) * 0.2);
       }
-      // On l'ajoute multiplié par 0 (le compilateur ne peut pas optimiser à coup sûr)
       rxz += check * 0.0;
 
-      // Étape 2 : length du vecteur (rxz - R, p.y)
       vec2 q = vec2(rxz - R, p.y);
-      return tlength2(q) - r;
+      return tlen2(q) - r;
     }
 
-    // -------- Normale : 4 évaluations SDF supplémentaires (×5 coût) --------
-    vec3 calcNormal(vec3 p) {
-      const float e = 0.002;
-      // Chaque appel fait ~1000 opérations → la normale coûte 5× un SDF
-      float dx = sdTorus(p + vec3(e, 0.0, 0.0), 1.0, 0.4)
-               - sdTorus(p - vec3(e, 0.0, 0.0), 1.0, 0.4);
-      float dy = sdTorus(p + vec3(0.0, e, 0.0), 1.0, 0.4)
-               - sdTorus(p - vec3(0.0, e, 0.0), 1.0, 0.4);
-      float dz = sdTorus(p + vec3(0.0, 0.0, e), 1.0, 0.4)
-               - sdTorus(p - vec3(0.0, 0.0, e), 1.0, 0.4);
-      return normalize(vec3(dx, dy, dz));
-    }
+    // =====================================================
+    // SCÈNE FRACTALE RÉCURSIVE (déroulée, 5 niveaux max)
+    // Chaque niveau ajoute 4 sous-donuts par parent
+    // =====================================================
+    float sceneSDF(vec3 p) {
+      float d = 1e10;
 
-    // -------- Gaspillage par étape de ray march : 40 iterations trig --------
-    float waste(vec3 p, float t) {
-      float acc = 0.0;
-      for (int i = 0; i < 40; i++) {
-        acc += tsin(p.x * float(i) * 0.3 + t) * tcos(p.y * float(i) * 0.2 - t);
+      // ---- NIVEAU 0 : donut central ----
+      d = min(d, sdTorus(p, 1.0, 0.35));
+
+      if (u_gen < 1) return d;
+
+      const float S1 = 0.4;
+
+      // ---- NIVEAU 1 : 4 donuts autour du central ----
+      for (int i = 0; i < 4; i++) {
+        float a = float(i) * (PI * 0.5) + u_time * 0.2;
+        vec3 off = vec3(tcos(a) * 1.2, 0.0, tsin(a) * 1.2);
+        vec3 lp = (p - off) / S1;
+        d = min(d, sdTorus(lp, 1.0, 0.4) * S1);
+
+        if (u_gen < 2) continue;
+
+        const float S2 = S1 * 0.4;
+
+        // ---- NIVEAU 2 : 4 donuts autour de chaque niveau-1 ----
+        for (int j = 0; j < 4; j++) {
+          float a2 = float(j) * (PI * 0.5) - u_time * 0.3;
+          vec3 off2 = off + vec3(tcos(a2) * 0.5, 0.0, tsin(a2) * 0.5);
+          vec3 lp2 = (p - off2) / S2;
+          d = min(d, sdTorus(lp2, 1.0, 0.4) * S2);
+
+          if (u_gen < 3) continue;
+
+          const float S3 = S2 * 0.4;
+
+          // ---- NIVEAU 3 : 4 donuts autour de chaque niveau-2 ----
+          for (int k = 0; k < 4; k++) {
+            float a3 = float(k) * (PI * 0.5) + u_time * 0.5;
+            vec3 off3 = off2 + vec3(tcos(a3) * 0.2, 0.0, tsin(a3) * 0.2);
+            vec3 lp3 = (p - off3) / S3;
+            d = min(d, sdTorus(lp3, 1.0, 0.4) * S3);
+
+            if (u_gen < 4) continue;
+
+            const float S4 = S3 * 0.4;
+
+            // ---- NIVEAU 4 : 4 donuts autour de chaque niveau-3 ----
+            for (int l = 0; l < 4; l++) {
+              float a4 = float(l) * (PI * 0.5) - u_time * 0.7;
+              vec3 off4 = off3 + vec3(tcos(a4) * 0.08, 0.0, tsin(a4) * 0.08);
+              vec3 lp4 = (p - off4) / S4;
+              d = min(d, sdTorus(lp4, 1.0, 0.4) * S4);
+
+              if (u_gen < 5) continue;
+
+              const float S5 = S4 * 0.4;
+
+              // ---- NIVEAU 5 : 4 donuts autour de chaque niveau-4 ----
+              for (int m = 0; m < 4; m++) {
+                float a5 = float(m) * (PI * 0.5) + u_time * 0.9;
+                vec3 off5 = off4 + vec3(tcos(a5) * 0.032, 0.0, tsin(a5) * 0.032);
+                vec3 lp5 = (p - off5) / S5;
+                d = min(d, sdTorus(lp5, 1.0, 0.4) * S5);
+              }
+            }
+          }
+        }
       }
-      return acc * 0.0; // toujours 0, mais le GPU ne le sait pas à la compilation
+
+      return d;
+    }
+
+    // Normale par différences finies (4 évaluations SDF)
+    vec3 calcNormal(vec3 p) {
+      const float e = 0.0015;
+      float dx = sceneSDF(p + vec3(e, 0.0, 0.0)) - sceneSDF(p - vec3(e, 0.0, 0.0));
+      float dy = sceneSDF(p + vec3(0.0, e, 0.0)) - sceneSDF(p - vec3(0.0, e, 0.0));
+      float dz = sceneSDF(p + vec3(0.0, 0.0, e)) - sceneSDF(p - vec3(0.0, 0.0, e));
+      return normalize(vec3(dx, dy, dz));
     }
 
     void main() {
       vec2 uv = (gl_FragCoord.xy - 0.5 * u_res) / u_res.y;
 
-      // Caméra tournante
-      float ca = tcos(u_time * 0.4);
-      float sa = tsin(u_time * 0.4);
+      // Caméra orbitale
+      float ca = tcos(u_time * 0.35);
+      float sa = tsin(u_time * 0.35);
       mat3 rot = mat3(ca, 0.0, sa, 0.0, 1.0, 0.0, -sa, 0.0, ca);
 
-      vec3 ro = rot * vec3(0.0, 0.6, 3.5);
-      vec3 rd = rot * normalize(vec3(uv, -1.5));
+      vec3 ro = rot * vec3(0.0, 0.8, 4.0);
+      vec3 rd = rot * normalize(vec3(uv, -1.6));
 
-      // ---- RAY MARCHING (128 étapes) ----
+      // ---- RAY MARCHING (80 étapes) ----
       float t = 0.0;
       float hit = -1.0;
-      for (int i = 0; i < 128; i++) {
+      for (int i = 0; i < 80; i++) {
         vec3 p = ro + rd * t;
-        // Gaspillage énorme à chaque étape
-        t += waste(p, float(i) * 0.01);
-        float d = sdTorus(p, 1.0, 0.4);
+        float d = sceneSDF(p);
         if (d < 0.001) { hit = t; break; }
         t += d;
-        if (t > 12.0) break;
+        if (t > 15.0) break;
       }
 
       vec3 col = vec3(0.0);
@@ -452,52 +610,39 @@
         vec3 p = ro + rd * hit;
         vec3 n = calcNormal(p);
 
-        // Lumière principale
-        vec3 lightDir = normalize(vec3(0.8, 1.0, -0.5));
+        vec3 lightDir = normalize(vec3(0.8, 1.2, -0.6));
         float diff = max(dot(n, lightDir), 0.0);
+        float shadow = clamp(diff, 0.2, 1.0);
 
-        // Spéculaire
         vec3 viewDir = -rd;
         vec3 halfV = normalize(lightDir + viewDir);
         float spec = pow(max(dot(n, halfV), 0.0), 48.0);
 
-        // Couleur donut glacé orange/doré
+        // Palette selon la profondeur (teinte qui varie avec l'échelle)
+        // On utilise le fragment pour colorer différemment chaque niveau
         vec3 baseCol = vec3(0.95, 0.55, 0.15);
-        // Glaçage sur le dessus
         float glaze = smoothstep(0.1, 0.5, n.y);
         vec3 glazeCol = vec3(1.0, 0.75, 0.35);
 
-        col = mix(baseCol, glazeCol, glaze) * (0.15 + 0.85 * diff);
+        col = mix(baseCol, glazeCol, glaze) * (0.15 + 0.85 * shadow);
         col += vec3(1.0, 0.9, 0.7) * spec * 0.8;
 
-        // Rim light subtil
         float rim = pow(1.0 - max(dot(n, viewDir), 0.0), 3.0);
         col += vec3(1.0, 0.6, 0.3) * rim * 0.25;
       } else {
-        // Fond : 100 itérations de trig gaspillées
-        float bg = 0.0;
-        for (int i = 0; i < 100; i++) {
-          bg += tsin(uv.x * 5.0 + float(i) * 0.1 + u_time * 0.2)
-              * tcos(uv.y * 5.0 - float(i) * 0.13);
-        }
-        bg *= 0.0; // jeté
-        // Vrai fond : dégradé sombre
-        float vignette = 1.0 - tlength2(uv) * 0.6;
+        // Fond : dégradé sombre
+        float vignette = 1.0 - tlen2(uv) * 0.6;
         col = vec3(0.04, 0.03, 0.06) * vignette;
-        col += vec3(0.08, 0.04, 0.02) * smoothstep(0.8, 0.0, tlength2(uv));
+        col += vec3(0.08, 0.04, 0.02) * smoothstep(0.8, 0.0, tlen2(uv));
       }
 
-      // Gamma — recalcule pow(0.4545) avec 10 itérations bidon
-      float g = 0.4545;
-      for (int i = 0; i < 10; i++) { g = g; }
-      col = pow(col, vec3(g));
-
+      col = pow(col, vec3(0.4545));
       outColor = vec4(col, 1.0);
     }
   `;
 
   function initGL() {
-    const dpr = Math.min(window.devicePixelRatio || 1, isIPad ? 2.0 : 2.5);
+    const dpr = Math.min(window.devicePixelRatio || 1, isIPad ? 1.5 : 2.0);
     const gl = canvas.getContext('webgl2', {
       antialias: false, depth: false, stencil: false,
       powerPreference: 'high-performance',
@@ -527,6 +672,7 @@
     gl.linkProgram(prog);
     if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
       console.error('link error:', gl.getProgramInfoLog(prog));
+      gpuInfo.textContent = 'Shader trop lourd';
       return null;
     }
     gl.useProgram(prog);
@@ -538,17 +684,18 @@
     gl.enableVertexAttribArray(loc);
     gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
 
-    const uRes  = gl.getUniformLocation(prog, 'u_res');
+    const uRes = gl.getUniformLocation(prog, 'u_res');
     const uTime = gl.getUniformLocation(prog, 'u_time');
+    const uGen = gl.getUniformLocation(prog, 'u_gen');
 
-    let W = Math.floor(window.innerWidth  * dpr);
+    let W = Math.floor(window.innerWidth * dpr);
     let H = Math.floor(window.innerHeight * dpr);
     canvas.width = W;
     canvas.height = H;
     gl.viewport(0, 0, W, H);
 
     function resize() {
-      W = Math.floor(window.innerWidth  * dpr);
+      W = Math.floor(window.innerWidth * dpr);
       H = Math.floor(window.innerHeight * dpr);
       canvas.width = W;
       canvas.height = H;
@@ -564,41 +711,69 @@
 
     const info = gl.getExtension('WEBGL_debug_renderer_info');
     const renderer = info ? gl.getParameter(info.UNMASKED_RENDERER_WEBGL) : 'GPU';
-    gpuInfo.textContent = String(renderer).slice(0, 28);
+    gpuInfo.textContent = String(renderer).slice(0, 26);
 
     canvas.addEventListener('webglcontextlost', (e) => {
       e.preventDefault();
-      gpuInfo.textContent = '⚠ GPU perdu (surchauffe)';
+      gpuInfo.textContent = '⚠ GPU perdu';
     });
 
-    // Calcule le nombre d'opérations par pixel (approximatif pour l'affichage)
-    // 128 steps × (40 waste + 30 check + 25 Newton×2 + overhead) + normale 5×
-    const opsPerPx = 128 * (40 + 30 + 50) + 5 * (25 + 30 + 50) + 100;
-    opsPerPxEl.textContent = `~${(opsPerPx / 1000).toFixed(0)}K`;
-
-    return { gl, uRes, uTime, getW: () => W, getH: () => H };
+    return { gl, uRes, uTime, uGen, getW: () => W, getH: () => H };
   }
 
   function renderLoop() {
     if (!running || !glState) return;
-    const { gl, uRes, uTime } = glState;
+    const { gl, uRes, uTime, uGen } = glState;
     const W = glState.getW(), H = glState.getH();
 
     const t0 = performance.now();
 
     gl.uniform2f(uRes, W, H);
     gl.uniform1f(uTime, performance.now() * 0.001);
+    gl.uniform1i(uGen, currentGen);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 
     const dt = performance.now() - t0;
     frameTimes.push(dt);
-    if (frameTimes.length > 60) frameTimes.shift();
+    if (frameTimes.length > 40) frameTimes.shift();
 
-    // FPS lissé
     const avg = frameTimes.reduce((a,b)=>a+b,0) / frameTimes.length;
     fpsEl.textContent = `${(1000 / Math.max(avg, 0.1)).toFixed(1)} fps · ${dt.toFixed(0)} ms`;
 
     requestAnimationFrame(renderLoop);
+  }
+
+  // ============================================================
+  // RÉGÉNÉRATION : +1 niveau toutes les 15 s
+  // ============================================================
+  function startRegeneration() {
+    genInterval = setInterval(() => {
+      if (!running) return;
+      if (currentGen >= MAX_GEN) return;
+      currentGen++;
+
+      // Mise à jour HUD
+      const donuts = donutCount(currentGen);
+      const ops = opsPerPixel(currentGen);
+      genEl.textContent = currentGen;
+      donutsEl.textContent = `${donuts.toLocaleString('fr-FR')} donuts`;
+      opsEl.textContent = formatOps(ops);
+
+      // Mise à jour workers
+      updateWorkersGen(currentGen);
+
+      // Bannière de génération
+      genBanner.textContent = `GÉN ${currentGen} · ${donuts.toLocaleString('fr-FR')} DONUTS`;
+      genBanner.classList.remove('show');
+      void genBanner.offsetWidth; // force reflow
+      genBanner.classList.add('show');
+
+      try { navigator.vibrate && navigator.vibrate([30, 30, 30]); } catch(e) {}
+    }, 15000);
+  }
+  function stopRegeneration() {
+    if (genInterval) clearInterval(genInterval);
+    genInterval = null;
   }
 
   // ============================================================
@@ -625,11 +800,11 @@
   function startThermalWatch() {
     thermalInterval = setInterval(() => {
       if (!running) return;
-      if (frameTimes.length < 40) return;
+      if (frameTimes.length < 30) return;
       const avg = frameTimes.reduce((a,b)=>a+b,0) / frameTimes.length;
       const elapsed = (Date.now() - startTime) / 1000;
-      // Après 60 s, si frame moyenne > 500 ms → throttle violent
-      if (elapsed > 60 && avg > 500 && !thermalWarnShown) {
+      // Après 45 s, si frame > 800 ms → throttle violent
+      if (elapsed > 45 && avg > 800 && !thermalWarnShown) {
         thermalWarnShown = true;
         thermalWarn.style.display = 'block';
         setTimeout(() => {
@@ -657,15 +832,8 @@
     const ss = String(elapsed % 60).padStart(2, '0');
     timerEl.textContent = `${mm}:${ss}`;
 
-    const heat = Math.min(100, 20 + elapsed * 5);
+    const heat = Math.min(100, 15 + elapsed * 4);
     tempFill.style.width = `${heat}%`;
-
-    if (performance.memory && performance.memory.usedJSHeapSize) {
-      const mb = (performance.memory.usedJSHeapSize / 1048576).toFixed(0);
-      ramInfo.textContent = `${mb} Mo`;
-    } else {
-      ramInfo.textContent = `~${workers.length} threads`;
-    }
 
     hudRaf = requestAnimationFrame(updateHUD);
   }
@@ -676,6 +844,7 @@
   async function start() {
     if (running) return;
     running = true;
+    currentGen = 1;
     document.body.style.overflow = 'hidden';
 
     warningScreen.style.display = 'none';
@@ -684,17 +853,18 @@
     await requestWakeLock();
 
     glState = initGL();
-    if (!glState) {
-      gpuInfo.textContent = 'WebGL2 requis';
-    } else {
-      renderLoop();
-    }
+    if (glState) renderLoop();
 
     const { count, cores } = launchWorkers();
-    coresEl.textContent = `${count} workers / ${cores} cœurs`;
+
+    // Init HUD
+    genEl.textContent = '1';
+    donutsEl.textContent = `${donutCount(1)} donuts · ${count} workers`;
+    opsEl.textContent = formatOps(opsPerPixel(1));
 
     startTime = Date.now();
     startThermalWatch();
+    startRegeneration();
     updateHUD();
 
     try { navigator.vibrate && navigator.vibrate(80); } catch(e) {}
@@ -706,6 +876,7 @@
 
     killWorkers();
     stopThermalWatch();
+    stopRegeneration();
     releaseWakeLock();
 
     if (hudRaf) cancelAnimationFrame(hudRaf);
@@ -715,6 +886,7 @@
     fpsEl.textContent = '--';
     timerEl.textContent = '00:00';
     tempFill.style.width = '0%';
+    genBanner.classList.remove('show');
 
     app.style.display = 'none';
     warningScreen.style.display = 'flex';
@@ -734,7 +906,6 @@
     killWorkers(); releaseWakeLock();
   });
 
-  // Double-tap sur STOP pour forcer si l'UI rame
   let lastStopTap = 0;
   stopBtn.addEventListener('touchstart', (e) => {
     const now = Date.now();
@@ -754,8 +925,6 @@
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && running) stop();
   });
-
-  if (isIPad) coresEl.textContent = 'iPad détecté';
 })();
 </script>
 </body>
