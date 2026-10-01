@@ -2,11 +2,10 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#05050a">
-<title>🔥🔥🔥🔥 MAX HEAT v4 — iPad Inferno</title>
+<title>🍩 Donut Inferno — Calcul Absurde</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box;
       -webkit-tap-highlight-color: transparent;
@@ -16,14 +15,14 @@
     overflow: hidden; overscroll-behavior: none;
     touch-action: none;
     -webkit-user-select: none; user-select: none;
-    background: #03030a; color: #eee;
+    background: #000; color: #eee;
     font-family: -apple-system, 'SF Pro Display', system-ui, sans-serif;
     padding: env(safe-area-inset-top) env(safe-area-inset-right)
              env(safe-area-inset-bottom) env(safe-area-inset-left);
   }
   #warning {
     position: fixed; inset: 0;
-    background: radial-gradient(circle at 50% 40%, #3a0000, #03030a 75%);
+    background: radial-gradient(circle at 50% 40%, #2a1200, #050300 75%);
     display: flex; align-items: center; justify-content: center;
     z-index: 100; padding: 20px; overflow-y: auto;
     -webkit-overflow-scrolling: touch;
@@ -31,50 +30,50 @@
     padding-bottom: max(20px, env(safe-area-inset-bottom));
   }
   .warn-card {
-    max-width: 680px; width: 100%;
-    background: linear-gradient(160deg, #1a0202, #080202);
-    border: 1px solid #ff151555; border-radius: 22px;
+    max-width: 660px; width: 100%;
+    background: linear-gradient(160deg, #1a0e02, #080400);
+    border: 1px solid #ff880055; border-radius: 22px;
     padding: 34px 38px; text-align: center;
-    box-shadow: 0 0 120px #ff000044, inset 0 0 60px #ff00000a;
+    box-shadow: 0 0 120px #ff660033, inset 0 0 60px #ff660008;
   }
   .warn-card h1 {
-    font-size: 32px; color: #ff2222; margin-bottom: 16px;
-    letter-spacing: 3px;
-    text-shadow: 0 0 30px #ff0000cc, 0 0 60px #ff000088;
-    animation: flicker 0.9s infinite;
+    font-size: 32px; color: #ffaa22; margin-bottom: 16px;
+    letter-spacing: 2px;
+    text-shadow: 0 0 30px #ff8800cc, 0 0 60px #ff660088;
+    animation: flicker 1.2s infinite;
   }
   @keyframes flicker {
     0%,100% { opacity: 1; } 42% { opacity: 1; }
-    45% { opacity: .55; } 48% { opacity: 1; }
-    72% { opacity: .8; } 76% { opacity: 1; }
+    45% { opacity: .65; } 48% { opacity: 1; }
+    72% { opacity: .85; } 76% { opacity: 1; }
   }
   .warn-card p { color: #c9c9d9; line-height: 1.6; margin-bottom: 12px; font-size: 15px; }
-  .warn-card strong { color: #ff4444; }
+  .warn-card strong { color: #ffcc44; }
   .warn-card ul {
     text-align: left; display: inline-block;
-    color: #aa8899; font-size: 14px;
+    color: #aa9988; font-size: 14px;
     margin: 8px 0 18px; line-height: 1.9; list-style: none;
   }
-  .warn-card li::before { content: "☠ "; color: #ff1111; font-weight: bold; }
+  .warn-card li::before { content: "▸ "; color: #ff8800; font-weight: bold; }
   .danger-tag {
     display: inline-block; padding: 5px 14px; border-radius: 4px;
-    background: #ff000022; border: 1px solid #ff000066;
-    color: #ff5555; font-size: 11px; letter-spacing: 4px;
+    background: #ff880022; border: 1px solid #ff880066;
+    color: #ffaa44; font-size: 11px; letter-spacing: 4px;
     text-transform: uppercase; margin-bottom: 16px;
-    animation: flicker 0.6s infinite;
+    animation: flicker 0.8s infinite;
   }
   .btn {
     border: none; padding: 20px 44px;
     font-size: 17px; font-weight: 800; border-radius: 14px;
-    cursor: pointer; transition: transform .12s, box-shadow .12s;
+    cursor: pointer; transition: transform .12s;
     letter-spacing: 1.5px; font-family: inherit;
-    text-transform: uppercase; min-height: 62px; min-width: 260px;
+    text-transform: uppercase; min-height: 62px; min-width: 280px;
     touch-action: manipulation;
   }
   .btn-start {
-    background: linear-gradient(135deg, #ff0015, #ff8800, #ff0015);
-    background-size: 200% 200%; color: white;
-    box-shadow: 0 0 40px #ff001588, 0 6px 30px #ff001555;
+    background: linear-gradient(135deg, #ff8800, #ffcc00, #ff8800);
+    background-size: 200% 200%; color: #1a0800;
+    box-shadow: 0 0 40px #ff880088, 0 6px 30px #ff880055;
     animation: shift 2s ease infinite;
   }
   @keyframes shift {
@@ -93,14 +92,15 @@
     position: absolute; inset: 0;
     width: 100%; height: 100%;
     display: block; touch-action: none;
+    image-rendering: auto;
   }
   #hud {
     position: absolute; top: 0; left: 0; right: 0;
-    padding: max(18px, env(safe-area-inset-top)) max(24px, env(safe-area-inset-right))
-             max(18px, env(safe-area-inset-left));
+    padding: max(16px, env(safe-area-inset-top)) max(22px, env(safe-area-inset-right))
+             max(16px, env(safe-area-inset-left));
     display: flex; justify-content: space-between; align-items: flex-start;
     z-index: 10; pointer-events: none;
-    background: linear-gradient(180deg, #000000dd, transparent 75%);
+    background: linear-gradient(180deg, #000000cc, transparent 75%);
     font-variant-numeric: tabular-nums;
   }
   .hud-block { display: flex; flex-direction: column; gap: 1px; }
@@ -109,7 +109,7 @@
     text-transform: uppercase; font-weight: 700;
   }
   .hud-value {
-    font-size: 26px; font-weight: 900; line-height: 1.1;
+    font-size: 24px; font-weight: 900; line-height: 1.1;
     text-shadow: 0 0 30px currentColor;
   }
   .hud-sub { font-size: 10px; color: #ffffff44; letter-spacing: 0.5px; }
@@ -120,8 +120,8 @@
   }
   #tempFill {
     height: 100%; width: 0%;
-    background: linear-gradient(90deg, #00ff88, #ffcc00, #ff4400, #ff0000, #ff00ff);
-    box-shadow: 0 0 40px #ff0000, 0 0 80px #ff000088;
+    background: linear-gradient(90deg, #00ff88, #ffcc00, #ff8800, #ff0000, #ff00ff);
+    box-shadow: 0 0 40px #ff6600, 0 0 80px #ff440088;
     transition: width .2s;
   }
   #stopWrap {
@@ -129,30 +129,15 @@
     bottom: max(44px, calc(env(safe-area-inset-bottom) + 26px));
     left: 50%; transform: translateX(-50%); z-index: 20;
   }
-  #heatOverlay {
-    position: absolute; inset: 0; pointer-events: none; z-index: 5;
-    background: radial-gradient(circle at 50% 50%, transparent 20%, #ff000044 100%);
-    animation: breathe 0.8s ease-in-out infinite;
-    mix-blend-mode: screen;
+  #fps {
+    position: absolute;
+    bottom: max(20px, calc(env(safe-area-inset-bottom) + 4px));
+    right: max(20px, env(safe-area-inset-right));
+    z-index: 11; pointer-events: none;
+    font-variant-numeric: tabular-nums;
+    font-size: 11px; letter-spacing: 1.5px;
+    color: #ffffff66; text-transform: uppercase;
   }
-  @keyframes breathe {
-    0%,100% { opacity: .4; } 50% { opacity: 1; }
-  }
-  #scanlines {
-    position: absolute; inset: 0; pointer-events: none; z-index: 6; opacity: .18;
-    background: repeating-linear-gradient(0deg, #000 0px, #000 1px, transparent 1px, transparent 3px);
-  }
-  #vignette {
-    position: absolute; inset: 0; pointer-events: none; z-index: 7;
-    box-shadow: inset 0 0 200px #ff000066, inset 0 0 400px #ff000033;
-  }
-  .ipad-note {
-    background: #ff880022; border: 1px solid #ff880066;
-    border-radius: 10px; padding: 12px 16px;
-    margin: 12px 0 16px; font-size: 13px;
-    color: #ffbb88; line-height: 1.5;
-  }
-  .ipad-note strong { color: #ff9955; }
   #thermalWarning {
     position: fixed; top: 50%; left: 50%;
     transform: translate(-50%, -50%);
@@ -173,61 +158,55 @@
 
 <div id="warning">
   <div class="warn-card">
-    <div class="danger-tag">☠ iPad — FUSION v4 ☠</div>
-    <h1>INFERNO TOTAL</h1>
-    <p>Version <strong>radicalement plus agressive</strong> : la charge CPU est ~10× celle de la v3.</p>
-
-    <div class="ipad-note">
-      <strong>⚠ iPad sans ventilateur.</strong>
-      Laisse tourner <strong>au moins 5 minutes</strong> — c'est seulement après que le throttling
-      commence vraiment. Retire la coque, pose sur table dure, <strong>débranche le chargeur</strong>.
-    </div>
-
+    <div class="danger-tag">🍩 Calcul Absurde 🍩</div>
+    <h1>DONUT INFERNO</h1>
+    <p>Un donut en ray marching. Simple à l'œil. <strong>Mais chaque pixel coûte ~500 000 opérations.</strong></p>
     <ul>
-      <li><strong>Workers 200k iterations</strong> internes + matrice 3×3</li>
-      <li><strong>4 passes GPU</strong> × 3000 iterations = 12 000 iter/pixel/frame</li>
-      <li>Thread principal brûlé via MessageChannel (pas de clamp 4 ms)</li>
-      <li><strong>60 oscillateurs audio</strong> + 8 sources de bruit filtré</li>
-      <li>Compteur en temps réel du débit des workers</li>
+      <li><strong>sin/cos par série de Taylor</strong> (20 termes au lieu de 5)</li>
+      <li><strong>sqrt par Newton-Raphson</strong> sur-itéré (20 au lieu de 8)</li>
+      <li><strong>Boucle de "vérification"</strong> par étape de ray march — résultat jeté</li>
+      <li><strong>128 étapes de ray march</strong> × ~50 opérations gaspillées chacune</li>
+      <li><strong>Normale calculée 4 fois</strong> (4 appels SDF au lieu d'1)</li>
+      <li><strong>Fond</strong> aussi calculé avec 100 itérations trig</li>
+      <li>Workers CPU en parallèle qui recalculent les mêmes maths</li>
     </ul>
-
-    <button class="btn btn-start" id="startBtn">🔥🔥🔥🔥 TOUT FAIRE FONDRE</button>
+    <p style="font-size:13px;color:#ffaa66;">
+      Le résultat visuel = un donut orange qui tourne. Le coût = un GPU Apple qui fond.
+    </p>
+    <br>
+    <button class="btn btn-start" id="startBtn">🍩🔥 LANCER LE DONUT</button>
   </div>
 </div>
 
 <div id="app">
   <canvas id="gl"></canvas>
-  <div id="heatOverlay"></div>
-  <div id="scanlines"></div>
-  <div id="vignette"></div>
-
   <div id="hud">
     <div class="hud-block">
-      <div class="hud-label">Threads</div>
-      <div class="hud-value" id="threads" style="color:#ff6a00">0</div>
-      <div class="hud-sub" id="cores">/ 0 cœurs</div>
+      <div class="hud-label">Résolution</div>
+      <div class="hud-value" id="res" style="color:#ffaa22">0</div>
+      <div class="hud-sub" id="cores">--</div>
     </div>
     <div class="hud-block" style="text-align:center">
-      <div class="hud-label">Débit CPU</div>
-      <div class="hud-value" id="mops" style="color:#ff2222">0 Mops/s</div>
+      <div class="hud-label">Calculs/pixel</div>
+      <div class="hud-value" id="opsPerPx" style="color:#ff4400">~500K</div>
       <div class="hud-sub" id="gpuInfo">GPU : init…</div>
     </div>
     <div class="hud-block" style="text-align:right">
       <div class="hud-label">Temps</div>
       <div class="hud-value" id="timer" style="color:#00e0ff">00:00</div>
-      <div class="hud-sub" id="ramInfo">RAM : --</div>
+      <div class="hud-sub" id="ramInfo">--</div>
     </div>
   </div>
-
   <div id="tempBar"><div id="tempFill"></div></div>
+  <div id="fps">--</div>
   <div id="stopWrap">
     <button class="btn btn-stop" id="stopBtn">■ STOP</button>
   </div>
 </div>
 
 <div id="thermalWarning">
-  🔥 iPad en surchauffe ! 🔥
-  <small>Arrêt automatique dans 4 s — laisse refroidir 10 min avant de relancer.</small>
+  🔥 GPU/CPU en surchauffe ! 🔥
+  <small>Arrêt automatique dans 4 s — laisse refroidir.</small>
 </div>
 
 <script>
@@ -242,142 +221,113 @@
   const startBtn      = $('startBtn');
   const stopBtn       = $('stopBtn');
   const app           = $('app');
-  const threadsEl     = $('threads');
+  const resEl         = $('res');
   const coresEl       = $('cores');
-  const mopsEl        = $('mops');
+  const opsPerPxEl    = $('opsPerPx');
   const timerEl       = $('timer');
   const tempFill      = $('tempFill');
   const gpuInfo       = $('gpuInfo');
   const ramInfo       = $('ramInfo');
+  const fpsEl         = $('fps');
   const canvas        = $('gl');
   const thermalWarn   = $('thermalWarning');
 
   let running = false;
-  let workers = [];
-  let memInterval = null;
-  let hudRaf = null;
-  let startTime = 0;
   let glState = null;
-  let audioCtx = null;
-  let audioNodes = [];
-  let wakeLock = null;
+  let startTime = 0;
+  let hudRaf = null;
+  let workers = [];
   let frameTimes = [];
-  let thermalCheckInterval = null;
+  let wakeLock = null;
   let thermalWarnShown = false;
-  let workerIterTotal = 0;        // total cumulé reçu des workers
-  let lastWorkerSample = 0;       // dernier total snapshot pour calcul débit
-  let mopsBuf = [];
-  let mainChannel = null;
-  let mainBurnRaf = null;
+  let thermalInterval = null;
 
   // ============================================================
-  // 🔥🔥🔥 WORKER ULTRA-AGRESSIF
-  // Boucle interne de 200 000 itérations + multiplication matricielle 3×3
-  // Vérification du flag 'running' quasi jamais = burn continu
+  // 🔥 WORKERS CPU — recalculent des maths absurdes en parallèle
+  // Ils font la même chose que le shader, mais sur le CPU
   // ============================================================
   const WORKER_CODE = `
     let running = true;
-    let totalIter = 0;
+    self.onmessage = (e) => { if (e.data === 'stop') running = false; };
 
-    self.onmessage = (e) => {
-      if (e.data === 'stop') running = false;
-    };
-
-    // État matriciel 3×3 (évite l'allocation, garde tout en registres)
-    let m00=1.001, m01=0.002, m02=0.003;
-    let m10=0.004, m11=1.005, m12=0.006;
-    let m20=0.007, m21=0.008, m22=1.009;
-
-    function mul3x3() {
-      const n00 = m00*m00 + m01*m10 + m02*m20;
-      const n01 = m00*m01 + m01*m11 + m02*m21;
-      const n02 = m00*m02 + m01*m12 + m02*m22;
-      const n10 = m10*m00 + m11*m10 + m12*m20;
-      const n11 = m10*m01 + m11*m11 + m12*m21;
-      const n12 = m10*m02 + m11*m12 + m12*m22;
-      const n20 = m20*m00 + m21*m10 + m22*m20;
-      const n21 = m20*m01 + m21*m11 + m22*m21;
-      const n22 = m20*m02 + m21*m12 + m22*m22;
-      m00=n00; m01=n01; m02=n02;
-      m10=n10; m11=n11; m12=n12;
-      m20=n20; m21=n21; m22=n22;
-      // Renormalise pour éviter l'infini
-      const s = m00*m00 + m11*m11 + m22*m22;
-      if (s > 1e8) {
-        const k = 1 / Math.sqrt(s);
-        m00*=k; m01*=k; m02*=k;
-        m10*=k; m11*=k; m12*=k;
-        m20*=k; m21*=k; m22*=k;
+    // sin via Taylor, 20 termes
+    function tsin(x) {
+      x = x - Math.floor((x + Math.PI) / (2*Math.PI)) * 2*Math.PI;
+      const x2 = x * x;
+      let term = x, sum = x;
+      for (let i = 1; i < 20; i++) {
+        term *= -x2 / ((2*i) * (2*i + 1));
+        sum += term;
       }
+      return sum;
+    }
+    function tcos(x) { return tsin(x + Math.PI/2); }
+
+    // sqrt via Newton-Raphson, 25 itérations (converge en 6)
+    function tsqrt(s) {
+      if (s <= 0) return 0;
+      let g = s * 0.5 + 0.5;
+      for (let i = 0; i < 25; i++) g = 0.5 * (g + s / g);
+      return g;
     }
 
-    // Buffer local pour écrire (force écriture cache L1)
-    const buf = new Float64Array(32768);
+    // SDF torus — la version "chère"
+    // Normalement : length(vec2(length(p.xz) - R, p.y)) - r
+    function sdTorus(px, py, pz, R, r) {
+      const rxz2 = px*px + pz*pz;
+      const rxz = tsqrt(rxz2);
+
+      // Boucle de vérification bidon
+      let check = 0;
+      for (let i = 0; i < 40; i++) {
+        check += tsin(i * 0.1 + rxz) * tcos(i * 0.2);
+      }
+      // check est jeté
+      void check;
+
+      const qx = rxz - R, qy = py;
+      return tsqrt(qx*qx + qy*qy) - r;
+    }
+
+    const buf = new Float64Array(4096);
     let bufIdx = 0;
 
     function burn() {
-      let acc = Math.random() * 1e9 + 1;
-      let outer = 0;
-
+      let total = 0;
+      let t = 0;
       while (running) {
-        // 200 000 itérations de calcul lourd AVANT de vérifier 'running'
-        for (let k = 0; k < 200000; k++) {
-          // Trigonométrie chaînée (pas de dépendance de données simple)
-          acc = Math.sin(acc * 1.0001) * Math.cos(acc * 0.9997)
-              + Math.sqrt(Math.abs(acc)) * 0.5
-              + Math.tan((acc % 1.5) * 0.7);
-
-          // Multiplication matricielle 3×3 (27 mul + 18 add)
-          mul3x3();
-
-          // Mélange avec l'état matriciel pour créer des dépendances
-          acc = acc + m00 + m11 + m22;
-
-          // Bitwise pour forcer la conversion float→int→float (chère)
-          acc = ((acc * 1e7) | 0) ^ (((acc * 1e3) | 0) << 5);
-          acc = Math.abs(acc) % 1e9 + 0.5;
-
-          totalIter++;
+        // 20 000 itérations internes de calcul de SDF
+        for (let k = 0; k < 20000; k++) {
+          const x = tsin(t * 0.1) * 1.5;
+          const y = tcos(t * 0.13) * 0.8;
+          const z = tsin(t * 0.07) * 1.5;
+          const d = sdTorus(x, y, z, 1.0, 0.4);
+          total += d;
+          t += 0.001;
         }
-
-        // Écriture mémoire (contention cache L1)
-        buf[bufIdx = (bufIdx + 1) & 32767] = acc;
-        outer++;
+        buf[bufIdx = (bufIdx + 1) & 4095] = total;
       }
     }
-
-    // Heartbeat : envoie le compteur au thread principal 4×/seconde
-    setInterval(() => {
-      try { self.postMessage(totalIter); totalIter = 0; } catch(e){}
-    }, 250);
-
     burn();
   `;
 
   function launchWorkers() {
     const cores = navigator.hardwareConcurrency || 4;
-    // Sur iPad on tente 2× (le scheduler iOS rejette au-delà)
-    const targetCount = cores * 2;
+    // iOS : on tente 2× les cœurs, on s'arrête si un worker refuse
+    const target = cores * 2;
 
     const blob = new Blob([WORKER_CODE], { type: 'application/javascript' });
     const url = URL.createObjectURL(blob);
 
-    for (let i = 0; i < targetCount; i++) {
+    for (let i = 0; i < target; i++) {
       try {
         const w = new Worker(url);
-        w.onmessage = (e) => {
-          // Chaque worker nous envoie son nombre d'itérations
-          workerIterTotal += Number(e.data) || 0;
-        };
         workers.push(w);
-      } catch(err) {
-        break;
-      }
+      } catch(e) { break; }
     }
     URL.revokeObjectURL(url);
     return { count: workers.length, cores };
   }
-
   function killWorkers() {
     for (const w of workers) {
       try { w.postMessage('stop'); } catch(e) {}
@@ -387,78 +337,167 @@
   }
 
   // ============================================================
-  // 🔥🔥🔥 GPU — WebGL2, 4 passes par frame, 3000 itérations par pixel
+  // 🍩 SHADER — DONUT ray-marché avec calculs absurdes
+  // Chaque pixel : ~500 000 opérations pour un simple torus
   // ============================================================
   const VERT = `#version 300 es
     in vec2 p;
     void main() { gl_Position = vec4(p, 0.0, 1.0); }
   `;
 
-  // Shader très lourd : 3000 itérations + hash + trig + pow
   const FRAG = `#version 300 es
     precision highp float;
     uniform vec2 u_res;
     uniform float u_time;
-    uniform float u_pass;
-    uniform sampler2D u_prev;
     out vec4 outColor;
 
-    float hash(vec2 p) {
-      p = fract(p * vec2(123.34, 456.21));
-      p += dot(p, p + 45.32);
-      return fract(p.x * p.y);
+    // -------- sin/cos par série de Taylor, 20 termes (overkill) --------
+    float tsin(float x) {
+      // Réduction d'argument sur [-pi, pi]
+      x = x - floor((x + 3.14159265) / 6.28318531) * 6.28318531;
+      float x2 = x * x;
+      float term = x;
+      float sum = x;
+      for (int i = 1; i < 20; i++) {
+        term *= -x2 / float((2*i) * (2*i + 1));
+        sum += term;
+      }
+      return sum;
+    }
+    float tcos(float x) { return tsin(x + 1.5707963); }
+
+    // -------- sqrt par Newton-Raphson, 25 itérations (overkill) --------
+    float tsqrt(float s) {
+      if (s <= 0.0) return 0.0;
+      float g = s * 0.5 + 0.5;
+      for (int i = 0; i < 25; i++) {
+        g = 0.5 * (g + s / g);
+      }
+      return g;
+    }
+
+    // -------- longueurs "chères" --------
+    float tlength2(vec2 v) { return tsqrt(v.x*v.x + v.y*v.y); }
+    float tlength3(vec3 v) { return tsqrt(v.x*v.x + v.y*v.y + v.z*v.z); }
+
+    // -------- SDF torus — 5 opérations, on en fait ~1000 --------
+    float sdTorus(vec3 p, float R, float r) {
+      // Étape 1 : length(p.xz) via Newton sur-itéré
+      float rxz2 = p.x*p.x + p.z*p.z;
+      float rxz = tsqrt(rxz2);
+
+      // Boucle de "vérification" bidon : 30 itérations de trig
+      // Résultat jeté = travail pur perdu
+      float check = 0.0;
+      for (int i = 0; i < 30; i++) {
+        check += tsin(float(i) * 0.1 + rxz) * tcos(float(i) * 0.2);
+      }
+      // On l'ajoute multiplié par 0 (le compilateur ne peut pas optimiser à coup sûr)
+      rxz += check * 0.0;
+
+      // Étape 2 : length du vecteur (rxz - R, p.y)
+      vec2 q = vec2(rxz - R, p.y);
+      return tlength2(q) - r;
+    }
+
+    // -------- Normale : 4 évaluations SDF supplémentaires (×5 coût) --------
+    vec3 calcNormal(vec3 p) {
+      const float e = 0.002;
+      // Chaque appel fait ~1000 opérations → la normale coûte 5× un SDF
+      float dx = sdTorus(p + vec3(e, 0.0, 0.0), 1.0, 0.4)
+               - sdTorus(p - vec3(e, 0.0, 0.0), 1.0, 0.4);
+      float dy = sdTorus(p + vec3(0.0, e, 0.0), 1.0, 0.4)
+               - sdTorus(p - vec3(0.0, e, 0.0), 1.0, 0.4);
+      float dz = sdTorus(p + vec3(0.0, 0.0, e), 1.0, 0.4)
+               - sdTorus(p - vec3(0.0, 0.0, e), 1.0, 0.4);
+      return normalize(vec3(dx, dy, dz));
+    }
+
+    // -------- Gaspillage par étape de ray march : 40 iterations trig --------
+    float waste(vec3 p, float t) {
+      float acc = 0.0;
+      for (int i = 0; i < 40; i++) {
+        acc += tsin(p.x * float(i) * 0.3 + t) * tcos(p.y * float(i) * 0.2 - t);
+      }
+      return acc * 0.0; // toujours 0, mais le GPU ne le sait pas à la compilation
     }
 
     void main() {
-      vec2 uv = gl_FragCoord.xy / u_res;
-      vec2 prev = texture(u_prev, uv).rg;
-      vec3 col = vec3(0.0);
-      float acc = 0.0;
-      float acc2 = 0.0;
+      vec2 uv = (gl_FragCoord.xy - 0.5 * u_res) / u_res.y;
 
-      // ==== 3000 itérations par pixel ====
-      for (int i = 0; i < 3000; i++) {
-        float fi = float(i);
-        vec2 p = uv * 2.0 - 1.0;
-        p += prev * 0.35;
+      // Caméra tournante
+      float ca = tcos(u_time * 0.4);
+      float sa = tsin(u_time * 0.4);
+      mat3 rot = mat3(ca, 0.0, sa, 0.0, 1.0, 0.0, -sa, 0.0, ca);
 
-        float a = fi * 0.0117 + u_time * 0.5 + u_pass * 1.7;
-        float s = sin(a), c = cos(a);
-        p = mat2(c, -s, s, c) * p;
+      vec3 ro = rot * vec3(0.0, 0.6, 3.5);
+      vec3 rd = rot * normalize(vec3(uv, -1.5));
 
-        float r = length(p);
-        float th = atan(p.y, p.x);
-        r = pow(r + 0.001, 0.85 + fi * 0.0002);
-        th += r * 6.0 + fi * 0.013;
-
-        vec2 q = vec2(cos(th), sin(th)) * r;
-
-        acc  += hash(q * 4.0 + fi * 0.1) * (0.5 + 0.5 * sin(fi * 0.07 + u_time * 1.3));
-        acc2 += sin(q.x * 15.0 + fi) * cos(q.y * 15.0 - fi * 0.5)
-              + tan(clamp(q.x * 0.1, -1.4, 1.4)) * 0.2;
-
-        col += vec3(
-          sin(q.x * 10.0 + fi * 0.09),
-          cos(q.y * 10.0 - fi * 0.06),
-          sin((q.x + q.y) * 7.0 + fi * 0.11)
-        ) * 0.0006;
+      // ---- RAY MARCHING (128 étapes) ----
+      float t = 0.0;
+      float hit = -1.0;
+      for (int i = 0; i < 128; i++) {
+        vec3 p = ro + rd * t;
+        // Gaspillage énorme à chaque étape
+        t += waste(p, float(i) * 0.01);
+        float d = sdTorus(p, 1.0, 0.4);
+        if (d < 0.001) { hit = t; break; }
+        t += d;
+        if (t > 12.0) break;
       }
 
-      acc  = acc / 3000.0;
-      acc2 = acc2 / 3000.0;
-      col  = col * (0.6 + acc * 0.9);
-      col  = pow(col, vec3(0.85));
+      vec3 col = vec3(0.0);
 
-      col.r += acc * 0.6 + u_pass * 0.05;
-      col.g += acc2 * 0.1;
-      col.b *= 0.35;
+      if (hit > 0.0) {
+        vec3 p = ro + rd * hit;
+        vec3 n = calcNormal(p);
+
+        // Lumière principale
+        vec3 lightDir = normalize(vec3(0.8, 1.0, -0.5));
+        float diff = max(dot(n, lightDir), 0.0);
+
+        // Spéculaire
+        vec3 viewDir = -rd;
+        vec3 halfV = normalize(lightDir + viewDir);
+        float spec = pow(max(dot(n, halfV), 0.0), 48.0);
+
+        // Couleur donut glacé orange/doré
+        vec3 baseCol = vec3(0.95, 0.55, 0.15);
+        // Glaçage sur le dessus
+        float glaze = smoothstep(0.1, 0.5, n.y);
+        vec3 glazeCol = vec3(1.0, 0.75, 0.35);
+
+        col = mix(baseCol, glazeCol, glaze) * (0.15 + 0.85 * diff);
+        col += vec3(1.0, 0.9, 0.7) * spec * 0.8;
+
+        // Rim light subtil
+        float rim = pow(1.0 - max(dot(n, viewDir), 0.0), 3.0);
+        col += vec3(1.0, 0.6, 0.3) * rim * 0.25;
+      } else {
+        // Fond : 100 itérations de trig gaspillées
+        float bg = 0.0;
+        for (int i = 0; i < 100; i++) {
+          bg += tsin(uv.x * 5.0 + float(i) * 0.1 + u_time * 0.2)
+              * tcos(uv.y * 5.0 - float(i) * 0.13);
+        }
+        bg *= 0.0; // jeté
+        // Vrai fond : dégradé sombre
+        float vignette = 1.0 - tlength2(uv) * 0.6;
+        col = vec3(0.04, 0.03, 0.06) * vignette;
+        col += vec3(0.08, 0.04, 0.02) * smoothstep(0.8, 0.0, tlength2(uv));
+      }
+
+      // Gamma — recalcule pow(0.4545) avec 10 itérations bidon
+      float g = 0.4545;
+      for (int i = 0; i < 10; i++) { g = g; }
+      col = pow(col, vec3(g));
 
       outColor = vec4(col, 1.0);
     }
   `;
 
   function initGL() {
-    const dpr = Math.min(window.devicePixelRatio || 1, 2.5);
+    const dpr = Math.min(window.devicePixelRatio || 1, isIPad ? 2.0 : 2.5);
     const gl = canvas.getContext('webgl2', {
       antialias: false, depth: false, stencil: false,
       powerPreference: 'high-performance',
@@ -466,27 +505,30 @@
       desynchronized: true,
       failIfMajorPerformanceCaveat: false,
     });
-    if (!gl) { gpuInfo.textContent = 'WebGL2 indisponible'; return null; }
+    if (!gl) { gpuInfo.textContent = 'WebGL2 indispo'; return null; }
 
     function compile(type, src) {
       const s = gl.createShader(type);
       gl.shaderSource(s, src);
       gl.compileShader(s);
       if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) {
-        console.error('shader', gl.getShaderInfoLog(s));
+        console.error('shader error:', gl.getShaderInfoLog(s));
         return null;
       }
       return s;
     }
     const vs = compile(gl.VERTEX_SHADER, VERT);
     const fs = compile(gl.FRAGMENT_SHADER, FRAG);
-    if (!vs || !fs) return null;
+    if (!vs || !fs) { gpuInfo.textContent = 'Shader refusé'; return null; }
 
     const prog = gl.createProgram();
     gl.attachShader(prog, vs);
     gl.attachShader(prog, fs);
     gl.linkProgram(prog);
-    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return null;
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
+      console.error('link error:', gl.getProgramInfoLog(prog));
+      return null;
+    }
     gl.useProgram(prog);
 
     const quad = gl.createBuffer();
@@ -496,45 +538,22 @@
     gl.enableVertexAttribArray(loc);
     gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
 
-    const uRes   = gl.getUniformLocation(prog, 'u_res');
-    const uTime  = gl.getUniformLocation(prog, 'u_time');
-    const uPrev  = gl.getUniformLocation(prog, 'u_prev');
-    const uPass  = gl.getUniformLocation(prog, 'u_pass');
+    const uRes  = gl.getUniformLocation(prog, 'u_res');
+    const uTime = gl.getUniformLocation(prog, 'u_time');
 
     let W = Math.floor(window.innerWidth  * dpr);
     let H = Math.floor(window.innerHeight * dpr);
-
-    function makeTex() {
-      const t = gl.createTexture();
-      gl.bindTexture(gl.TEXTURE_2D, t);
-      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, W, H, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-      return t;
-    }
-    function makeFBO(tex) {
-      const f = gl.createFramebuffer();
-      gl.bindFramebuffer(gl.FRAMEBUFFER, f);
-      gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0);
-      gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-      return f;
-    }
-
-    // 5 textures + 5 FBO pour un pipeline de 4 passes
-    const texs = [makeTex(), makeTex(), makeTex(), makeTex(), makeTex()];
-    const fbos = texs.map(makeFBO);
+    canvas.width = W;
+    canvas.height = H;
+    gl.viewport(0, 0, W, H);
 
     function resize() {
       W = Math.floor(window.innerWidth  * dpr);
       H = Math.floor(window.innerHeight * dpr);
       canvas.width = W;
       canvas.height = H;
-      for (const t of texs) {
-        gl.bindTexture(gl.TEXTURE_2D, t);
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, W, H, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
-      }
+      gl.viewport(0, 0, W, H);
+      resEl.textContent = `${W}×${H}`;
     }
     resize();
     window.addEventListener('resize', resize);
@@ -545,235 +564,41 @@
 
     const info = gl.getExtension('WEBGL_debug_renderer_info');
     const renderer = info ? gl.getParameter(info.UNMASKED_RENDERER_WEBGL) : 'GPU';
-    gpuInfo.textContent = 'GPU : ' + String(renderer).slice(0, 26);
+    gpuInfo.textContent = String(renderer).slice(0, 28);
 
     canvas.addEventListener('webglcontextlost', (e) => {
       e.preventDefault();
-      gpuInfo.textContent = '⚠ GPU perdu (surchauffe iOS)';
+      gpuInfo.textContent = '⚠ GPU perdu (surchauffe)';
     });
 
-    return { gl, uRes, uTime, uPrev, uPass, texs, fbos, getW: () => W, getH: () => H };
+    // Calcule le nombre d'opérations par pixel (approximatif pour l'affichage)
+    // 128 steps × (40 waste + 30 check + 25 Newton×2 + overhead) + normale 5×
+    const opsPerPx = 128 * (40 + 30 + 50) + 5 * (25 + 30 + 50) + 100;
+    opsPerPxEl.textContent = `~${(opsPerPx / 1000).toFixed(0)}K`;
+
+    return { gl, uRes, uTime, getW: () => W, getH: () => H };
   }
 
   function renderLoop() {
     if (!running || !glState) return;
-    const { gl, uRes, uTime, uPrev, uPass, texs, fbos } = glState;
+    const { gl, uRes, uTime } = glState;
     const W = glState.getW(), H = glState.getH();
 
     const t0 = performance.now();
 
     gl.uniform2f(uRes, W, H);
     gl.uniform1f(uTime, performance.now() * 0.001);
-
-    // 4 passes en chaîne : chaque passe lit le résultat de la précédente
-    for (let pass = 0; pass < 4; pass++) {
-      gl.activeTexture(gl.TEXTURE0);
-      gl.bindTexture(gl.TEXTURE_2D, texs[pass]);
-      gl.uniform1i(uPrev, 0);
-      gl.uniform1f(uPass, pass);
-      gl.bindFramebuffer(gl.FRAMEBUFFER, fbos[pass + 1]);
-      gl.viewport(0, 0, W, H);
-      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-    }
-
-    // Rendu final à l'écran
-    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-    gl.bindTexture(gl.TEXTURE_2D, texs[4]);
-    gl.uniform1i(uPrev, 0);
-    gl.uniform1f(uPass, 4.0);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 
-    // Rotation : la plus vieille texture devient la nouvelle source
-    const oldest = texs.shift();
-    texs.push(oldest);
-
-    // Mesure temps de frame
     const dt = performance.now() - t0;
     frameTimes.push(dt);
-    if (frameTimes.length > 90) frameTimes.shift();
+    if (frameTimes.length > 60) frameTimes.shift();
+
+    // FPS lissé
+    const avg = frameTimes.reduce((a,b)=>a+b,0) / frameTimes.length;
+    fpsEl.textContent = `${(1000 / Math.max(avg, 0.1)).toFixed(1)} fps · ${dt.toFixed(0)} ms`;
 
     requestAnimationFrame(renderLoop);
-  }
-
-  // ============================================================
-  // 🔥 AUDIO — 60 oscillateurs + 8 bruits filtrés
-  // ============================================================
-  function startAudioStress() {
-    try {
-      const AC = window.AudioContext || window.webkitAudioContext;
-      if (!AC) return;
-      audioCtx = new AC();
-      if (audioCtx.state === 'suspended') audioCtx.resume().catch(()=>{});
-
-      const master = audioCtx.createGain();
-      master.gain.value = 0.00006;
-      master.connect(audioCtx.destination);
-
-      for (let i = 0; i < 60; i++) {
-        const osc = audioCtx.createOscillator();
-        osc.type = ['sine','square','sawtooth','triangle'][i % 4];
-        osc.frequency.value = 8000 + i * 137;
-        const g = audioCtx.createGain();
-        g.gain.value = 0.015;
-        const lfo = audioCtx.createOscillator();
-        lfo.frequency.value = 0.5 + i * 0.03;
-        const lfoGain = audioCtx.createGain();
-        lfoGain.gain.value = 200;
-        lfo.connect(lfoGain).connect(osc.frequency);
-        osc.connect(g).connect(master);
-        osc.start(); lfo.start();
-        audioNodes.push(osc, lfo, g, lfoGain);
-      }
-
-      const bufSize = Math.floor(audioCtx.sampleRate * 1.5);
-      const noiseBuf = audioCtx.createBuffer(1, bufSize, audioCtx.sampleRate);
-      const data = noiseBuf.getChannelData(0);
-      for (let i = 0; i < bufSize; i++) data[i] = Math.random() * 2 - 1;
-      for (let n = 0; n < 8; n++) {
-        const src = audioCtx.createBufferSource();
-        src.buffer = noiseBuf; src.loop = true;
-        const g = audioCtx.createGain();
-        g.gain.value = 0.035;
-        const filter = audioCtx.createBiquadFilter();
-        filter.type = 'bandpass';
-        filter.frequency.value = 400 + n * 900;
-        filter.Q.value = 12;
-        src.connect(filter).connect(g).connect(master);
-        src.start();
-        audioNodes.push(src, g, filter);
-      }
-    } catch(e) {}
-  }
-  function stopAudioStress() {
-    for (const n of audioNodes) {
-      try { n.stop && n.stop(); } catch(e) {}
-      try { n.disconnect && n.disconnect(); } catch(e) {}
-    }
-    audioNodes = [];
-    if (audioCtx) { try { audioCtx.close(); } catch(e) {} audioCtx = null; }
-  }
-
-  // ============================================================
-  // 🔥 RAM — ~250 Mo max
-  // ============================================================
-  let memBlocks = [];
-  const MAX_BLOCKS = 25;
-  function startMemStress() {
-    memInterval = setInterval(() => {
-      if (!running) return;
-      try {
-        const arr = new Float64Array(1_250_000);
-        for (let j = 0; j < arr.length; j += 4096) arr[j] = j * 0.5;
-        memBlocks.push(arr);
-        while (memBlocks.length > MAX_BLOCKS) memBlocks.shift();
-      } catch (e) { memBlocks = []; }
-    }, 100);
-  }
-  function stopMemStress() {
-    if (memInterval) clearInterval(memInterval);
-    memInterval = null;
-    memBlocks = [];
-  }
-
-  // ============================================================
-  // 🔥 MAIN THREAD — MessageChannel (contourne le clamp setTimeout 4ms d'iOS)
-  // Brûle 16 ms par cycle, laisse 2 ms respirer
-  // ============================================================
-  function startMainBurn() {
-    mainChannel = new MessageChannel();
-    let last = performance.now();
-    mainChannel.port1.onmessage = () => {
-      if (!running) return;
-      const now = performance.now();
-      // Burn de 16 ms (compense le temps déjà écoulé)
-      const target = 16;
-      const end = now + target;
-      let acc = 1.0001, x = 1.234, m = 0.5;
-      while (performance.now() < end) {
-        for (let i = 0; i < 5000; i++) {
-          x = Math.sqrt(Math.abs(x * 1.00001 + Math.sin(i) * Math.cos(i * 1.7)));
-          acc += Math.tan(i * 0.001) * Math.atan(x) - Math.sin(x * 2.3);
-          m = m * 1.0001 + x * 0.0001;
-          acc = (acc + m) % 1e10;
-        }
-      }
-      last = now;
-      mainChannel.port2.postMessage(0);
-    };
-    mainChannel.port2.postMessage(0);
-  }
-  function stopMainBurn() {
-    if (mainChannel) {
-      try { mainChannel.port1.close(); mainChannel.port2.close(); } catch(e) {}
-      mainChannel = null;
-    }
-  }
-
-  // ============================================================
-  // HUD
-  // ============================================================
-  function updateHUD() {
-    if (!running) return;
-    const now = Date.now();
-    const elapsed = Math.floor((now - startTime) / 1000);
-    const mm = String(Math.floor(elapsed / 60)).padStart(2, '0');
-    const ss = String(elapsed % 60).padStart(2, '0');
-    timerEl.textContent = `${mm}:${ss}`;
-
-    // Débit workers : calcule Mops/s glissant sur 1 s
-    if (lastWorkerSample === 0) {
-      lastWorkerSample = workerIterTotal;
-      workerIterTotal = 0;
-    }
-    if (elapsed !== lastWorkerSample) {
-      mopsBuf.push(workerIterTotal / 1e6);
-      if (mopsBuf.length > 4) mopsBuf.shift();
-      const avg = mopsBuf.reduce((a,b)=>a+b,0) / mopsBuf.length;
-      mopsEl.textContent = `${avg.toFixed(1)} Mops/s`;
-      workerIterTotal = 0;
-      lastWorkerSample = elapsed;
-    }
-
-    // RAM
-    if (performance.memory && performance.memory.usedJSHeapSize) {
-      const mb = (performance.memory.usedJSHeapSize / 1048576).toFixed(0);
-      ramInfo.textContent = `RAM : ${mb} Mo`;
-    } else {
-      ramInfo.textContent = `RAM : ~${memBlocks.length * 10} Mo`;
-    }
-
-    const heat = Math.min(100, 20 + elapsed * 5);
-    tempFill.style.width = `${heat}%`;
-
-    hudRaf = requestAnimationFrame(updateHUD);
-  }
-
-  // ============================================================
-  // DÉTECTION THROTTLE — moins sensible pour laisser chauffer
-  // ============================================================
-  function startThermalWatch() {
-    thermalCheckInterval = setInterval(() => {
-      if (!running) return;
-      if (frameTimes.length < 60) return;
-      const avg = frameTimes.reduce((a,b)=>a+b,0) / frameTimes.length;
-      const elapsed = (Date.now() - startTime) / 1000;
-      // Après 90 s de test, si la frame moyenne dépasse 40 ms → throttle sévère
-      if (elapsed > 90 && avg > 40 && !thermalWarnShown) {
-        thermalWarnShown = true;
-        thermalWarn.style.display = 'block';
-        setTimeout(() => {
-          thermalWarn.style.display = 'none';
-          if (running) stop();
-        }, 4500);
-      }
-    }, 2500);
-  }
-  function stopThermalWatch() {
-    if (thermalCheckInterval) clearInterval(thermalCheckInterval);
-    thermalCheckInterval = null;
-    frameTimes = [];
-    thermalWarnShown = false;
-    thermalWarn.style.display = 'none';
   }
 
   // ============================================================
@@ -795,6 +620,57 @@
   });
 
   // ============================================================
+  // DÉTECTION THROTTLE
+  // ============================================================
+  function startThermalWatch() {
+    thermalInterval = setInterval(() => {
+      if (!running) return;
+      if (frameTimes.length < 40) return;
+      const avg = frameTimes.reduce((a,b)=>a+b,0) / frameTimes.length;
+      const elapsed = (Date.now() - startTime) / 1000;
+      // Après 60 s, si frame moyenne > 500 ms → throttle violent
+      if (elapsed > 60 && avg > 500 && !thermalWarnShown) {
+        thermalWarnShown = true;
+        thermalWarn.style.display = 'block';
+        setTimeout(() => {
+          thermalWarn.style.display = 'none';
+          if (running) stop();
+        }, 4000);
+      }
+    }, 2000);
+  }
+  function stopThermalWatch() {
+    if (thermalInterval) clearInterval(thermalInterval);
+    thermalInterval = null;
+    frameTimes = [];
+    thermalWarnShown = false;
+    thermalWarn.style.display = 'none';
+  }
+
+  // ============================================================
+  // HUD
+  // ============================================================
+  function updateHUD() {
+    if (!running) return;
+    const elapsed = Math.floor((Date.now() - startTime) / 1000);
+    const mm = String(Math.floor(elapsed / 60)).padStart(2, '0');
+    const ss = String(elapsed % 60).padStart(2, '0');
+    timerEl.textContent = `${mm}:${ss}`;
+
+    const heat = Math.min(100, 20 + elapsed * 5);
+    tempFill.style.width = `${heat}%`;
+
+    if (performance.memory && performance.memory.usedJSHeapSize) {
+      const mb = (performance.memory.usedJSHeapSize / 1048576).toFixed(0);
+      ramInfo.textContent = `${mb} Mo`;
+    } else {
+      ramInfo.textContent = `~${workers.length} threads`;
+    }
+
+    hudRaf = requestAnimationFrame(updateHUD);
+  }
+
+  // ============================================================
   // START / STOP
   // ============================================================
   async function start() {
@@ -808,21 +684,17 @@
     await requestWakeLock();
 
     glState = initGL();
-    if (glState) renderLoop();
+    if (!glState) {
+      gpuInfo.textContent = 'WebGL2 requis';
+    } else {
+      renderLoop();
+    }
 
     const { count, cores } = launchWorkers();
-    threadsEl.textContent = count;
-    coresEl.textContent = `/ ${cores} cœurs (×${(count/cores).toFixed(1)})`;
-
-    startMemStress();
-    startAudioStress();
-    startMainBurn();
-    startThermalWatch();
+    coresEl.textContent = `${count} workers / ${cores} cœurs`;
 
     startTime = Date.now();
-    lastWorkerSample = 0;
-    workerIterTotal = 0;
-    mopsBuf = [];
+    startThermalWatch();
     updateHUD();
 
     try { navigator.vibrate && navigator.vibrate(80); } catch(e) {}
@@ -833,17 +705,15 @@
     running = false;
 
     killWorkers();
-    stopMemStress();
-    stopAudioStress();
-    stopMainBurn();
     stopThermalWatch();
     releaseWakeLock();
 
     if (hudRaf) cancelAnimationFrame(hudRaf);
     hudRaf = null;
 
-    threadsEl.textContent = '0';
-    mopsEl.textContent = '0 Mops/s';
+    frameTimes = [];
+    fpsEl.textContent = '--';
+    timerEl.textContent = '00:00';
     tempFill.style.width = '0%';
 
     app.style.display = 'none';
@@ -858,12 +728,13 @@
   stopBtn.addEventListener('click', stop);
 
   window.addEventListener('beforeunload', () => {
-    killWorkers(); stopMemStress(); stopAudioStress(); stopMainBurn(); releaseWakeLock();
+    killWorkers(); releaseWakeLock();
   });
   window.addEventListener('pagehide', () => {
-    killWorkers(); stopMemStress(); stopAudioStress(); stopMainBurn(); releaseWakeLock();
+    killWorkers(); releaseWakeLock();
   });
 
+  // Double-tap sur STOP pour forcer si l'UI rame
   let lastStopTap = 0;
   stopBtn.addEventListener('touchstart', (e) => {
     const now = Date.now();
@@ -884,7 +755,7 @@
     if (e.key === 'Escape' && running) stop();
   });
 
-  if (isIPad) coresEl.textContent = `/ iPad détecté`;
+  if (isIPad) coresEl.textContent = 'iPad détecté';
 })();
 </script>
 </body>
