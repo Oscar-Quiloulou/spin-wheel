@@ -134,6 +134,15 @@ body {
   to { transform: rotate(360deg); }
 }
 
+/* --- NOUVEAU : wrapper pour caler la butée sur le bord de la roue --- */
+
+.wheel-wrap {
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+  line-height: 0;
+}
+
 canvas {
   max-width: 100%;
   height: auto;
@@ -157,6 +166,80 @@ canvas {
   border-bottom: 16px solid transparent;
   border-left: 26px solid #ff3e7f;
   filter: drop-shadow(0 0 6px #ff3e7f);
+}
+
+/* ------------------------------------------------ */
+/* --------- NOUVEAU : LA BUTEE ANIMEE ------------ */
+/* ------------------------------------------------ */
+
+.butee {
+  position: absolute;
+  top: 50%;
+  right: -16px;              /* dépasse légèrement du bord de la roue */
+  width: 0;
+  height: 0;
+  z-index: 5;
+  pointer-events: none;
+
+  border-top: 17px solid transparent;
+  border-bottom: 17px solid transparent;
+  border-right: 32px solid #ff3e7f;  /* pointe vers la gauche = vers le centre */
+
+  transform: translateY(-50%);
+  transform-origin: 0% 50%;  /* pivote autour de sa pointe */
+
+  filter: drop-shadow(0 0 8px #ff3e7f);
+
+  /* au repos : petite pulsation douce */
+  animation: buteeIdle 2.2s ease-in-out infinite;
+}
+
+@keyframes buteeIdle {
+  0%, 100% {
+    transform: translateY(-50%) translateX(0) scale(1);
+    filter: drop-shadow(0 0 6px #ff3e7f);
+  }
+  50% {
+    transform: translateY(-50%) translateX(-4px) scale(1.06);
+    filter: drop-shadow(0 0 14px #ffb800);
+  }
+}
+
+/* pendant la rotation : la butée "cliquette" */
+.butee.spinning {
+  animation: buteeClick 0.14s linear infinite;
+}
+
+@keyframes buteeClick {
+  0%, 100% {
+    transform: translateY(-50%) rotate(0deg);
+    filter: drop-shadow(0 0 8px #ff3e7f);
+  }
+  50% {
+    transform: translateY(-50%) rotate(-11deg);
+    filter: drop-shadow(0 0 18px #ffb800);
+  }
+}
+
+/* quand un gagnant est trouvé : flash doré */
+.butee.winner {
+  border-right-color: #ffe600;
+  animation: buteeWin 0.5s ease-out 4;
+}
+
+@keyframes buteeWin {
+  0% {
+    transform: translateY(-50%) scale(1) rotate(0deg);
+    filter: drop-shadow(0 0 8px #ffe600);
+  }
+  35% {
+    transform: translateY(-50%) scale(1.6) rotate(-12deg);
+    filter: drop-shadow(0 0 26px #ffe600);
+  }
+  100% {
+    transform: translateY(-50%) scale(1) rotate(0deg);
+    filter: drop-shadow(0 0 8px #ffe600);
+  }
 }
 
 /* ------------------------------------------------ */
@@ -564,6 +647,14 @@ input {
   .btn {
     font-size: 0.9rem;
   }
+
+  /* butée un peu plus petite sur mobile */
+  .butee {
+    right: -12px;
+    border-top-width: 14px;
+    border-bottom-width: 14px;
+    border-right-width: 26px;
+  }
 }
 
 @media (max-width: 380px) {
@@ -606,8 +697,12 @@ input {
     </h2>
 
     <div class="wheel-container">
-      <canvas id="wheel" width="420" height="420"></canvas>
-      <div class="pointer"></div>
+      <div class="wheel-wrap">
+        <canvas id="wheel" width="420" height="420"></canvas>
+        <div class="pointer"></div>
+        <!-- NOUVELLE BUTEE : indique où s'arrête la roue -->
+        <div class="butee" id="butee" aria-hidden="true"></div>
+      </div>
     </div>
 
     <button id="spinBtn" class="spin-btn">
@@ -955,6 +1050,10 @@ const themeSelect =
 const secretBtn =
   document.getElementById("secretBtn");
 
+/* NOUVEAU : la butée */
+const butee =
+  document.getElementById("butee");
+
 /* ------------------------------------------------ */
 /* ---------------------- LISTE ------------------- */
 /* ------------------------------------------------ */
@@ -1273,6 +1372,12 @@ spinBtn.onclick = () => {
 
   resultEl.classList.remove("show");
 
+  /* NOUVEAU : la butée passe en mode "cliquetis" */
+  if (butee) {
+    butee.classList.remove("winner");
+    butee.classList.add("spinning");
+  }
+
   const extra =
     4 + Math.random() * 3;
 
@@ -1330,6 +1435,12 @@ spinBtn.onclick = () => {
       resultEl.classList.add(
         "show"
       );
+
+      /* NOUVEAU : la butée fait son effet "gagnant" */
+      if (butee) {
+        butee.classList.remove("spinning");
+        butee.classList.add("winner");
+      }
 
       spawnConfetti();
     }
