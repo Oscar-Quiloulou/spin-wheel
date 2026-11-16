@@ -36,7 +36,8 @@ body {
   position: fixed;
   top: 16px;
   right: 16px;
-  z-index: 10000;
+  /* ⬇️ z-index abaissé : passe DERRIÈRE le panneau d'aide (z-index 999) */
+  z-index: 990;
 
   display: inline-flex;
   align-items: center;
@@ -65,7 +66,8 @@ body {
   transition:
     transform 0.18s ease,
     box-shadow 0.18s ease,
-    filter 0.18s ease;
+    filter 0.18s ease,
+    opacity 0.25s ease;
 }
 
 .next-site-button:hover {
@@ -134,8 +136,6 @@ body {
   to { transform: rotate(360deg); }
 }
 
-/* --- NOUVEAU : wrapper pour caler la butée sur le bord de la roue --- */
-
 .wheel-wrap {
   position: relative;
   display: inline-block;
@@ -168,77 +168,132 @@ canvas {
   filter: drop-shadow(0 0 6px #ff3e7f);
 }
 
-/* ------------------------------------------------ */
-/* --------- NOUVEAU : LA BUTEE ANIMEE ------------ */
-/* ------------------------------------------------ */
+/* =============================================== */
+/* =============== LA BUTÉE (flapper) ============ */
+/* =============================================== */
 
 .butee {
   position: absolute;
   top: 50%;
-  right: -16px;              /* dépasse légèrement du bord de la roue */
-  width: 0;
-  height: 0;
-  z-index: 5;
+  right: -22px;
+  width: 44px;
+  height: 44px;
+  margin-top: -22px;
+  z-index: 6;
   pointer-events: none;
-
-  border-top: 17px solid transparent;
-  border-bottom: 17px solid transparent;
-  border-right: 32px solid #ff3e7f;  /* pointe vers la gauche = vers le centre */
-
-  transform: translateY(-50%);
-  transform-origin: 0% 50%;  /* pivote autour de sa pointe */
-
-  filter: drop-shadow(0 0 8px #ff3e7f);
-
-  /* au repos : petite pulsation douce */
-  animation: buteeIdle 2.2s ease-in-out infinite;
+  filter: drop-shadow(0 0 6px #ff3e7f);
+  transition: filter 0.35s ease;
 }
 
-@keyframes buteeIdle {
+.butee-flap {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  width: 30px;
+  height: 20px;
+  margin-top: -10px;
+  transform-origin: 100% 50%;
+  transform: rotate(0deg);
+  background: linear-gradient(90deg, #ffe600 0%, #ffb800 40%, #ff3e7f 100%);
+  clip-path: polygon(0 50%, 100% 0, 100% 100%);
+  transition: transform 0.16s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation: flapIdle 2.8s ease-in-out infinite;
+}
+
+@keyframes flapIdle {
+  0%, 100% { transform: rotate(-3deg); }
+  50%      { transform: rotate(3deg); }
+}
+
+.butee-hinge {
+  position: absolute;
+  top: 50%;
+  right: 3px;
+  width: 14px;
+  height: 14px;
+  margin-top: -7px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #ffffff, #ff3e7f 55%, #6b0030 100%);
+  box-shadow:
+    0 0 0 2px rgba(255,255,255,0.6),
+    inset -2px -2px 4px rgba(0,0,0,0.35);
+  z-index: 2;
+  animation: hingeGlow 2.8s ease-in-out infinite;
+}
+
+@keyframes hingeGlow {
   0%, 100% {
-    transform: translateY(-50%) translateX(0) scale(1);
-    filter: drop-shadow(0 0 6px #ff3e7f);
+    box-shadow:
+      0 0 0 2px rgba(255,255,255,0.6),
+      inset -2px -2px 4px rgba(0,0,0,0.35);
   }
   50% {
-    transform: translateY(-50%) translateX(-4px) scale(1.06);
-    filter: drop-shadow(0 0 14px #ffb800);
+    box-shadow:
+      0 0 0 3px rgba(255,255,255,0.85),
+      0 0 10px #ffb800,
+      inset -2px -2px 4px rgba(0,0,0,0.35);
   }
 }
 
-/* pendant la rotation : la butée "cliquette" */
 .butee.spinning {
-  animation: buteeClick 0.14s linear infinite;
+  filter: drop-shadow(0 0 9px #ffb800);
 }
 
-@keyframes buteeClick {
-  0%, 100% {
-    transform: translateY(-50%) rotate(0deg);
-    filter: drop-shadow(0 0 8px #ff3e7f);
-  }
-  50% {
-    transform: translateY(-50%) rotate(-11deg);
-    filter: drop-shadow(0 0 18px #ffb800);
-  }
+.butee.spinning .butee-flap {
+  animation: none;
 }
 
-/* quand un gagnant est trouvé : flash doré */
+.butee.spinning .butee-flap.kicked {
+  transform: rotate(30deg);
+  transition: transform 0.055s cubic-bezier(0.2, 0.85, 0.3, 1);
+}
+
+.butee.spinning .butee-hinge {
+  animation: none;
+}
+
 .butee.winner {
-  border-right-color: #ffe600;
-  animation: buteeWin 0.5s ease-out 4;
+  filter: drop-shadow(0 0 18px #ffe600);
 }
 
-@keyframes buteeWin {
-  0% {
-    transform: translateY(-50%) scale(1) rotate(0deg);
-    filter: drop-shadow(0 0 8px #ffe600);
+.butee.winner .butee-flap {
+  animation: flapWin 0.45s ease-out 4;
+}
+
+.butee.winner .butee-hinge {
+  animation: hingeWin 0.45s ease-out 4;
+}
+
+@keyframes flapWin {
+  0%   { transform: rotate(0deg);   }
+  30%  { transform: rotate(-42deg); }
+  65%  { transform: rotate(22deg);  }
+  100% { transform: rotate(0deg);   }
+}
+
+@keyframes hingeWin {
+  0%, 100% { transform: scale(1);   }
+  50%      { transform: scale(1.45); }
+}
+
+@media (max-width: 500px) {
+  .butee {
+    right: -18px;
+    width: 36px;
+    height: 36px;
+    margin-top: -18px;
   }
-  35% {
-    transform: translateY(-50%) scale(1.6) rotate(-12deg);
-    filter: drop-shadow(0 0 26px #ffe600);
+  .butee-flap {
+    right: 8px;
+    width: 25px;
+    height: 17px;
+    margin-top: -8.5px;
   }
-  100% {
-    transform: translateY(-50%) scale(1) rotate(0deg);
-    filter: drop-shadow(0 0 8px #ffe600);
+  .butee-hinge {
+    right: 2px;
+    width: 12px;
+    height: 12px;
+    margin-top: -6px;
   }
 }
 
@@ -260,13 +315,8 @@ canvas {
   transition: 0.15s;
 }
 
-.spin-btn:hover {
-  transform: scale(1.05);
-}
-
-.spin-btn:active {
-  transform: scale(0.95);
-}
+.spin-btn:hover { transform: scale(1.05); }
+.spin-btn:active { transform: scale(0.95); }
 
 /* ------------------------------------------------ */
 /* ---------------------- RESULT ------------------ */
@@ -294,8 +344,8 @@ canvas {
 }
 
 @keyframes rainbowPulse {
-  0% { filter: hue-rotate(0deg) brightness(1); }
-  50% { filter: hue-rotate(180deg) brightness(1.2); }
+  0%   { filter: hue-rotate(0deg) brightness(1); }
+  50%  { filter: hue-rotate(180deg) brightness(1.2); }
   100% { filter: hue-rotate(360deg) brightness(1); }
 }
 
@@ -363,20 +413,9 @@ input {
   font-weight: 700;
 }
 
-.btn-primary {
-  background: #ff3e7f;
-  color: white;
-}
-
-.btn-danger {
-  background: #ff0000;
-  color: white;
-}
-
-.btn-secondary {
-  background: #00c6ff;
-  color: white;
-}
+.btn-primary   { background: #ff3e7f; color: white; }
+.btn-danger    { background: #ff0000; color: white; }
+.btn-secondary { background: #00c6ff; color: white; }
 
 /* ------------------------------------------------ */
 /* ---------------------- CHIPS ------------------- */
@@ -395,15 +434,8 @@ input {
 }
 
 @keyframes chipIn {
-  from {
-    transform: scale(0.5);
-    opacity: 0;
-  }
-
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
+  from { transform: scale(0.5); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
 }
 
 .name-chip button {
@@ -440,7 +472,7 @@ input {
 
 @keyframes helpPulse {
   0%,100% { transform: scale(1); }
-  50% { transform: scale(1.08); }
+  50%     { transform: scale(1.08); }
 }
 
 .help-panel {
@@ -457,12 +489,11 @@ input {
   padding: 20px;
   transition: 0.4s;
   overflow-y: auto;
+  /* ⬆️ z-index (999) > bouton "suite" (990) => le panneau recouvre le bouton */
   z-index: 999;
 }
 
-.help-panel.open {
-  right: 0;
-}
+.help-panel.open { right: 0; }
 
 .help-close {
   background: transparent;
@@ -473,9 +504,7 @@ input {
   color: #00c6ff;
 }
 
-.accordion {
-  margin-top: 20px;
-}
+.accordion { margin-top: 20px; }
 
 .accordion-item {
   background: #f0faff;
@@ -506,13 +535,11 @@ input {
   max-height: 500px;
 }
 
-.tuto-highlight {
-  animation: tutoPulse 1.4s infinite;
-}
+.tuto-highlight { animation: tutoPulse 1.4s infinite; }
 
 @keyframes tutoPulse {
   0%,100% { box-shadow: 0 0 0px #00c6ff; }
-  50% { box-shadow: 0 0 12px #00c6ff; }
+  50%     { box-shadow: 0 0 12px #00c6ff; }
 }
 
 /* ------------------------------------------------ */
@@ -523,18 +550,12 @@ input {
   --bg: #fff7e6;
   --card: #ffffff;
   --text: #333;
-  --accent: #ff3e7f;
-  --accent2: #ffb800;
-  --accent3: #00c6ff;
 }
 
 .theme-dark {
   --bg: #111;
   --card: #1c1c1c;
   --text: #f5f5f5;
-  --accent: #8ab4ff;
-  --accent2: #bb86fc;
-  --accent3: #03dac6;
 }
 
 .theme-dark canvas {
@@ -549,9 +570,6 @@ input {
   --bg: linear-gradient(135deg, #ff3e7f, #ffb800);
   --card: rgba(255,255,255,0.8);
   --text: #222;
-  --accent: #ff3e7f;
-  --accent2: #ffb800;
-  --accent3: #00c6ff;
 }
 
 .theme-festive .card {
@@ -563,15 +581,12 @@ input {
   --bg: #111;
   --card: #1c1c1c;
   --text: #fff;
-  --accent: #ff3e7f;
-  --accent2: #ffb800;
-  --accent3: #00c6ff;
   animation: animatedBG 12s infinite alternate;
 }
 
 @keyframes animatedBG {
-  0% { background: linear-gradient(135deg, #111, #222); }
-  50% { background: linear-gradient(135deg, #330033, #111); }
+  0%   { background: linear-gradient(135deg, #111, #222); }
+  50%  { background: linear-gradient(135deg, #330033, #111); }
   100% { background: linear-gradient(135deg, #001133, #330033); }
 }
 
@@ -600,95 +615,46 @@ input {
 /* ------------------------------------------------ */
 
 @media (max-width: 600px) {
-
-  body {
-    padding: 76px 10px 15px;
-  }
+  body { padding: 76px 10px 15px; }
 
   .next-site-button {
-    top: 10px;
-    right: 10px;
-    left: 10px;
-    width: auto;
-    max-width: none;
-    min-height: 42px;
-    padding: 9px 14px;
+    top: 10px; right: 10px; left: 10px;
+    width: auto; max-width: none;
+    min-height: 42px; padding: 9px 14px;
     font-size: 0.82rem;
   }
 
-  .card {
-    padding: 15px;
-    border-radius: 14px;
-  }
-
-  .spin-btn {
-    width: 100%;
-    font-size: 1rem;
-  }
+  .card { padding: 15px; border-radius: 14px; }
+  .spin-btn { width: 100%; font-size: 1rem; }
 
   .help-button {
-    width: 55px;
-    height: 55px;
-    right: 15px;
-    bottom: 15px;
+    width: 55px; height: 55px;
+    right: 15px; bottom: 15px;
     font-size: 1.2rem;
   }
 
-  .help-panel {
-    width: 100vw;
-    border-left: none;
-    padding: 15px;
-  }
-
-  .result-box {
-    font-size: 1.5rem;
-  }
-
-  .btn {
-    font-size: 0.9rem;
-  }
-
-  /* butée un peu plus petite sur mobile */
-  .butee {
-    right: -12px;
-    border-top-width: 14px;
-    border-bottom-width: 14px;
-    border-right-width: 26px;
-  }
+  .help-panel { width: 100vw; border-left: none; padding: 15px; }
+  .result-box { font-size: 1.5rem; }
+  .btn { font-size: 0.9rem; }
 }
 
 @media (max-width: 380px) {
-
-  .next-site-button {
-    font-size: 0.75rem;
-    min-height: 40px;
-  }
-
-  .card {
-    padding: 12px;
-  }
-
-  .name-chip {
-    font-size: 0.85rem;
-    padding: 5px 9px;
-  }
+  .next-site-button { font-size: 0.75rem; min-height: 40px; }
+  .card { padding: 12px; }
+  .name-chip { font-size: 0.85rem; padding: 5px 9px; }
 }
 </style>
 </head>
 
 <body class="theme-light">
 
-<!-- BOUTON ACCES A LA SUITE DU SITE -->
 <a href="choix.html" class="next-site-button">
   Clique pour accéder à la suite du site !
 </a>
 
-<!-- BOUTON SECRET INVISIBLE -->
 <div id="secretBtn" class="secret-button"></div>
 
 <div class="app">
-
-  <!-- -------------------- WHEEL CARD -------------------- -->
 
   <div class="card">
 
@@ -700,8 +666,12 @@ input {
       <div class="wheel-wrap">
         <canvas id="wheel" width="420" height="420"></canvas>
         <div class="pointer"></div>
-        <!-- NOUVELLE BUTEE : indique où s'arrête la roue -->
-        <div class="butee" id="butee" aria-hidden="true"></div>
+
+        <div class="butee" id="butee" aria-hidden="true">
+          <div class="butee-flap"></div>
+          <div class="butee-hinge"></div>
+        </div>
+
       </div>
     </div>
 
@@ -716,8 +686,6 @@ input {
     <div id="result" class="result-box"></div>
 
   </div>
-
-  <!-- -------------------- CONTROL PANEL -------------------- -->
 
   <div class="card">
 
@@ -735,13 +703,8 @@ input {
     </button>
 
     <div style="margin-top:10px;">
-      <button id="shuffleBtn" class="btn btn-secondary">
-        Mélanger
-      </button>
-
-      <button id="clearBtn" class="btn btn-danger">
-        Tout effacer
-      </button>
+      <button id="shuffleBtn" class="btn btn-secondary">Mélanger</button>
+      <button id="clearBtn" class="btn btn-danger">Tout effacer</button>
     </div>
 
     <div id="nameList" style="margin-top:15px;"></div>
@@ -750,195 +713,82 @@ input {
 
 </div>
 
-<!-- -------------------- HELP BUTTON -------------------- -->
-
-<button class="help-button" id="helpBtn">
-  ❔
-</button>
-
-<!-- -------------------- HELP PANEL -------------------- -->
+<button class="help-button" id="helpBtn">❔</button>
 
 <div class="help-panel" id="helpPanel">
 
-  <button class="help-close" id="helpClose">
-    ✖
-  </button>
+  <button class="help-close" id="helpClose">✖</button>
 
-  <h2 style="color:#00c6ff; margin-top:10px;">
-    Aide & Tutoriel
-  </h2>
+  <h2 style="color:#00c6ff; margin-top:10px;">Aide & Tutoriel</h2>
 
   <div class="accordion">
 
-    <!-- SECTION 1 -->
-
     <div class="accordion-item">
-
-      <div class="accordion-header">
-        📘 Comment utiliser la roue ?
-        <span>▼</span>
-      </div>
-
+      <div class="accordion-header">📘 Comment utiliser la roue ? <span>▼</span></div>
       <div class="accordion-content">
-
         <p><b>1.</b> Ajoute un prénom dans le champ prévu.</p>
         <p><b>2.</b> Appuie sur <b>Entrée</b> ou clique sur <b>Ajouter</b>.</p>
         <p><b>3.</b> Répète pour ajouter plusieurs prénoms.</p>
         <p><b>4.</b> Clique sur <b>Mélanger</b>.</p>
         <p><b>5.</b> Clique sur <b>Lancer la roue</b>.</p>
         <p><b>6.</b> Le gagnant apparaît avec un effet arc-en-ciel 🎉</p>
-
-        <a href="/choix.html">
-          Voir les mini jeu
-        </a>
-
+        <a href="/choix.html">Voir les mini jeu</a>
       </div>
     </div>
 
-    <!-- SECTION 2 -->
-
     <div class="accordion-item">
-
-      <div class="accordion-header">
-        💡 Astuces & Tips
-        <span>▼</span>
-      </div>
-
+      <div class="accordion-header">💡 Astuces & Tips <span>▼</span></div>
       <div class="accordion-content">
-
-        <p>
-          • Appuie sur <b>Entrée</b> pour ajouter un prénom rapidement.
-        </p>
-
-        <p>
-          • Tu peux coller une liste entière. Il suffi de mettre
-          <b>;</b> entre chaque prénom
-        </p>
-
-        <p>
-          • Clique sur <b>❌</b> pour supprimer un prénom.
-        </p>
-
-        <p>
-          • Les prénoms sont sauvegardés automatiquement dnas le stockage interne.
-          Veuillez ne pas vider le cache.
-        </p>
-
-        <p>
-          • Fonctionne sur téléphone, tablette et PC.
-        </p>
-
+        <p>• Appuie sur <b>Entrée</b> pour ajouter un prénom rapidement.</p>
+        <p>• Tu peux coller une liste entière. Il suffi de mettre <b>;</b> entre chaque prénom</p>
+        <p>• Clique sur <b>❌</b> pour supprimer un prénom.</p>
+        <p>• Les prénoms sont sauvegardés automatiquement dnas le stockage interne. Veuillez ne pas vider le cache.</p>
+        <p>• Fonctionne sur téléphone, tablette et PC.</p>
       </div>
     </div>
 
-    <!-- SECTION 3 -->
-
     <div class="accordion-item">
-
-      <div class="accordion-header">
-        🎮 Fonctionnalités fun
-        <span>▼</span>
-      </div>
-
+      <div class="accordion-header">🎮 Fonctionnalités fun <span>▼</span></div>
       <div class="accordion-content">
-
         <p>• Halo arc-en-ciel autour de la roue.</p>
         <p>• Confettis dynamiques à chaque gagnant.</p>
         <p>• Animation arc-en-ciel sur le gagnant.</p>
         <p>• Segments en dégradés stylés.</p>
+        <p>• <b>Butée animée</b> qui cliquette au passage de chaque segment et s'illumine en doré pour célébrer le gagnant.</p>
         <p>• Interface fun et moderne.</p>
-
       </div>
     </div>
 
-    <!-- SECTION 4 -->
-
     <div class="accordion-item">
-
-      <div class="accordion-header">
-        🎨 Thème
-        <span>▼</span>
-      </div>
-
+      <div class="accordion-header">🎨 Thème <span>▼</span></div>
       <div class="accordion-content">
-
-        <p>
-          Choisis l’ambiance de la roue :
-        </p>
-
-        <label for="themeSelect">
-          <b>Thème :</b>
-        </label>
-
-        <select
-          id="themeSelect"
-          style="margin-top:6px; width:100%; padding:8px; border-radius:8px; border:2px solid #00c6ff55;"
-        >
+        <p>Choisis l’ambiance de la roue :</p>
+        <label for="themeSelect"><b>Thème :</b></label>
+        <select id="themeSelect" style="margin-top:6px; width:100%; padding:8px; border-radius:8px; border:2px solid #00c6ff55;">
           <option value="light">Clair</option>
           <option value="dark">Sombre</option>
           <option value="festive">Festif</option>
           <option value="animated">Animé</option>
         </select>
-
-        <p style="margin-top:10px; font-size:0.9rem; opacity:0.8;">
-          Le thème est sauvegardé automatiquement.
-        </p>
-
+        <p style="margin-top:10px; font-size:0.9rem; opacity:0.8;">Le thème est sauvegardé automatiquement.</p>
       </div>
     </div>
 
-    <!-- SECTION 5 -->
-
     <div class="accordion-item">
-
-      <div class="accordion-header">
-        🎓 Tutoriel animé
-        <span>▼</span>
-      </div>
-
+      <div class="accordion-header">🎓 Tutoriel animé <span>▼</span></div>
       <div class="accordion-content">
-
-        <p>
-          Voici les éléments importants :
-        </p>
-
+        <p>Voici les éléments importants :</p>
         <p><b>Champ d’ajout :</b></p>
-
         <div class="input-wrapper tuto-highlight">
           <span>✏️</span>
           <input placeholder="Exemple">
         </div>
-
-        <p style="margin-top:10px;">
-          <b>Bouton Ajouter :</b>
-        </p>
-
-        <button class="btn btn-primary tuto-highlight">
-          Ajouter
-        </button>
-
-        <p style="margin-top:10px;">
-          <b>Bouton Lancer la roue :</b>
-        </p>
-
-        <button
-          class="spin-btn tuto-highlight"
-          style="padding:8px 20px; font-size:1rem;"
-        >
-          Lancer
-        </button>
-
-        <p style="margin-top:10px;">
-          <b>Résultat :</b>
-        </p>
-
-        <div
-          class="result-box tuto-highlight"
-          style="transform:scale(0.7); opacity:1;"
-        >
-          Exemple
-        </div>
-
+        <p style="margin-top:10px;"><b>Bouton Ajouter :</b></p>
+        <button class="btn btn-primary tuto-highlight">Ajouter</button>
+        <p style="margin-top:10px;"><b>Bouton Lancer la roue :</b></p>
+        <button class="spin-btn tuto-highlight" style="padding:8px 20px; font-size:1rem;">Lancer</button>
+        <p style="margin-top:10px;"><b>Résultat :</b></p>
+        <div class="result-box tuto-highlight" style="transform:scale(0.7); opacity:1;">Exemple</div>
       </div>
     </div>
 
@@ -953,15 +803,10 @@ input {
 
 const STORAGE_KEY = "roulette_prenoms_styled";
 
-let names = JSON.parse(
-  localStorage.getItem(STORAGE_KEY) || "[]"
-);
+let names = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
 
 function save() {
-  localStorage.setItem(
-    STORAGE_KEY,
-    JSON.stringify(names)
-  );
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(names));
 }
 
 /* ------------------------------------------------ */
@@ -972,140 +817,70 @@ const THEME_KEY = "roulette_theme";
 const root = document.body;
 
 function applyTheme(theme) {
-
-  root.classList.remove(
-    "theme-light",
-    "theme-dark",
-    "theme-festive",
-    "theme-animated"
-  );
-
-  if (theme === "dark") {
-    root.classList.add("theme-dark");
-  }
-  else if (theme === "festive") {
-    root.classList.add("theme-festive");
-  }
-  else if (theme === "animated") {
-    root.classList.add("theme-animated");
-  }
-  else {
-    root.classList.add("theme-light");
-  }
+  root.classList.remove("theme-light", "theme-dark", "theme-festive", "theme-animated");
+  if (theme === "dark")          root.classList.add("theme-dark");
+  else if (theme === "festive")  root.classList.add("theme-festive");
+  else if (theme === "animated") root.classList.add("theme-animated");
+  else                           root.classList.add("theme-light");
 }
 
 function loadTheme() {
-
-  const saved =
-    localStorage.getItem(THEME_KEY) || "light";
-
+  const saved = localStorage.getItem(THEME_KEY) || "light";
   applyTheme(saved);
-
-  const select =
-    document.getElementById("themeSelect");
-
-  if (select) {
-    select.value = saved;
-  }
+  const select = document.getElementById("themeSelect");
+  if (select) select.value = saved;
 }
 
 function setTheme(theme) {
-
   applyTheme(theme);
-
-  localStorage.setItem(
-    THEME_KEY,
-    theme
-  );
+  localStorage.setItem(THEME_KEY, theme);
 }
 
 /* ------------------------------------------------ */
 /* ---------------------- DOM --------------------- */
 /* ------------------------------------------------ */
 
-const nameInput =
-  document.getElementById("nameInput");
+const nameInput  = document.getElementById("nameInput");
+const addBtn     = document.getElementById("addBtn");
+const shuffleBtn = document.getElementById("shuffleBtn");
+const clearBtn   = document.getElementById("clearBtn");
+const nameList   = document.getElementById("nameList");
+const resultEl   = document.getElementById("result");
+const spinBtn    = document.getElementById("spinBtn");
+const themeSelect = document.getElementById("themeSelect");
+const secretBtn  = document.getElementById("secretBtn");
 
-const addBtn =
-  document.getElementById("addBtn");
-
-const shuffleBtn =
-  document.getElementById("shuffleBtn");
-
-const clearBtn =
-  document.getElementById("clearBtn");
-
-const nameList =
-  document.getElementById("nameList");
-
-const resultEl =
-  document.getElementById("result");
-
-const spinBtn =
-  document.getElementById("spinBtn");
-
-const themeSelect =
-  document.getElementById("themeSelect");
-
-const secretBtn =
-  document.getElementById("secretBtn");
-
-/* NOUVEAU : la butée */
-const butee =
-  document.getElementById("butee");
+/* BUTÉE */
+const butee = document.getElementById("butee");
+const buteeFlap = butee ? butee.querySelector(".butee-flap") : null;
 
 /* ------------------------------------------------ */
 /* ---------------------- LISTE ------------------- */
 /* ------------------------------------------------ */
 
 function renderList() {
-
   nameList.innerHTML = "";
-
   names.forEach((n, i) => {
-
-    const chip =
-      document.createElement("div");
-
+    const chip = document.createElement("div");
     chip.className = "name-chip";
-
-    chip.innerHTML =
-      `${n} <button>❌</button>`;
-
+    chip.innerHTML = `${n} <button>❌</button>`;
     chip.querySelector("button").onclick = () => {
-
       names.splice(i, 1);
-
       save();
       renderList();
       drawWheel();
     };
-
     nameList.appendChild(chip);
   });
 }
 
 function addName() {
-
-  const raw =
-    nameInput.value.trim();
-
+  const raw = nameInput.value.trim();
   if (!raw) return;
-
-  raw
-    .split(/[,;\n]/)
-    .map(s => s.trim())
-    .filter(Boolean)
-    .forEach(n => {
-
-      if (!names.includes(n)) {
-        names.push(n);
-      }
-
-    });
-
+  raw.split(/[,;\n]/).map(s => s.trim()).filter(Boolean).forEach(n => {
+    if (!names.includes(n)) names.push(n);
+  });
   nameInput.value = "";
-
   save();
   renderList();
   drawWheel();
@@ -1113,62 +888,35 @@ function addName() {
 
 addBtn.onclick = addName;
 
-nameInput.addEventListener(
-  "keydown",
-  (e) => {
-
-    if (e.key === "Enter") {
-      addName();
-    }
-
-  }
-);
+nameInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") addName();
+});
 
 shuffleBtn.onclick = () => {
-
-  for (
-    let i = names.length - 1;
-    i > 0;
-    i--
-  ) {
-
-    const j =
-      Math.floor(
-        Math.random() * (i + 1)
-      );
-
-    [names[i], names[j]] =
-      [names[j], names[i]];
+  for (let i = names.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [names[i], names[j]] = [names[j], names[i]];
   }
-
   save();
   renderList();
   drawWheel();
 };
 
 clearBtn.onclick = () => {
-
   if (confirm("Tout effacer ?")) {
-
     names = [];
-
     save();
     renderList();
     drawWheel();
   }
-
 };
 
 /* ------------------------------------------------ */
 /* ---------------------- WHEEL ------------------- */
 /* ------------------------------------------------ */
 
-const canvas =
-  document.getElementById("wheel");
-
-const ctx =
-  canvas.getContext("2d");
-
+const canvas = document.getElementById("wheel");
+const ctx = canvas.getContext("2d");
 const size = canvas.width;
 const radius = size / 2;
 
@@ -1176,149 +924,78 @@ let currentAngle = 0;
 let spinning = false;
 
 function randomColor(i) {
-
-  const colors = [
-    "#ff3e7f",
-    "#ffb800",
-    "#00c6ff",
-    "#ff6f00",
-    "#00ff9d",
-    "#ff00ff"
-  ];
-
-  return colors[
-    i % colors.length
-  ];
+  const colors = ["#ff3e7f", "#ffb800", "#00c6ff", "#ff6f00", "#00ff9d", "#ff00ff"];
+  return colors[i % colors.length];
 }
 
 function drawWheel() {
-
-  ctx.clearRect(
-    0,
-    0,
-    size,
-    size
-  );
+  ctx.clearRect(0, 0, size, size);
 
   if (names.length === 0) {
-
     ctx.fillStyle = "#999";
     ctx.font = "bold 18px Poppins";
     ctx.textAlign = "center";
-
-    ctx.fillText(
-      "Ajoute des prénoms",
-      radius,
-      radius
-    );
-
+    ctx.fillText("Ajoute des prénoms", radius, radius);
     return;
   }
 
-  const slice =
-    (Math.PI * 2) / names.length;
-
+  const slice = (Math.PI * 2) / names.length;
   ctx.save();
-
-  ctx.translate(
-    radius,
-    radius
-  );
-
+  ctx.translate(radius, radius);
   ctx.rotate(currentAngle);
 
-  for (
-    let i = 0;
-    i < names.length;
-    i++
-  ) {
+  for (let i = 0; i < names.length; i++) {
+    const start = i * slice;
+    const end = start + slice;
 
-    const start =
-      i * slice;
-
-    const end =
-      start + slice;
-
-    const grad =
-      ctx.createLinearGradient(
-        0,
-        0,
-        radius,
-        radius
-      );
-
-    grad.addColorStop(
-      0,
-      randomColor(i)
-    );
-
-    grad.addColorStop(
-      1,
-      "#ffffff55"
-    );
-
+    const grad = ctx.createLinearGradient(0, 0, radius, radius);
+    grad.addColorStop(0, randomColor(i));
+    grad.addColorStop(1, "#ffffff55");
     ctx.fillStyle = grad;
 
     ctx.beginPath();
-
     ctx.moveTo(0, 0);
-
-    ctx.arc(
-      0,
-      0,
-      radius - 10,
-      start,
-      end
-    );
-
+    ctx.arc(0, 0, radius - 10, start, end);
     ctx.closePath();
-
     ctx.fill();
 
     ctx.lineWidth = 4;
     ctx.strokeStyle = "#fff";
-
     ctx.stroke();
 
     ctx.save();
-
-    ctx.rotate(
-      start + slice / 2
-    );
-
+    ctx.rotate(start + slice / 2);
     ctx.textAlign = "right";
     ctx.fillStyle = "white";
     ctx.font = "bold 18px Poppins";
-
-    ctx.fillText(
-      names[i],
-      radius - 20,
-      0
-    );
-
+    ctx.fillText(names[i], radius - 20, 0);
     ctx.restore();
   }
 
   ctx.restore();
 }
 
-function getWinner(angle) {
+function getSegmentIndex(angle, count) {
+  if (count === 0) return -1;
+  const slice = (Math.PI * 2) / count;
+  const normalized = ((Math.PI * 2 - (angle % (Math.PI * 2))) % (Math.PI * 2));
+  return Math.floor(normalized / slice);
+}
 
-  const slice =
-    (Math.PI * 2) / names.length;
+/* ------------------------------------------------ */
+/* ---------- ANIMATION DE LA BUTÉE -------------- */
+/* ------------------------------------------------ */
 
-  const normalized =
-    (
-      Math.PI * 2 -
-      (angle % (Math.PI * 2))
-    ) %
-    (Math.PI * 2);
+let buteeKickTimer = null;
+let buteeLastSeg = -1;
 
-  return names[
-    Math.floor(
-      normalized / slice
-    )
-  ];
+function kickButee() {
+  if (!buteeFlap) return;
+  buteeFlap.classList.add("kicked");
+  clearTimeout(buteeKickTimer);
+  buteeKickTimer = setTimeout(() => {
+    buteeFlap.classList.remove("kicked");
+  }, 50);
 }
 
 /* ------------------------------------------------ */
@@ -1326,31 +1003,14 @@ function getWinner(angle) {
 /* ------------------------------------------------ */
 
 function spawnConfetti() {
-
   for (let i = 0; i < 80; i++) {
-
-    const c =
-      document.createElement("div");
-
+    const c = document.createElement("div");
     c.className = "confetti";
-
-    c.style.left =
-      Math.random() * 100 + "vw";
-
-    c.style.background =
-      randomColor(i);
-
-    c.style.animationDuration =
-      1.8 +
-      Math.random() * 1.2 +
-      "s";
-
+    c.style.left = Math.random() * 100 + "vw";
+    c.style.background = randomColor(i);
+    c.style.animationDuration = 1.8 + Math.random() * 1.2 + "s";
     document.body.appendChild(c);
-
-    setTimeout(
-      () => c.remove(),
-      2500
-    );
+    setTimeout(() => c.remove(), 2500);
   }
 }
 
@@ -1359,156 +1019,93 @@ function spawnConfetti() {
 /* ------------------------------------------------ */
 
 spinBtn.onclick = () => {
-
-  if (
-    spinning ||
-    names.length === 0
-  ) {
-    return;
-  }
+  if (spinning || names.length === 0) return;
 
   spinning = true;
   spinBtn.disabled = true;
-
   resultEl.classList.remove("show");
 
-  /* NOUVEAU : la butée passe en mode "cliquetis" */
   if (butee) {
     butee.classList.remove("winner");
     butee.classList.add("spinning");
+    buteeLastSeg = getSegmentIndex(currentAngle, names.length);
   }
 
-  const extra =
-    4 + Math.random() * 3;
-
-  const finalAngle =
-    currentAngle +
-    extra * Math.PI * 2 +
-    Math.random() * Math.PI * 2;
-
-  const duration =
-    2600 +
-    Math.random() * 800;
-
-  const start =
-    performance.now();
-
-  const startAngle =
-    currentAngle;
+  const extra = 4 + Math.random() * 3;
+  const finalAngle = currentAngle + extra * Math.PI * 2 + Math.random() * Math.PI * 2;
+  const duration = 2600 + Math.random() * 800;
+  const start = performance.now();
+  const startAngle = currentAngle;
 
   function animate(now) {
-
-    const t =
-      Math.min(
-        1,
-        (now - start) / duration
-      );
-
-    const eased =
-      1 - Math.pow(1 - t, 3);
-
-    currentAngle =
-      startAngle +
-      (finalAngle - startAngle) *
-      eased;
+    const t = Math.min(1, (now - start) / duration);
+    const eased = 1 - Math.pow(1 - t, 3);
+    currentAngle = startAngle + (finalAngle - startAngle) * eased;
 
     drawWheel();
 
-    if (t < 1) {
-
-      requestAnimationFrame(
-        animate
-      );
-
+    if (names.length > 1 && buteeFlap) {
+      const seg = getSegmentIndex(currentAngle, names.length);
+      if (seg !== buteeLastSeg) {
+        buteeLastSeg = seg;
+        kickButee();
+      }
     }
-    else {
 
+    if (t < 1) {
+      requestAnimationFrame(animate);
+    } else {
       spinning = false;
       spinBtn.disabled = false;
 
-      const winner =
-        getWinner(currentAngle);
+      const finalSeg = getSegmentIndex(currentAngle, names.length);
+      const winner = names[finalSeg];
 
-      resultEl.innerHTML =
-        winner;
+      resultEl.innerHTML = winner;
+      resultEl.classList.add("show");
 
-      resultEl.classList.add(
-        "show"
-      );
-
-      /* NOUVEAU : la butée fait son effet "gagnant" */
       if (butee) {
         butee.classList.remove("spinning");
         butee.classList.add("winner");
+        if (buteeFlap) buteeFlap.classList.remove("kicked");
       }
 
       spawnConfetti();
     }
   }
 
-  requestAnimationFrame(
-    animate
-  );
+  requestAnimationFrame(animate);
 };
 
 /* ------------------------------------------------ */
 /* -------------------- HELP PANEL ---------------- */
 /* ------------------------------------------------ */
 
-const helpBtn =
-  document.getElementById("helpBtn");
+const helpBtn   = document.getElementById("helpBtn");
+const helpPanel = document.getElementById("helpPanel");
+const helpClose = document.getElementById("helpClose");
 
-const helpPanel =
-  document.getElementById("helpPanel");
-
-const helpClose =
-  document.getElementById("helpClose");
-
-helpBtn.onclick = () =>
-  helpPanel.classList.add("open");
-
-helpClose.onclick = () =>
-  helpPanel.classList.remove("open");
+helpBtn.onclick = () => helpPanel.classList.add("open");
+helpClose.onclick = () => helpPanel.classList.remove("open");
 
 /* ------------------------------------------------ */
 /* --------------------- ACCORDEON ---------------- */
 /* ------------------------------------------------ */
 
-document
-  .querySelectorAll(".accordion-header")
-  .forEach(header => {
-
-    header.addEventListener(
-      "click",
-      () => {
-
-        const content =
-          header.nextElementSibling;
-
-        content.classList.toggle(
-          "open"
-        );
-      }
-    );
-
+document.querySelectorAll(".accordion-header").forEach(header => {
+  header.addEventListener("click", () => {
+    header.nextElementSibling.classList.toggle("open");
   });
+});
 
 /* ------------------------------------------------ */
 /* ------------------ THEME SELECTOR -------------- */
 /* ------------------------------------------------ */
 
 if (themeSelect) {
-
-  themeSelect.addEventListener(
-    "change",
-    () => {
-
-      setTheme(
-        themeSelect.value
-      );
-
-    }
-  );
+  themeSelect.addEventListener("change", () => {
+    setTheme(themeSelect.value);
+  });
 }
 
 /* ------------------------------------------------ */
@@ -1516,10 +1113,7 @@ if (themeSelect) {
 /* ------------------------------------------------ */
 
 secretBtn.onclick = () => {
-
-  window.location.href =
-    "youtube.html";
-
+  window.location.href = "youtube.html";
 };
 
 /* ------------------------------------------------ */
